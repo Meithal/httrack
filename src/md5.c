@@ -18,6 +18,7 @@
 /* #include "config.h" */
 
 #include <string.h>             /* for memcpy() */
+#include <stdint.h>             /* for uint32_t */
 #include "md5.h"
 
 static void byteReverse(unsigned char *buf, unsigned longs);
@@ -74,12 +75,12 @@ void MD5Init(struct MD5Context *ctx, int brokenEndian) {
 * of bytes.
 */
 void MD5Update(struct MD5Context *ctx, unsigned char const *buf, unsigned len) {
-  uint32 t;
+  uint32_t t;
 
   /* Update bitcount */
 
   t = ctx->bits[0];
-  if ((ctx->bits[0] = t + ((uint32) len << 3)) < t)
+  if ((ctx->bits[0] = t + ((uint32_t) len << 3)) < t)
     ctx->bits[1]++;             /* Carry from low to high */
   ctx->bits[1] += len >> 29;
 
@@ -186,8 +187,8 @@ void MD5Final(unsigned char digest[16], struct MD5Context *ctx) {
 * reflect the addition of 16 longwords of new data.  MD5Update blocks
 * the data and converts bytes into longwords for this routine.
 */
-void MD5Transform(uint32 buf[4], uint32 const in[16]) {
-  register uint32 a, b, c, d;
+void MD5Transform(uint32_t buf[4], uint32_t const in[16]) {
+  register uint32_t a, b, c, d;
 
   a = buf[0];
   b = buf[1];

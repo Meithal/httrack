@@ -91,7 +91,7 @@ Please visit our Website: http://www.httrack.com
 
 #else
 
-#include "config.h"
+//#include "config.h"
 
 #ifndef SETUID
 #define HTS_DO_NOT_USE_UID

@@ -1,3 +1,6 @@
 [submodule "src/coucal"]
 	path = src/coucal
 	url = https://github.com/xroche/coucal.git
+[submodule "portable"]
+	path = portable
+	url = https://github.com/Meithal/portable.git
