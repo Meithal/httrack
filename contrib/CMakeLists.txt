@@ -97,6 +97,8 @@ if(APPLE)
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/AppDelegate.m
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/main.m
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Base.lproj/MainMenu.xib
+		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/MainMenu.h
+		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/MainMenu.m
 	)
 
 	add_dependencies(HttrackMac httr)
@@ -118,6 +120,7 @@ if(APPLE)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework AppKit ")
 
 	#enable_testing()
+	# cf https://stackoverflow.com/a/78355693/13577241
 	find_package(XCTest REQUIRED)
 
 	xctest_add_bundle(UnitTests HttrackMac
