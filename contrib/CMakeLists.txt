@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.12)
 
+if(APPLE AND NOT CMAKE_OSX_SYSROOT)
+    execute_process(
+        COMMAND xcrun --sdk macosx --show-sdk-path
+        OUTPUT_VARIABLE _sdk_path
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    set(CMAKE_OSX_SYSROOT "${_sdk_path}" CACHE PATH "macOS SDK" FORCE)
+endif()
+
 project(Httrack C)
 
 set(HTTRACK_SOURCES 
@@ -90,6 +99,8 @@ if(APPLE)
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Base.lproj/MainMenu.xib
 	)
 
+	add_dependencies(HttrackMac httr)
+
 	set_source_files_properties(
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Base.lproj/MainMenu.xib
 		PROPERTIES
@@ -104,5 +115,30 @@ if(APPLE)
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/plist.in
 	)
 
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework AppKit")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework AppKit ")
+
+	#enable_testing()
+	find_package(XCTest REQUIRED)
+
+	xctest_add_bundle(UnitTests HttrackMac
+    	${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMacTests/HttrackMacTests.m
+	)
+	set_target_properties(UnitTests 
+		PROPERTIES 
+		XCODE_ATTRIBUTE_TEST_HOST ""
+		# XCODE_ATTRIBUTE_TEST_TARGET_NAME HttrackMac
+		XCODE_PRODUCT_TYPE com.apple.product-type.bundle.unit-test
+	)
+
+	xctest_add_bundle(UITests HttrackMac
+		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMacUITests/HttrackMacUITests.m
+		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMacUITests/HttrackMacUITestsLaunchTests.m
+	)
+	set_target_properties(UITests 
+		PROPERTIES 
+	    XCODE_ATTRIBUTE_TEST_HOST ""
+		# XCODE_ATTRIBUTE_BUNDLE_LOADER ""
+		# XCODE_ATTRIBUTE_TEST_TARGET_NAME HttrackMac
+		XCODE_PRODUCT_TYPE com.apple.product-type.bundle.ui-testing)
+
 endif()
