@@ -142,10 +142,18 @@ static HTS_UNUSED void htssafe_compile_time_check_(void) {
  */
 #define strcatbuff(A, B) \
   ( HTS_IS_NOT_CHAR_BUFFER(A) \
-  ? strcat(A, B) \
-  : strncat_safe_(A, sizeof(A), B, \
-  HTS_IS_NOT_CHAR_BUFFER(B) ? (size_t) -1 : sizeof(B), (size_t) -1, \
-  "overflow while appending '" #B "' to '"#A"'", __FILE__, __LINE__) )
+    ? strcat(A, B) \
+    : strncat_safe_(\
+        A,\
+        sizeof(A), \
+        B, \
+        HTS_IS_NOT_CHAR_BUFFER(B) ? (size_t) -1 : sizeof(B),\
+        (size_t) -1, \
+        "overflow while appending '" #B "' to '"#A"'", \
+        __FILE__,\
+        __LINE__\
+      ) \
+  )
 
 /**
  * Copy characters from "B" to "A".
@@ -194,10 +202,11 @@ static HTS_INLINE HTS_UNUSED size_t strlen_safe_(const char *source, const size_
   return size;
 }
 
-static HTS_INLINE HTS_UNUSED char* strncat_safe_(char *const dest, const size_t sizeof_dest,
-                                                 const char *const source, const size_t sizeof_source, 
-                                                 const size_t n,
-                                                 const char *exp, const char *file, int line) {
+static HTS_INLINE HTS_UNUSED char* strncat_safe_(
+   char *const dest, const size_t sizeof_dest,
+   const char *const source, const size_t sizeof_source,
+   const size_t n,
+   const char *exp, const char *file, int line) {
   const size_t source_len = strlen_safe_(source, sizeof_source, file, line);
   const size_t dest_len = strlen_safe_(dest, sizeof_dest, file, line);
   /* note: "size_t is an unsigned integral type" ((size_t) -1 is positive) */

@@ -456,7 +456,7 @@ int back_nsoc_overall(const struct_back * sback) {
 static int create_back_tmpfile(httrackp * opt, lien_back *const back) {
   // do not use tempnam() but a regular filename
   back->tmpfile_buffer[0] = '\0';
-  if (back->url_sav != NULL && back->url_sav[0] != '\0') {
+  if (back->url_sav[0] != '\0') {
     snprintf(back->tmpfile_buffer, sizeof(back->tmpfile_buffer), "%s.z", 
              back->url_sav);
     back->tmpfile = back->tmpfile_buffer;
@@ -715,7 +715,7 @@ int back_finalize(httrackp * opt, cache_back * cache, struct_back * sback,
               HTS_STAT.stat_files++;
               hts_log_print(opt, LOG_TRACE, "added file %s%s => %s",
                             back[p].url_adr, back[p].url_fil,
-                            back[p].url_sav != NULL ? back[p].url_sav : "");
+                            back[p].url_sav[0] != '\0' ? back[p].url_sav : "");
             }
             if ((!back[p].r.notmodified) && (opt->is_update)) {
               HTS_STAT.stat_updated_files++;    // page modifiée
@@ -3440,7 +3440,7 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
                       if (back[i].r.statuscode == HTTP_OK && !back[i].testmode) {       // 'OK'
                         if (!is_hypertext_mime(opt, back[i].r.contenttype, back[i].url_fil)) {  // not HTML
                           if (strnotempty(back[i].url_sav)) {   // target found
-                            int size = fsize_utf8(back[i].url_sav);     // target size
+                            off_t size = fsize_utf8(back[i].url_sav);     // target size
 
                             if (size >= 0) {
                               if (back[i].r.totalsize == size) {        // same size!

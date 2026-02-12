@@ -1128,7 +1128,7 @@ char *hts_convertStringIDNAToUTF8(const char *s, size_t size) {
             } else {
               /* emiter (byte per byte) */
 #define EM(C) do { \
-  if (C != -1) {   \
+  if ((signed char)C != -1) {   \
     ADD_BYTE(C);   \
   } else {         \
     FREE_BUFFER(); \
@@ -1229,7 +1229,7 @@ char *hts_convertUCS4StringToUTF8(const hts_UCS4 *s, size_t nChars) {
     const hts_UCS4 uc = s[i];
     /* emitter (byte per byte) */
 #define EM(C) do { \
-  if (C != -1) {   \
+  if ((signed char)C != -1) {   \
     ADD_BYTE(C);   \
   } else {         \
     FREE_BUFFER(); \

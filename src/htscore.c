@@ -439,7 +439,7 @@ static int look_like_xml(const char *s) {
 
 // Début de httpmirror, robot
 // url1 peut être multiple
-int httpmirror(char *url1, httrackp * opt) {
+int httpmirror(const char *url1, httrackp * opt) {
   char *primary = NULL;         // première page, contenant les liens à scanner
   hash_struct hash;             // système de hachage, accélère la recherche dans les liens
   hash_struct *const hashptr = &hash;
@@ -795,8 +795,10 @@ int httpmirror(char *url1, httrackp * opt) {
     // lien primaire
     if (!hts_record_link(opt, "primary", "/primary",
                         fslash(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                        fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                        StringBuff(opt->path_html_utf8), "index.html")),
+                          fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
+                            StringBuff(opt->path_html_utf8), "index.html"
+                          )
+                        ),
                         "", "", NULL)) {
       XH_extuninit;             // désallocation mémoire & buffers
       return 0;

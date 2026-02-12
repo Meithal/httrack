@@ -46,6 +46,7 @@ Please visit our Website: http://www.httrack.com
 #include "htscharset.h"
 #include "htsencoding.h"
 #include "htsmd5.h"
+#include "coucal/coucal.h"
 
 #include <ctype.h>
 #if USE_BEGINTHREAD
@@ -170,7 +171,7 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
   int argv_url = -1;            // ==0 : utiliser cache et doit.log
   char *argv_firsturl = NULL;   // utilisé pour nommage par défaut
   char *url = NULL;             // URLS séparées par un espace
-  int url_sz = 65535;
+  off_t url_sz = 65535;
 
   //char url[65536];         // URLS séparées par un espace
   // the parametres
@@ -249,12 +250,12 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
 
   /* create x_argvblk buffer for transformed command line */
   {
-    int current_size = 0;
-    int size;
+    off_t current_size = 0;
+    off_t size;
     int na;
 
     for(na = 0; na < argc; na++)
-      current_size += (int) (strlen(argv[na]) + 1);
+      current_size += (off_t) (strlen(argv[na]) + 1);
     if ((size = fsize("config")) > 0)
       current_size += size;
     x_argvblk = (char *) malloct(current_size + 32768);
@@ -1682,7 +1683,7 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                     FILE *fp = fopen(argv[na], "rb");
 
                     if (fp != NULL) {
-                      int cl = (int) strlen(url);
+                      off_t cl = (off_t) strlen(url);
 
                       ensureUrlCapacity(url, url_sz, cl + fz + 8192);
                       if (cl > 0) {     /* don't stick! (3.43) */

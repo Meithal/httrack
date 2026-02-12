@@ -3,7 +3,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MainMenu : NSObject
+
+
+@interface ViewBlankPanel : NSObject
 @property (assign) IBOutlet NSTextField *httrSiteUrl;
 
 @end

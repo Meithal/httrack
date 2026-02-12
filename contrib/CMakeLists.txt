@@ -12,8 +12,7 @@ endif()
 project(Httrack C)
 
 set(HTTRACK_SOURCES 
-httrack.c
-htscore.c htsparse.c htsback.c htscache.c 
+	htscore.c htsparse.c htsback.c htscache.c 
 	htscatchurl.c htsfilters.c htsftp.c htshash.c coucal/coucal.c
 	htshelp.c htslib.c htscoremain.c 
 	htsname.c htsrobots.c htstools.c htswizard.c 
@@ -45,21 +44,11 @@ set(SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../src)
 list(TRANSFORM HTTRACK_SOURCES PREPEND "${SRC_ROOT}/")
 list(TRANSFORM HTTRACK_HEADERS PREPEND "${SRC_ROOT}/")
 
-# set the lowest xcode 26 handles
-if(APPLE)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
-endif()
 
-add_executable(httr ${HTTRACK_SOURCES} ${HTTRACK_HEADERS} )
 
-target_compile_definitions(httr PRIVATE 
-	HTTRACK_SKIP_GNU_BUILDTOOLS=1
-	HTS_DO_NOT_REDEFINE_in_addr_t=1
-	HAVE_STRNLEN=1
-	#HTS_USEOPENSSL=0 // with find_package LibreSSL::SSL, SSL_library_init isnt available, so this can be used instead to download only http sites (not https)
-)
+add_library(httr_lib STATIC ${HTTRACK_SOURCES} ${HTTRACK_HEADERS} )
 
-target_include_directories(httr PRIVATE 
+target_include_directories(httr_lib PUBLIC 
 	"${SRC_ROOT}/coucal"
 	"${SRC_ROOT}"
 )
@@ -68,11 +57,10 @@ target_include_directories(httr PRIVATE
 set(LIBRESSL_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../portable")
 add_subdirectory("${LIBRESSL_ROOT_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/libssl")
 
-
 # list(APPEND CMAKE_MODULE_PATH "${LIBRESSL_ROOT_DIR}")
 # find_package(LibreSSL REQUIRED)
 
-target_link_libraries(httr PRIVATE 
+target_link_libraries(httr_lib PUBLIC 
 	# LibreSSL::Crypto 
 	# LibreSSL::SSL # doesnt provide SSL_library_init & alii for some reason
 	# LibreSSL::TLS
@@ -84,12 +72,31 @@ target_link_libraries(httr PRIVATE
 find_package(ZLIB REQUIRED)
 find_package(Iconv REQUIRED)  # macOS only, but safe
 
-target_link_libraries(httr PRIVATE 
+target_link_libraries(httr_lib PUBLIC 
 	ZLIB::ZLIB 
 	Iconv::Iconv 
 )
 
+target_compile_definitions(httr_lib PUBLIC 
+	# HTTRACK_SKIP_GNU_BUILDTOOLS=1
+	HTS_DO_NOT_REDEFINE_in_addr_t=1
+	HAVE_STRNLEN=1
+	#HTS_USEOPENSSL=0 // with find_package LibreSSL::SSL, SSL_library_init isnt available, so this can be used instead to download only http sites (not https)
+)
+
+add_executable(httr
+	"${SRC_ROOT}/httrack.c"
+	"${SRC_ROOT}/httrack.h"
+)
+target_link_libraries(httr PUBLIC httr_lib)
+
+
 if(APPLE)
+	set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.github.meithal")
+	# set the lowest xcode 26 handles
+	set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
+	set(MACOSX_DEPLOYMENT_TARGET "11.0")
+
 	add_executable(
 		HttrackMac
 		MACOSX_BUNDLE
@@ -97,18 +104,23 @@ if(APPLE)
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/AppDelegate.m
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/main.m
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Base.lproj/MainMenu.xib
-		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/MainMenu.h
-		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/MainMenu.m
+		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/ViewMain.h
+		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/ViewMain.m
+		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Controllers/ControllerMainMenu.h
+		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Controllers/ControllerMainMenu.m
 	)
 
-	add_dependencies(HttrackMac httr)
+	target_link_libraries(HttrackMac PUBLIC httr_lib)
+	target_include_directories(HttrackMac PRIVATE "${SRC_ROOT}")
 
 	set_source_files_properties(
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Base.lproj/MainMenu.xib
 		PROPERTIES
-		MACOSX_PACKAGE_LOCATION
-		Resources
+		MACOSX_PACKAGE_LOCATION Resources
+		MACOSX_BUNDLE_GUI_IDENTIFIER ${MACOSX_BUNDLE_GUI_IDENTIFIER}
 	)
+
+	
 
 	set_target_properties(
 		HttrackMac
@@ -145,3 +157,7 @@ if(APPLE)
 		XCODE_PRODUCT_TYPE com.apple.product-type.bundle.ui-testing)
 
 endif()
+
+add_executable(
+	objctest "test.m"
+)

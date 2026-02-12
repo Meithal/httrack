@@ -279,7 +279,7 @@ void hts_record_init(httrackp *opt);
 void hts_record_free(httrackp *opt);
 
 //int httpmirror(char* url,int level,httrackp opt);
-int httpmirror(char *url1, httrackp * opt);
+int httpmirror(const char *url1, httrackp * opt);
 int filesave(httrackp * opt, const char *adr, int len, const char *s,
              const char *url_adr /* = NULL */ ,
              const char *url_fil /* = NULL */ );

@@ -1311,7 +1311,7 @@ int cache_writedata(FILE * cache_ndx, FILE * cache_dat, const char *str1,
   if (cache_dat) {
     char BIGSTK buff[HTS_URLMAXSIZE * 4];
     char s[256];
-    int pos;
+    long pos;
 
     fflush(cache_dat);
     fflush(cache_ndx);
@@ -1320,7 +1320,7 @@ int cache_writedata(FILE * cache_ndx, FILE * cache_dat, const char *str1,
     if (cache_wint(cache_dat, len) != -1) {     // length
       if (fwrite(outbuff, 1, len, cache_dat) == len) {  // data
         /* then write index */
-        sprintf(s, "%d\n", pos);
+        sprintf(s, "%ld\n", pos);
         buff[0] = '\0';
         strcatbuff(buff, str1);
         strcatbuff(buff, "\n");
@@ -1730,7 +1730,7 @@ void cache_init(cache_back * cache, httrackp * opt) {
       }
       // lire index
       if (oldndx != NULL) {
-        int buffl;
+        off_t buffl;
 
         fclose(oldndx);
         oldndx = NULL;
@@ -2024,7 +2024,7 @@ char *readfile(const char *fil) {
 char *readfile2(const char *fil, LLint * size) {
   char *adr = NULL;
   char catbuff[CATBUFF_SIZE];
-  INTsys len = 0;
+  off_t len = 0;
 
   len = fsize(fil);
   if (len >= 0) {               // exists

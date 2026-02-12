@@ -179,7 +179,7 @@ HTSEXT_API int catch_url(T_SOC soc, char *url, char *method, char *data) {
 
           // méthode en majuscule
           size_t i;
-          int r = 0;
+          ssize_t r = 0;
 
           af.adr[0] = af.fil[0] = '\0';
           //

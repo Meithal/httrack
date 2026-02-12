@@ -228,7 +228,7 @@ static HTS_UNUSED socklen_t SOCaddr_copyaddr_(SOCaddr*const server,
 
 /* Get dotted address */
 
-static HTS_UNUSED void SOCaddr_inetntoa_(char *namebuf, size_t namebuflen, 
+static HTS_UNUSED void SOCaddr_inetntoa_(char *namebuf, socklen_t namebuflen, 
                                          SOCaddr *const ss,
                                          const char *file, const int line) {
   assertf_(namebuf != NULL, file, line);
