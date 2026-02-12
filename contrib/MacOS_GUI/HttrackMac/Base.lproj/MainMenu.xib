@@ -778,8 +778,9 @@ DQ
             </connections>
             <point key="canvasLocation" x="231.5" y="400"/>
         </window>
-        <customObject id="Nbn-6H-ZPH" userLabel="BlankPanel" customClass="ViewBlankPanel">
+        <customObject id="Nbn-6H-ZPH" userLabel="ViewMain" customClass="ViewMain">
             <connections>
+                <outlet property="controller" destination="cQo-wQ-vce" id="MIu-et-O6n"/>
                 <outlet property="httrSiteUrl" destination="GGi-xD-q7D" id="Y7D-aK-p0e"/>
             </connections>
         </customObject>
@@ -799,6 +800,11 @@ DQ
                 <outlet property="view" destination="9T3-Qw-mWp" id="PJW-0p-8Fb"/>
             </connections>
         </viewController>
+        <customObject id="cQo-wQ-vce" customClass="ControllerMainMenu">
+            <connections>
+                <outlet property="app" destination="Voe-Tx-rLC" id="FIv-tA-QEt"/>
+            </connections>
+        </customObject>
     </objects>
     <resources>
         <image name="sidebar.left" catalog="system" width="18" height="14"/>

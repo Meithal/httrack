@@ -58,6 +58,8 @@ static void __cdecl my_uninit(t_hts_callbackarg * carg) {
 
 -(void)DownloadSite:(NSString*) url {
     NSLog(@"Controller %@", url);
+    
+    [self.app changeWindowSubtitle:url];
 
     httrackp *opt = hts_create_opt();
     htswrap_add(opt, "loop", my_loop);

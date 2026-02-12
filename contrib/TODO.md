@@ -8,7 +8,13 @@ TODO
 - [x] Avoir une version la plus retrocompatible possible (10.6)
 - [x] Avoir une invite d'url qui lance la copie d'un site
 - [x] Message d'erreur quand url non trouvée, url vide, etc.
-- [ ] Changer le sous titre de la fenetre une fois la copie lancée
+- [x] Changer le sous titre de la fenetre une fois la copie lancée
+- [ ] Empecher que l'UI freeze quand on lance une copie
+- [ ] ... Avoir un feedback qu'une copie est en cours
+- [ ] ... Quand la fenetre associée est fermer, arrêter le thread de copie
+- [ ] ...... Avoir un systeme de background worker qui continue la copie
+meme quand le programme est arrêté et qui s'y reconnecte quand le programme
+est redémarré ?
 - [ ] Avoir un feedback des pages copiées
 - [ ] Avoir un bouton pour cacher sidebar <https://developer.apple.com/videos/play/wwdc2020/10104/?time=835> <https://stackoverflow.com/questions/54870957/nssplitviewcontroller-nssplitviewitem-support-in-xibs>
 - [x] ... résoudre le bug de double declaration d'enum HTTP_STATUS_OK
@@ -37,8 +43,13 @@ externes tres generiques.
 - [ ] ... Avoir une option incognito pour ne jamais enregistrer cette info
 - [ ] Afficher la date de modification du fichier depuis loop sback->lnk->send_too
 - [ ] ... Pouvoir trier les pages du site par ordre de modification
-- [ ] Si on cherche Crackman.ttf, rechercher aussi Crackman.TTF et CRACKMAN.TTF
 - [ ] Donner une version réparé du site à coté d'une version non touchée
+- [ ] ... Si on cherche Crackman.ttf, rechercher aussi Crackman.TTF et CRACKMAN.TTF
+- [ ] ... Si on detecte un encorage utf essayer un encodage non utf, et vice versa
+- [ ] ... Convertir une url de type file:// vers une url en ligne, sans doute etourderie
+- [ ] ... Signaler les modifications faites
+- [ ] Afficher en temps reel les liens trouvés sur chaque page
+- [ ] Permettre d'afficher la version locale du site d'un clic
 
 ---
 

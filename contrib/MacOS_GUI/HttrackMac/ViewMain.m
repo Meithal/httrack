@@ -97,14 +97,11 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 //}
 @end
 
-@implementation ViewBlankPanel
+@implementation ViewMain
 - (IBAction)httrDowloadButton:(id)sender {
     NSLog(@"Push %@", [self.httrSiteUrl stringValue]);
-    ControllerMainMenu *cm = [[ControllerMainMenu alloc] init];
-    [cm DownloadSite:[self.httrSiteUrl stringValue]];
+    [self.controller DownloadSite:[self.httrSiteUrl stringValue]];
     
-    // !!!: what is this
-    [cm release];
 }
 
 

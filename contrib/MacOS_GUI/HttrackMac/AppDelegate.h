@@ -4,5 +4,7 @@
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
 
+
+-(void)changeWindowSubtitle:(NSString*)newSubtitle;
 @end
 

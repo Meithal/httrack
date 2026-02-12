@@ -34,5 +34,9 @@
     return YES;
 }
 
+-(void)changeWindowSubtitle:(NSString*)newSubtitle
+{
+    self.window.subtitle = newSubtitle;
+}
 
 @end

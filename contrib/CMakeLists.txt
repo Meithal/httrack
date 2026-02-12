@@ -110,7 +110,7 @@ if(APPLE)
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Controllers/ControllerMainMenu.m
 	)
 
-	target_link_libraries(HttrackMac PUBLIC httr_lib)
+	target_link_libraries(HttrackMac PRIVATE httr_lib)
 	target_include_directories(HttrackMac PRIVATE "${SRC_ROOT}")
 
 	set_source_files_properties(
