@@ -64,7 +64,6 @@ typedef struct lien_adrfilsave lien_adrfilsave;
 
 /* basic net definitions */
 #include "htsbase.h"
-#include "htsbasenet.h"
 #include "htsnet.h"
 #include "htsdefines.h"
 

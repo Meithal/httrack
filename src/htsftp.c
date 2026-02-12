@@ -37,6 +37,7 @@ Please visit our Website: http://www.httrack.com
 // Version .05 (01/2000)
 
 #include "htsftp.h"
+#include "htsbasenet.h"
 
 #include "htscore.h"
 #include "htsthread.h"

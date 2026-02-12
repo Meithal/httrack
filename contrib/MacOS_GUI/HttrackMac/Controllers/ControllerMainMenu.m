@@ -67,17 +67,24 @@ static void __cdecl my_uninit(t_hts_callbackarg * carg) {
     htswrap_add(opt, "save-file2", my_filesave2);
     htswrap_add(opt, "end", my_end);
     htswrap_add(opt, "free", my_uninit);
-    int status = httpmirror([url UTF8String], opt);
     
-    if(opt->state.exit_xh != 0) {
-        NSString * description = NSLocalizedString(@"Couldn't connect", @"When httpmirror returnn a faulty value");
-        NSError * underlyingError = [[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorBadURL userInfo:nil];
-        NSDictionary *errorDictionary = @{ NSLocalizedDescriptionKey : description,
-            NSUnderlyingErrorKey : underlyingError, NSURLErrorKey : url };
+    NSBlockOperation * operation = [NSBlockOperation blockOperationWithBlock:^{
+        int status = httpmirror([url UTF8String], opt);
+        
+        if(opt->state.exit_xh != 0) {
+            NSString * description = NSLocalizedString(@"Couldn't connect", @"When httpmirror returnn a faulty value");
+            NSError * underlyingError = [[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorBadURL userInfo:nil];
+            NSDictionary *errorDictionary = @{ NSLocalizedDescriptionKey : description,
+                NSUnderlyingErrorKey : underlyingError, NSURLErrorKey : url };
 
-        [[NSAlert alertWithError:[[NSError alloc] initWithDomain:MacHttrackErrors code:NSURLErrorBadURL userInfo:errorDictionary]] runModal];
-    }
-
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                [[NSAlert alertWithError:[[NSError alloc] initWithDomain:MacHttrackErrors code:NSURLErrorBadURL userInfo:errorDictionary]] runModal];
+            }];
+        }
+    }];
+    
+    NSOperationQueue * queue = [[NSOperationQueue alloc] init];
+    [queue addOperation:operation];
 }
 @end
 

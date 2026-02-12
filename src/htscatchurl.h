@@ -35,7 +35,6 @@ Please visit our Website: http://www.httrack.com
 #ifndef HTS_CATCHURL_DEFH
 #define HTS_CATCHURL_DEFH
 
-#include "htsbasenet.h"
 
 /* Library internal definictions */
 #ifdef HTS_INTERNAL_BYTECODE

@@ -36,6 +36,8 @@ Please visit our Website: http://www.httrack.com
 
 #include <stdio.h>
 
+#include <openssl/ssl.h>
+
 #include "htsglobal.h"
 #include "htsnet.h"
 

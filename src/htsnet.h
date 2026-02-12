@@ -37,7 +37,6 @@ Please visit our Website: http://www.httrack.com
 
 /* basic net definitions */
 #include "htsglobal.h"
-#include "htsbasenet.h"
 #include "htssafe.h"
 
 #include <string.h>

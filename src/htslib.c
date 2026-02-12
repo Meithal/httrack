@@ -39,6 +39,7 @@ Please visit our Website: http://www.httrack.com
 
 /* specific definitions */
 #include "htsbase.h"
+#include "htsbasenet.h"
 #include "htsnet.h"
 #include "htsbauth.h"
 #include "htsthread.h"
@@ -48,6 +49,7 @@ Please visit our Website: http://www.httrack.com
 #include "htsmodules.h"
 #include "htscharset.h"
 #include "htsencoding.h"
+
 
 #ifdef _WIN32
 #include <direct.h>

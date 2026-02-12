@@ -54,6 +54,8 @@ Please visit our Website: http://www.httrack.com
 /* htslib */
 /*#include "htslib.h"*/
 
+#include "htsbasenet.h"
+
 /* catch url */
 #include "htscatchurl.h"
 

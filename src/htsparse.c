@@ -63,6 +63,10 @@ Please visit our Website: http://www.httrack.com
 // arrays
 #include "htsarrays.h"
 
+//net
+#include "htsbasenet.h"
+
+
 /** Append bytes to the output buffer up to the pointer 'html'. **/
 #define HT_add_adr do { \
   if ( (opt->getmode & 1) != 0 && ptr > 0 ) { \

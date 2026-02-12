@@ -34,7 +34,6 @@ Please visit our Website: http://www.httrack.com
 #define HTSFTP_DEFH
 
 #include "htsbase.h"
-#include "htsbasenet.h"
 #include "htsthread.h"
 
 /* Forward definitions */

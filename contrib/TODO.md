@@ -1,6 +1,14 @@
 TODO
 ===
 
+Ongoing
+---
+
+- Verifier memory leaks
+
+Taches
+---
+
 - [x] Faire que le CmakeLists genere une APP cocoa
 - [x] ... avec des tests
 - [ ] ... qui fonctionnent y compris en mode UI
@@ -9,7 +17,8 @@ TODO
 - [x] Avoir une invite d'url qui lance la copie d'un site
 - [x] Message d'erreur quand url non trouvée, url vide, etc.
 - [x] Changer le sous titre de la fenetre une fois la copie lancée
-- [ ] Empecher que l'UI freeze quand on lance une copie
+- [x] Empecher que l'UI freeze quand on lance une copie
+- [ ] ... Migrer vers grand central dispatch avec la version SwiftUI
 - [ ] ... Avoir un feedback qu'une copie est en cours
 - [ ] ... Quand la fenetre associée est fermer, arrêter le thread de copie
 - [ ] ...... Avoir un systeme de background worker qui continue la copie
@@ -51,6 +60,8 @@ externes tres generiques.
 - [ ] Afficher en temps reel les liens trouvés sur chaque page
 - [ ] Permettre d'afficher la version locale du site d'un clic
 
+
+Plus tard
 ---
 
 - [ ] Avoir un REPL

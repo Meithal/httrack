@@ -42,6 +42,7 @@ Please visit our Website: http://www.httrack.com
 /* specific definitions */
 #include "htsbase.h"
 #include "htsnet.h"
+#include "htsbasenet.h"
 #include "htsbauth.h"
 #include "htsmd5.h"
 #include "htsindex.h"
