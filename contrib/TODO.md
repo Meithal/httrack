@@ -54,14 +54,44 @@ externes tres generiques.
 - [ ] ... Pouvoir trier les pages du site par ordre de modification
 - [ ] Donner une version réparé du site à coté d'une version non touchée
 - [ ] ... Si on cherche Crackman.ttf, rechercher aussi Crackman.TTF et CRACKMAN.TTF
-- [ ] ... Si on detecte un encorage utf essayer un encodage non utf, et vice versa
+- [ ] ... Si on detecte un encodage utf essayer un encodage non utf, et vice versa
 - [ ] ... Convertir une url de type file:// vers une url en ligne, sans doute etourderie
 - [ ] ... Signaler les modifications faites
 - [ ] Afficher en temps reel les liens trouvés sur chaque page
 - [ ] Permettre d'afficher la version locale du site d'un clic
-
+- [ ] Implementer le NSPasteboard
+protocol mpour glisser deposer des
+sites vers le finder.
+- [ ] Dans le listing de pages, pouvoir
+en modifier ou ajouter pour forcer
+le telechargement
+- [ ] Pouvoir exporter l'arborescence d'un site sous forme de json ou de graphe
+- [ ] Afficher une notification bureau
+quand le site a fini de se télécharger
+- [ ] Pouvoir mettre en pause et arrêter un téléchargement
+- [ ] Creer une fenetre separée pour lancer un nouveau telechargement ?
+Peut etre simpliste qui contient un simple textView et a l'aspect d'un crayon
+- [ ] Ajouter des settings
 
 Plus tard
 ---
 
 - [ ] Avoir un REPL
+
+Doc utilisées
+---
+
+- <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithBlocks/WorkingwithBlocks.html> Bouts de fonction a executer plus tard.
+- <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Blocks/Articles/00_Introduction.html> doc
+- <https://developer.apple.com/library/archive/documentation/General/Conceptual/ConcurrencyProgrammingGuide/OperationObjects/OperationObjects.html> Lancer un block en parellele,
+l'interrompre, etc.
+
+Docs a utiliser
+---
+
+- Mettre en pause telechargement : <https://stackoverflow.com/questions/8113268/how-to-cancel-nsblockoperation>
+- Cocoa Bindings : <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CocoaBindings/Concepts/HowDoBindingsWork.html>
+- Evenements : <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/EventOverview/EventHandlingBasics/EventHandlingBasics.html> Faire que les boutons du menu fassent quelque chose
+- Outline : <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/OutlineView/OutlineView.html#//apple_ref/doc/uid/10000023i> Pour creer des arbres hierarchiques
+- Settings : <https://developer.apple.com/documentation/foundation/accessing-settings-from-your-code?language=objc> acces depuis le code et observation
+- Settings : <https://developer.apple.com/documentation/foundation/adding-a-settings-interface-to-your-app?language=objc> ajouter UI

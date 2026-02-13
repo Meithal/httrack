@@ -94,8 +94,8 @@ target_link_libraries(httr PUBLIC httr_lib)
 if(APPLE)
 	set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.github.meithal")
 	# set the lowest xcode 26 handles
-	set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
-	set(MACOSX_DEPLOYMENT_TARGET "11.0")
+	set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6")
+	set(MACOSX_DEPLOYMENT_TARGET "10.6")
 
 	add_executable(
 		HttrackMac
@@ -108,6 +108,10 @@ if(APPLE)
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/ViewMain.m
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Controllers/ControllerMainMenu.h
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Controllers/ControllerMainMenu.m
+		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Models/ModelsApp.h
+		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Models/ModelsApp.m
+		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/CoreLogic.h
+		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/CoreLogic.m
 	)
 
 	target_link_libraries(HttrackMac PRIVATE httr_lib)

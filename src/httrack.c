@@ -45,6 +45,7 @@ Please visit our Website: http://www.httrack.com
 #include "htsdefines.h"
 #include "httrack.h"
 #include "htslib.h"
+#include "htsbasenet.h"
 
 /* Static definitions */
 static int fexist(const char *s);

@@ -1,3 +1,4 @@
+//#import <Availability.h>
 
 #import "AppDelegate.h"
 
@@ -34,9 +35,21 @@
     return YES;
 }
 
--(void)changeWindowSubtitle:(NSString*)newSubtitle
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
 {
-    self.window.subtitle = newSubtitle;
+    return YES;
 }
 
+
+-(void)changeWindowSubtitle:(NSString*)newSubtitle
+{
+    if(@available(macOS 11.0, *)) {
+        self.window.subtitle = newSubtitle;
+    }
+}
+
+-(void)warnUser:(NSError*)error
+{
+    [[NSAlert alertWithError:error] runModal];
+}
 @end

@@ -97,6 +97,27 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 //}
 @end
 
+@interface ProjectsDataSource: NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate>
+- (NSInteger) numberOfRowsInTableView:(NSTableView *) tableView;
+- (id) tableView:(NSTableView *) tableView
+objectValueForTableColumn:(NSTableColumn *) tableColumn
+             row:(NSInteger) row;
+@end
+
+@implementation ProjectsDataSource
+- (NSInteger) numberOfRowsInTableView:(NSTableView *) tableView
+{
+    return 4;
+}
+- (id) tableView:(NSTableView *) tableView
+objectValueForTableColumn:(NSTableColumn *) tableColumn
+             row:(NSInteger) row;
+{
+    return @"toto";
+}
+@end
+
+
 @implementation ViewMain
 - (IBAction)httrDowloadButton:(id)sender {
     NSLog(@"Push %@", [self.httrSiteUrl stringValue]);
