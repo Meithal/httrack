@@ -9,30 +9,26 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SitePageLine : NSObject
-@property (copy) NSString * title;
-@property (retain) NSMutableArray * children;
--(void) dealloc;
+@interface MyDowloadableFile : NSObject
+@property (copy) NSString * name;
+@property (assign) NSNumber * downloadAdvancement; /** 0.0 - 1.0 */
+@property (assign) NSDate * dateCreated;
++(instancetype) createFromString:(NSString *) name;
 @end
 
-@interface FileSystemItem : NSObject
-{
-    NSString *relativePath;
-    FileSystemItem *parent;
-    NSMutableArray *children;
-}
- 
-+ (FileSystemItem *)rootItem;
-- (NSInteger)numberOfChildren;// Returns -1 for leaf nodes
-- (FileSystemItem *)childAtIndex:(NSUInteger)n; // Invalid to call on leaf nodes
-- (NSString *)fullPath;
-- (NSString *)relativePath;
- 
+@interface MyDirectoryElements : NSObject
+@property (copy) NSString* name;
+@property (strong, atomic) NSMutableArray<MyDirectoryElements *> * directories;
+@property (strong, atomic) NSMutableArray<MyDowloadableFile *> * files;
+@property NSInteger depth;
+
++(instancetype) createFromString:(NSString *) name;
 @end
- 
 
 @interface ModelsApp : NSObject
-
++(MyDirectoryElements *)allocArborescence;
++(MyDirectoryElements*)addDirectory:(NSString *)dirname toArborescene:(MyDirectoryElements *)arbo;
++(id)addFile:(NSString*) file toArborescence:(MyDirectoryElements *)arbo;
 @end
 
 NS_ASSUME_NONNULL_END

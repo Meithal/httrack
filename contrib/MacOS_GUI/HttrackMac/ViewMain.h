@@ -6,6 +6,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
+
+@interface ProjectsDataSource: NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate>
+@property (assign) IBOutlet CoreLogic *telechargements;
+@end
+
 @interface ViewMain : NSObject
 @property (assign) IBOutlet NSTextField *httrSiteUrl;
 @property (assign) IBOutlet ControllerMainMenu *controller;

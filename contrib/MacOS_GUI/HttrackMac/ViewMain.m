@@ -11,10 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void) splitView:(NSSplitView *) splitView
 resizeSubviewsWithOldSize:(NSSize) oldSize
 {
-//    NSLog(@"oldsize %@\n", NSStringFromSize(oldSize));
     NSView* left = splitView.subviews[0];
     NSView* right = splitView.subviews[1];
-    //splitView.
     
     CGFloat fixedWidth = left.frame.size.width;
     CGFloat dividerWidth = splitView.dividerThickness;
@@ -38,85 +36,77 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 {
     return splitView.frame.size.width - 200;
 }
-//- (instancetype)init
-//{
-//    self = [super init];
-//    if (self) {
-//        ;
-//    }
-//    
-//    return self;
-//}
-
-//- (void)awakeFromNib
-//{
-//    [super awakeFromNib];
-//    
-//    NSSplitViewController *svc = [[NSSplitViewController alloc] init];
-//
-//    NSViewController *leftVC = [[NSViewController alloc] init];
-//    //leftVC.view = self.left[0];   // outlet from XIB
-//
-//    NSViewController *rightVC = [[NSViewController alloc] init];
-//    //rightVC.view = self.splitView.subviews[1]; // outlet from XIB
-//
-//    [svc addSplitViewItem:
-//        [NSSplitViewItem splitViewItemWithViewController:leftVC]];
-//    [svc addSplitViewItem:
-//        [NSSplitViewItem splitViewItemWithViewController:rightVC]];
-//
-//    svc.view.frame = self.view.bounds;
-//    svc.view.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-//
-//    [self addChildViewController:svc];
-//    [self.view addSubview:svc.view];
-//    return;
-//}
-//- (void)viewDidLoad
-//{
-//    [super viewDidLoad];
-//
-//    NSSplitViewController *svc = [[NSSplitViewController alloc] init];
-//
-//    NSViewController *leftVC = [[NSViewController alloc] init];
-//    leftVC.view = self.splitView.subviews[0];   // outlet from XIB
-//
-//    NSViewController *rightVC = [[NSViewController alloc] init];
-//    rightVC.view = self.splitView.subviews[1]; // outlet from XIB
-//
-//    [svc addSplitViewItem:
-//        [NSSplitViewItem splitViewItemWithViewController:leftVC]];
-//    [svc addSplitViewItem:
-//        [NSSplitViewItem splitViewItemWithViewController:rightVC]];
-//
-//    svc.view.frame = self.view.bounds;
-//    svc.view.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-//
-//    [self addChildViewController:svc];
-//    [self.view addSubview:svc.view];
-//}
 @end
 
-@interface ProjectsDataSource: NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate>
-- (NSInteger) numberOfRowsInTableView:(NSTableView *) tableView;
-- (id) tableView:(NSTableView *) tableView
-objectValueForTableColumn:(NSTableColumn *) tableColumn
-             row:(NSInteger) row;
+@interface VerticalTextCell: NSTextFieldCell
+@end
+
+@implementation VerticalTextCell
+- (NSRect)drawingRectForBounds:(NSRect)rect
+{
+    NSFont * font = self.font;
+    return NSRectFromCGRect(CGRectMake(rect.origin.x, rect.origin.y + font.xHeight / 2, rect.size.width, rect.size.height)); // centre verticalement le texte
+}
 @end
 
 @implementation ProjectsDataSource
-- (NSInteger) numberOfRowsInTableView:(NSTableView *) tableView
-{
-    return 4;
+
+#pragma mark NSOutlineViewDataSource delegates
+- (BOOL)outlineView:(nonnull NSOutlineView *)outlineView isItemExpandable:(nonnull MyDirectoryElements *)item {
+    if(item.class == MyDowloadableFile.class)
+        return NO;
+    return item.directories.count || item.files.count;
 }
-- (id) tableView:(NSTableView *) tableView
-objectValueForTableColumn:(NSTableColumn *) tableColumn
-             row:(NSInteger) row;
+
+- (NSInteger)outlineView:(nonnull NSOutlineView *)outlineView numberOfChildrenOfItem:(nullable MyDirectoryElements *)item {
+    if(item == nil)
+        return self.telechargements.websites.directories.count;
+    else if (item.class == MyDowloadableFile.class)
+        return 0;
+    else
+        return item.directories.count + item.files.count;
+}
+
+- (nullable id)outlineView:(nonnull NSOutlineView *)outlineView objectValueForTableColumn:(nullable NSTableColumn *)tableColumn byItem:(nullable MyDirectoryElements *)item {
+    if(item == nil) return @"nil";
+    
+    if(item.class == MyDirectoryElements.class) {
+        if([tableColumn.identifier isEqual:@"PageName"])
+            return item.name;
+        else if(([tableColumn.identifier isEqual:@"Avancement"]))
+            return nil;
+        else raise(42);
+    } else if (item.class == MyDowloadableFile.class) {
+        MyDowloadableFile * item_cast = item;
+        if([tableColumn.identifier isEqual:@"PageName"])
+            return item_cast.name;
+        else if(([tableColumn.identifier isEqual:@"Avancement"]))
+            return item_cast.downloadAdvancement;
+        else raise(42);
+
+    }
+}
+
+- (nonnull id)outlineView:(nonnull NSOutlineView *)outlineView child:(NSInteger)index ofItem:(nullable MyDirectoryElements*)item {
+    if(item == nil)
+        return self.telechargements.websites.directories[0];
+    else {
+        if(index < item.directories.count)
+            return item.directories[index];
+        else
+            return item.files[index - item.directories.count];
+    }
+}
+
+#pragma mark NSOutlineViewDelegate overrides
+- (BOOL) outlineView:(NSOutlineView *) outlineView
+         isGroupItem:(MyDirectoryElements *) item
 {
-    return @"toto";
+    if(item.class != MyDirectoryElements.class)
+        return NO;
+    return item.depth < 2;
 }
 @end
-
 
 @implementation ViewMain
 - (IBAction)httrDowloadButton:(id)sender {

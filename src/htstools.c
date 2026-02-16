@@ -41,13 +41,13 @@ Please visit our Website: http://www.httrack.com
 #include "htsstrings.h"
 #include "htscharset.h"
 #ifdef _WIN32
-#include "windows.h"
+# include "windows.h"
 #else
-#include <dirent.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <sys/stat.h>
+# include <dirent.h>
+# ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+# endif
+# include <sys/stat.h>
 #endif
 
 // Portable directory find functions

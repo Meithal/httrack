@@ -5,13 +5,18 @@ Ongoing
 ---
 
 - Verifier memory leaks
+- Ecrire des tests unitaires
+- Ecrire des tests UI
+- Mettre des bulles d'aide sur les different controles
+- Ecrire une odcumentatiion
+- Garder le programme suffisamment intuitif pour n'avoir besoin ni de l'un ni de l'autre
 
 Taches
 ---
 
 - [x] Faire que le CmakeLists genere une APP cocoa
 - [x] ... avec des tests
-- [ ] ... qui fonctionnent y compris en mode UI
+- [x] ... qui fonctionnent y compris en mode UI
 - [x] Avoir une target dependant de httrack ouvrant une fenetre simple
 - [x] Avoir une version la plus retrocompatible possible (10.6)
 - [x] Avoir une invite d'url qui lance la copie d'un site
@@ -27,12 +32,17 @@ est redémarré ?
 - [ ] Avoir un feedback des pages copiées
 - [ ] Avoir un bouton pour cacher sidebar <https://developer.apple.com/videos/play/wwdc2020/10104/?time=835> <https://stackoverflow.com/questions/54870957/nssplitviewcontroller-nssplitviewitem-support-in-xibs>
 - [x] ... résoudre le bug de double declaration d'enum HTTP_STATUS_OK
-- [ ] Avoir un listing de sites copiés
+- [x] Sauvegarder le listing dans le dossier user plutot que l'endroit de l'executable.
+- [x] Avoir un listing de sites copiés
+- [ ] ... Afficher l'avancement de chaque recopie
+- [ ] ... Faire en sorte que ce listing se mette a jour en temps reel
+- [ ] ... Le listing doit se faire sur un thred different
 - [ ] Avoir un listing de liens externes référencés par les diverses pages
 - [ ] Avoir un aperçu de chaque page copiée
 - [ ] Commencer a télécharger le favicon du site pour y associer une icone
-- [ ] En proposer une vue arborescente comme dans un arbre FTP
-- [ ] S'assurer que le site web puisse s'imprimmer correctement.
+- [x] En proposer une vue arborescente comme dans un arbre FTP
+- [ ] S'assurer que le site web puisse s'imprimmer correctement. L'option
+"imprimer" ou "exporter en PDF" doit donner une vue qui fasse sens ?
 - [ ] Faire une maquette avec une grosse barre d'url en haut
 - [ ] Ajouter un feedback qui empeche de télécharger tant que l'url n'est pas correcte
 - [ ] Poposer un backend via nc pour naviguer sur le site en local et aussi
@@ -62,16 +72,25 @@ externes tres generiques.
 - [ ] Implementer le NSPasteboard
 protocol mpour glisser deposer des
 sites vers le finder.
-- [ ] Dans le listing de pages, pouvoir
-en modifier ou ajouter pour forcer
-le telechargement
+- [ ] Dans le listing de pages, pouvoir en modifier ou ajouter pour forcer le telechargement
 - [ ] Pouvoir exporter l'arborescence d'un site sous forme de json ou de graphe
-- [ ] Afficher une notification bureau
-quand le site a fini de se télécharger
+- [ ] Afficher une notification bureau quand le site a fini de se télécharger
 - [ ] Pouvoir mettre en pause et arrêter un téléchargement
 - [ ] Creer une fenetre separée pour lancer un nouveau telechargement ?
 Peut etre simpliste qui contient un simple textView et a l'aspect d'un crayon
 - [ ] Ajouter des settings
+- [ ] ... Le dossier où on veut faire le mirroir
+- [ ] Avoir une vue simpliste avec juste une barre de progression
+- [ ] Pouvoir drag et drop une url (page web safari?) sur la fenetre, ou coller du texte
+- [ ] Si on veut telecharger tous les PDF d'une page, separer visiblement les liens
+d'une certine arborescence d'une autre, et mettre un bouton "telecharger tout d'une
+arborescence" dans le outliner.
+- [ ] Utiliser NSdocument pour representer la copie d'un site? D'un reseau de sites interconnecté ?
+Permettrait undo/redo et icloud. Avoir un panel de sites visibles dans "fenetres" et pouvoir
+en ouvrir plusieurs.
+- [ ] Pouvoir customiser en profondeur l'apparence du site avant de l'imprimer en pdf, afficher
+les images d'un dossier en mosaique par exemple.
+- [ ] Ajouter un pont vers AppleScript
 
 Plus tard
 ---
@@ -95,3 +114,6 @@ Docs a utiliser
 - Outline : <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/OutlineView/OutlineView.html#//apple_ref/doc/uid/10000023i> Pour creer des arbres hierarchiques
 - Settings : <https://developer.apple.com/documentation/foundation/accessing-settings-from-your-code?language=objc> acces depuis le code et observation
 - Settings : <https://developer.apple.com/documentation/foundation/adding-a-settings-interface-to-your-app?language=objc> ajouter UI
+- Mise a jour listing temps reel : <https://developer.apple.com/documentation/foundation/improving-performance-and-stability-when-accessing-the-file-system?language=objc> (File presenter & coordinator)
+- Listing multithreadé : <https://developer.apple.com/documentation/foundation/nsfilecoordinator?language=objc>
+- NSdocument : <https://developer.apple.com/documentation/appkit/nsdocument?language=objc>

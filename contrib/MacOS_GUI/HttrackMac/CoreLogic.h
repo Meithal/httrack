@@ -10,6 +10,7 @@
 #import "htscore.h"
 
 #import "AppDelegate.h"
+#import "Models/ModelsApp.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,9 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
     httrackp *_httrack_opt;
 }
 @property (assign) IBOutlet AppDelegate *app;
+@property (readonly) MyDirectoryElements * websites;
 
 -(void)dowloadSite:(NSString*) url;
--(NSArray *)indexOfDownloadedSites;
+-(void)indexOfDownloadedSites:(MyDirectoryElements *) arbo;
 @end
 
 NS_ASSUME_NONNULL_END

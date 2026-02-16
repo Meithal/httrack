@@ -4,19 +4,17 @@
 //
 //  Created by ivo on 13/02/2026.
 //
-#import <stdio.h>
-
 #import "CoreLogic.h"
+#import "Models/ModelsApp.h"
 
 #import "htscore.h"
-#import "htstools.h"
-#include "htslib.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 
 NSErrorDomain const MacHttrackErrors = @"com.github.meithal";
 
+#pragma mark fonctions bridge httrack
 static int __cdecl my_loop(t_hts_callbackarg * carg, httrackp * opt, lien_back * back, int back_max, int back_index, int lien_n, int lien_tot, int stat_time, hts_stat_struct * stats) {
     // appelé à chaque boucle de HTTrack, permet d'arreter un telechargement
     // si besoin
@@ -56,7 +54,40 @@ static void __cdecl my_uninit(t_hts_callbackarg * carg) {
     return 1;
 }
 
+#pragma mark fonction coeur de metier
+
+void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress);
+void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
+{
+    NSDirectoryEnumerator * dirEn = [NSFileManager.defaultManager enumeratorAtPath:[adress path]];
+    
+    NSString * file;
+    while ((file = [dirEn nextObject])) {
+        [dirEn skipDescendants];
+        BOOL isDir = NO;
+        if([NSFileManager.defaultManager fileExistsAtPath:[[adress path] stringByAppendingPathComponent:file] isDirectory:&isDir])
+        {
+            if(isDir) {
+                parseDirectoriesRecurse([ModelsApp addDirectory:file toArborescene:dir], [adress URLByAppendingPathComponent:file]);
+            } else {
+                [ModelsApp addFile:file toArborescence:dir];
+            }
+        }
+    }
+}
+
 @implementation CoreLogic
+-(MyDirectoryElements *) websites
+{
+    if(_websites == nil) {
+        _websites = [MyDirectoryElements createFromString:@"racine"];
+        [self indexOfDownloadedSites:_websites];
+    }
+    
+    return _websites;
+}
+@synthesize websites = _websites;
+
 -(void)dowloadSite:(NSString*) url
 {
     
@@ -82,25 +113,28 @@ static void __cdecl my_uninit(t_hts_callbackarg * carg) {
 
 }
 
--(NSArray *)indexOfDownloadedSites
+
+
+-(void)indexOfDownloadedSites:(MyDirectoryElements *) arbo
 {
-    puts("foo");
+    NSURL * url = [NSURL URLWithString:@"Mirrored Websites/" relativeToURL:[NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject];
     
-    char path_buffer[FILENAME_MAX];
-    snprintf(path_buffer, FILENAME_MAX, "%s%s", _httrack_opt->path_log.buffer_, ".");
-    find_handle h = hts_findfirst(path_buffer);
-    if(h) {
-        do{
-            if(hts_findisdir(h)) {
-                //fexist();
-                char path_buffer[FILENAME_MAX];
-                snprintf(path_buffer, FILENAME_MAX, "%s%s", _httrack_opt->path_log.buffer_, hts_findgetname(h));
-                find_handle h2 = hts_findfirst(path_buffer);
+    NSDirectoryEnumerator * dirEn = [NSFileManager.defaultManager enumeratorAtPath:[url path]];
+    
+    NSString * file;
+    while ((file = [dirEn nextObject])) {
+        [dirEn skipDescendants];
+        BOOL isDir = NO;
+        if([NSFileManager.defaultManager fileExistsAtPath:[[url path] stringByAppendingPathComponent:file] isDirectory:&isDir] && isDir)
+        {
+            if([NSFileManager.defaultManager fileExistsAtPath:[[[url path] stringByAppendingPathComponent:file] stringByAppendingPathComponent:@"index.html"]]) {
+                
+                parseDirectoriesRecurse([ModelsApp addDirectory:file toArborescene:arbo], [url URLByAppendingPathComponent:file]);
             }
-            printf("%s\n", hts_findgetname(h));
-        } while(hts_findnext(h));
+        }
     }
-    hts_findclose(h);
+    
+    return;
 }
 
 -(id)init{
