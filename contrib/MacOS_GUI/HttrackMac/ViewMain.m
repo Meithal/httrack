@@ -7,6 +7,8 @@ NS_ASSUME_NONNULL_BEGIN
 {}
 @end
 
+#pragma mark main split view delagate
+
 @implementation MainSplitViewDelegate
 - (void) splitView:(NSSplitView *) splitView
 resizeSubviewsWithOldSize:(NSSize) oldSize

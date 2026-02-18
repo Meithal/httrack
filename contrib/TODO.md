@@ -8,8 +8,9 @@ Ongoing
 - Ecrire des tests unitaires
 - Ecrire des tests UI
 - Mettre des bulles d'aide sur les different controles
-- Ecrire une odcumentatiion
+- Ecrire une documentation
 - Garder le programme suffisamment intuitif pour n'avoir besoin ni de l'un ni de l'autre
+- Ameliorer le temps de demarrage
 
 Taches
 ---
@@ -23,6 +24,7 @@ Taches
 - [x] Message d'erreur quand url non trouvée, url vide, etc.
 - [x] Changer le sous titre de la fenetre une fois la copie lancée
 - [x] Empecher que l'UI freeze quand on lance une copie
+- [ ] ... Griser le bouton pendant que le telechargement est en cours
 - [ ] ... Migrer vers grand central dispatch avec la version SwiftUI
 - [ ] ... Avoir un feedback qu'une copie est en cours
 - [ ] ... Quand la fenetre associée est fermer, arrêter le thread de copie
@@ -37,6 +39,7 @@ est redémarré ?
 - [ ] ... Afficher l'avancement de chaque recopie
 - [ ] ... Faire en sorte que ce listing se mette a jour en temps reel
 - [ ] ... Le listing doit se faire sur un thred different
+- [ ] Avoir une icone a coté de chaque nom de site (favicon)
 - [ ] Avoir un listing de liens externes référencés par les diverses pages
 - [ ] Avoir un aperçu de chaque page copiée
 - [ ] Commencer a télécharger le favicon du site pour y associer une icone
