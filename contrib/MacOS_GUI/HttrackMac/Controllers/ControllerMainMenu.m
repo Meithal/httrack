@@ -6,13 +6,11 @@
 //
 
 #import "ControllerMainMenu.h"
+#import "../CoreLogic.h"
 
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-
-
 
 
 @implementation ControllerMainMenu
@@ -20,9 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)DownloadSite:(NSString*) url {
     NSLog(@"Controller %@", url);
     
-    [self.app changeWindowSubtitle:url];
+    [(AppDelegate*)([NSApplication sharedApplication].delegate) changeWindowSubtitle:url];
     //[self.coreLogic indexOfDownloadedSites];
-    [self.coreLogic dowloadSite:url];
+    [[(AppDelegate*)([NSApplication sharedApplication].delegate) getLogic] dowloadSite:url onError:^(NSDictionary *errorDictionary, NSErrorDomain domain) {
+        [(AppDelegate*)([NSApplication sharedApplication].delegate) warnUser:[[NSError alloc] initWithDomain:domain code:NSURLErrorBadURL userInfo:errorDictionary]];
+    }];
+    
+    
+
 }
 @end
 

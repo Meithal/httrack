@@ -865,13 +865,7 @@ DQ
                 <outlet property="view" destination="9T3-Qw-mWp" id="PJW-0p-8Fb"/>
             </connections>
         </viewController>
-        <customObject id="cQo-wQ-vce" customClass="ControllerMainMenu">
-            <connections>
-                <outlet property="app" destination="Voe-Tx-rLC" id="FIv-tA-QEt"/>
-                <outlet property="coreLogic" destination="pcY-z1-yey" id="hkZ-jj-9AG"/>
-                <outlet property="models" destination="wru-PL-Qcv" id="aoM-qA-Ckr"/>
-            </connections>
-        </customObject>
+        <customObject id="cQo-wQ-vce" customClass="ControllerMainMenu"/>
         <customView id="6XH-ZK-QcH" userLabel="ViewDownloadEnCours">
             <rect key="frame" x="0.0" y="0.0" width="438" height="639"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -981,11 +975,7 @@ DQ
                 <outlet property="telechargements" destination="pcY-z1-yey" id="Rq3-L5-8l8"/>
             </connections>
         </customObject>
-        <customObject id="pcY-z1-yey" customClass="CoreLogic">
-            <connections>
-                <outlet property="app" destination="Voe-Tx-rLC" id="b4U-Ba-psw"/>
-            </connections>
-        </customObject>
+        <customObject id="pcY-z1-yey" customClass="CoreLogic"/>
         <customObject id="wru-PL-Qcv" customClass="ModelsApp"/>
     </objects>
     <resources>

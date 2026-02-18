@@ -88,7 +88,7 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
 }
 @synthesize websites = _websites;
 
--(void)dowloadSite:(NSString*) url
+-(void)dowloadSite:(NSString*) url onError:(void (^)(NSDictionary *, NSErrorDomain)) onError
 {
     
     // TODO: implement download cancellation
@@ -103,7 +103,7 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
                 NSUnderlyingErrorKey : underlyingError, NSURLErrorKey : url };
 
             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                [self.app warnUser:[[NSError alloc] initWithDomain:MacHttrackErrors code:NSURLErrorBadURL userInfo:errorDictionary]];
+                onError(errorDictionary, MacHttrackErrors);
             }];
         }
     }];

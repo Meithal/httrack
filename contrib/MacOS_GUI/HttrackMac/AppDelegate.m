@@ -10,6 +10,9 @@
 
 @implementation AppDelegate
 
+-(void)applicationWillFinishLaunching:(NSNotification *)notification {
+    _logic = [[CoreLogic alloc] init];
+}
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
     
@@ -27,7 +30,7 @@
 
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
-    // Insert code here to tear down your application
+    [_logic release];
 }
 
 
@@ -46,6 +49,10 @@
     if(@available(macOS 11.0, *)) {
         self.window.subtitle = newSubtitle;
     }
+}
+
+-(CoreLogic*)getLogic {
+    return _logic;
 }
 
 -(void)warnUser:(NSError*)error
