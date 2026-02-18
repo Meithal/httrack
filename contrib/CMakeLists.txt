@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.12)
 
-if(APPLE AND NOT CMAKE_OSX_SYSROOT)
-    execute_process(
-        COMMAND xcrun --sdk macosx --show-sdk-path
-        OUTPUT_VARIABLE _sdk_path
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    set(CMAKE_OSX_SYSROOT "${_sdk_path}" CACHE PATH "macOS SDK" FORCE)
-endif()
+# if(APPLE AND NOT CMAKE_OSX_SYSROOT)
+#     execute_process(
+#         COMMAND xcrun --sdk macosx --show-sdk-path
+#         OUTPUT_VARIABLE _sdk_path
+#         OUTPUT_STRIP_TRAILING_WHITESPACE
+#     )
+#     set(CMAKE_OSX_SYSROOT "${_sdk_path}" CACHE PATH "macOS SDK" FORCE)
+# endif()
 
 project(Httrack C)
 
@@ -104,8 +104,6 @@ if(APPLE)
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/AppDelegate.m
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/main.m
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Base.lproj/MainMenu.xib
-		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/ViewMain.h
-		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/ViewMain.m
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Controllers/ControllerMainMenu.h
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Controllers/ControllerMainMenu.m
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Models/ModelsApp.h
@@ -123,8 +121,6 @@ if(APPLE)
 		MACOSX_PACKAGE_LOCATION Resources
 		MACOSX_BUNDLE_GUI_IDENTIFIER ${MACOSX_BUNDLE_GUI_IDENTIFIER}
 	)
-
-	
 
 	set_target_properties(
 		HttrackMac

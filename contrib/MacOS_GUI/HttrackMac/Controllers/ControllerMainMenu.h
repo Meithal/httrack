@@ -1,21 +1,18 @@
-//
-//  ControllerMainMenu.h
-//  HttrackMac
-//
-//  Created by ivo on 06/02/2026.
-//
-
 #import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
-#import "../AppDelegate.h"
-#import "../Models/ModelsApp.h"
-#import "../CoreLogic.h"
+#import "ControllerMainMenu.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ControllerMainMenu : NSObject
 
--(void)DownloadSite:(NSString*) url;
+@interface ProjectsDataSource: NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate>
+@property (assign) IBOutlet CoreLogic *telechargements;
+@end
+
+@interface ControllerMainMenu : NSObject
+@property (assign) IBOutlet NSTextField *httrSiteUrl;
+
 @end
 
 NS_ASSUME_NONNULL_END

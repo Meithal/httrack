@@ -843,9 +843,8 @@ DQ
             </connections>
             <point key="canvasLocation" x="231.5" y="400"/>
         </window>
-        <customObject id="Nbn-6H-ZPH" userLabel="ViewMain" customClass="ViewMain">
+        <customObject id="Nbn-6H-ZPH" userLabel="ControllerMainMenu" customClass="ControllerMainMenu">
             <connections>
-                <outlet property="controller" destination="cQo-wQ-vce" id="MIu-et-O6n"/>
                 <outlet property="httrSiteUrl" destination="GGi-xD-q7D" id="Y7D-aK-p0e"/>
             </connections>
         </customObject>
@@ -855,17 +854,6 @@ DQ
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <point key="canvasLocation" x="-196" y="359"/>
         </customView>
-        <viewController id="2da-sh-8Po" userLabel="Left View Controller">
-            <connections>
-                <outlet property="view" destination="8xI-RN-m18" id="8WN-D9-QbJ"/>
-            </connections>
-        </viewController>
-        <viewController id="wts-tU-9FH" userLabel="Right View Controller">
-            <connections>
-                <outlet property="view" destination="9T3-Qw-mWp" id="PJW-0p-8Fb"/>
-            </connections>
-        </viewController>
-        <customObject id="cQo-wQ-vce" customClass="ControllerMainMenu"/>
         <customView id="6XH-ZK-QcH" userLabel="ViewDownloadEnCours">
             <rect key="frame" x="0.0" y="0.0" width="438" height="639"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -875,7 +863,7 @@ DQ
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <clipView key="contentView" id="ikk-yy-Bj3">
                         <rect key="frame" x="1" y="1" width="346" height="149"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <predicateEditor verticalHuggingPriority="750" nestingMode="compound" canRemoveAllRows="YES" rowHeight="32" id="Ahb-VG-bcf">
                                 <rect key="frame" x="0.0" y="0.0" width="346" height="149"/>
@@ -976,7 +964,6 @@ DQ
             </connections>
         </customObject>
         <customObject id="pcY-z1-yey" customClass="CoreLogic"/>
-        <customObject id="wru-PL-Qcv" customClass="ModelsApp"/>
     </objects>
     <resources>
         <image name="sidebar.left" catalog="system" width="18" height="14"/>

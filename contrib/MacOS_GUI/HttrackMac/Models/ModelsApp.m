@@ -15,7 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
     me.name = name;
     return me;
 }
-
 @end
 
 @implementation MyDirectoryElements

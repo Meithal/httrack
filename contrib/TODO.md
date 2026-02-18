@@ -25,6 +25,7 @@ Taches
 - [x] Changer le sous titre de la fenetre une fois la copie lancée
 - [x] Empecher que l'UI freeze quand on lance une copie
 - [ ] ... Griser le bouton pendant que le telechargement est en cours
+- [ ] ... Mettre un bouton de pause lors du telechargement
 - [ ] ... Migrer vers grand central dispatch avec la version SwiftUI
 - [ ] ... Avoir un feedback qu'une copie est en cours
 - [ ] ... Quand la fenetre associée est fermer, arrêter le thread de copie

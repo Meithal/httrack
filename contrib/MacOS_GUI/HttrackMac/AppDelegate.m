@@ -13,6 +13,7 @@
 -(void)applicationWillFinishLaunching:(NSNotification *)notification {
     _logic = [[CoreLogic alloc] init];
 }
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
     
@@ -28,11 +29,9 @@
     //_window.toolbarStyle = NSWindowToolbarStyleUnified;//
 }
 
-
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     [_logic release];
 }
-
 
 - (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app {
     return YES;
@@ -42,7 +41,6 @@
 {
     return YES;
 }
-
 
 -(void)changeWindowSubtitle:(NSString*)newSubtitle
 {
