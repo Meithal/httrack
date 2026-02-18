@@ -10,10 +10,6 @@
 
 @implementation AppDelegate
 
--(void)applicationWillFinishLaunching:(NSNotification *)notification {
-    _logic = [[CoreLogic alloc] init];
-}
-
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
     
@@ -50,6 +46,8 @@
 }
 
 -(CoreLogic*)getLogic {
+    if(_logic == nil)
+        _logic = [[CoreLogic alloc] init];
     return _logic;
 }
 

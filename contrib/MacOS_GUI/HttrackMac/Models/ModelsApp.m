@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nonnull instancetype)createFromString:(nonnull NSString *)name {
     MyDowloadableFile * me =[[MyDowloadableFile alloc] init];
     me.name = name;
-    return me;
+    return [me autorelease];
 }
 @end
 
@@ -23,14 +23,14 @@ NS_ASSUME_NONNULL_BEGIN
     me.name = name;
     me.directories = [[NSMutableArray alloc] init];
     me.files = [[NSMutableArray alloc] init];
-    return me;
+    return [me autorelease];
 }
--(void)dealloc {
-    [super dealloc];
-    
-    [self.files release];
-    [self.directories release];
-}
+//-(void)dealloc {
+//    [super dealloc];
+//    
+//    //[self.files release];
+//    //[self.directories release];
+//}
 @end
 
 @implementation ModelsApp

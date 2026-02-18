@@ -76,11 +76,12 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     }
 }
 
+#pragma mark CoreLogic
 @implementation CoreLogic
 -(MyDirectoryElements *) websites
 {
     if(_websites == nil) {
-        _websites = [MyDirectoryElements createFromString:@"racine"];
+        _websites = [[MyDirectoryElements createFromString:@"racine"] retain];
         [self indexOfDownloadedSites:_websites];
     }
     
@@ -91,16 +92,22 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
 -(void)dowloadSite:(NSString*) url onError:(void (^)(NSDictionary *, NSErrorDomain)) onError
 {
     
-    // TODO: implement download cancellation
+    // TODO: implement download cancellation and pause
     // - https://stackoverflow.com/questions/8113268/how-to-cancel-nsblockoperation
     NSBlockOperation * operation = [NSBlockOperation blockOperationWithBlock:^{
         int status = httpmirror([url UTF8String], _httrack_opt);
         
         if(_httrack_opt->state.exit_xh != 0) {
             NSString * description = NSLocalizedString(@"Couldn't connect", @"When httpmirror returnn a faulty value");
+            
             NSError * underlyingError = [[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorBadURL userInfo:nil];
-            NSDictionary *errorDictionary = @{ NSLocalizedDescriptionKey : description,
-                NSUnderlyingErrorKey : underlyingError, NSURLErrorKey : url };
+            
+            NSDictionary * errorDictionary = @{
+                NSLocalizedDescriptionKey : description,
+                NSUnderlyingErrorKey : underlyingError,
+                NSURLErrorKey : url
+            };
+            [underlyingError autorelease];
 
             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                 onError(errorDictionary, MacHttrackErrors);
@@ -110,10 +117,8 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     
     NSOperationQueue * queue = [[NSOperationQueue alloc] init];
     [queue addOperation:operation];
-
+    [queue autorelease];
 }
-
-
 
 -(void)indexOfDownloadedSites:(MyDirectoryElements *) arbo
 {
@@ -168,6 +173,7 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
 - (void)dealloc
 {
     hts_free_opt(_httrack_opt);
+    [_websites release];
     
     [super dealloc];
 }

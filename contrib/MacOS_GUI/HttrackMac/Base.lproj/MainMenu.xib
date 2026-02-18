@@ -709,7 +709,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="274" height="360"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="fullWidth" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="medium" headerView="Bv3-v5-UtE" indentationPerLevel="13" autoresizesOutlineColumn="YES" outlineTableColumn="eEH-ST-yrq" id="508-O8-Dav">
+                                                <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="fullWidth" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="medium" headerView="Bv3-v5-UtE" indentationPerLevel="13" autoresizesOutlineColumn="YES" outlineTableColumn="eEH-ST-yrq" id="508-O8-Dav" customClass="ProjectsOutlineView">
                                                     <rect key="frame" x="0.0" y="0.0" width="274" height="332"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="17" height="0.0"/>
@@ -845,6 +845,7 @@ DQ
         </window>
         <customObject id="Nbn-6H-ZPH" userLabel="ControllerMainMenu" customClass="ControllerMainMenu">
             <connections>
+                <outlet property="_delegate" destination="Voe-Tx-rLC" id="1Ya-O5-z6a"/>
                 <outlet property="httrSiteUrl" destination="GGi-xD-q7D" id="Y7D-aK-p0e"/>
             </connections>
         </customObject>
@@ -960,10 +961,9 @@ DQ
         </customView>
         <customObject id="ekE-Pl-wKh" userLabel="ProjectsDataSource" customClass="ProjectsDataSource">
             <connections>
-                <outlet property="telechargements" destination="pcY-z1-yey" id="Rq3-L5-8l8"/>
+                <outlet property="_delegate" destination="Voe-Tx-rLC" id="XkV-W6-uCE"/>
             </connections>
         </customObject>
-        <customObject id="pcY-z1-yey" customClass="CoreLogic"/>
     </objects>
     <resources>
         <image name="sidebar.left" catalog="system" width="18" height="14"/>

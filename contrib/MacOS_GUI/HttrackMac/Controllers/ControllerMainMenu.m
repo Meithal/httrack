@@ -1,5 +1,4 @@
-#import "CoreLogic.h"
-#import "AppDelegate.h"
+#import "../AppDelegate.h"
 
 #import "ControllerMainMenu.h"
 
@@ -10,8 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 {}
 @end
 
-#pragma mark main split view delagate
-
+#pragma mark MainSplitViewDelegate
 @implementation MainSplitViewDelegate
 - (void) splitView:(NSSplitView *) splitView
 resizeSubviewsWithOldSize:(NSSize) oldSize
@@ -55,8 +53,10 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 @end
 
 @implementation ProjectsDataSource
-
-#pragma mark NSOutlineViewDataSource delegates
+-(void)awakeFromNib {
+    _logic = _delegate.getLogic;
+}
+#pragma mark NSOutlineViewDataSource
 - (BOOL)outlineView:(nonnull NSOutlineView *)outlineView isItemExpandable:(nonnull MyDirectoryElements *)item {
     if(item.class == MyDowloadableFile.class)
         return NO;
@@ -64,8 +64,10 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 }
 
 - (NSInteger)outlineView:(nonnull NSOutlineView *)outlineView numberOfChildrenOfItem:(nullable MyDirectoryElements *)item {
+    if(!_logic)
+        return 0;
     if(item == nil)
-        return self.telechargements.websites.directories.count;
+        return _logic.websites.directories.count;
     else if (item.class == MyDowloadableFile.class)
         return 0;
     else
@@ -82,7 +84,7 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
             return nil;
         else raise(42);
     } else if (item.class == MyDowloadableFile.class) {
-        MyDowloadableFile * item_cast = item;
+        MyDowloadableFile * item_cast = (MyDowloadableFile*)item;
         if([tableColumn.identifier isEqual:@"PageName"])
             return item_cast.name;
         else if(([tableColumn.identifier isEqual:@"Avancement"]))
@@ -94,7 +96,7 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 
 - (nonnull id)outlineView:(nonnull NSOutlineView *)outlineView child:(NSInteger)index ofItem:(nullable MyDirectoryElements*)item {
     if(item == nil)
-        return self.telechargements.websites.directories[0];
+        return _logic.websites.directories[0];
     else {
         if(index < item.directories.count)
             return item.directories[index];
@@ -103,7 +105,7 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     }
 }
 
-#pragma mark NSOutlineViewDelegate overrides
+#pragma mark NSOutlineViewDelegate
 - (BOOL) outlineView:(NSOutlineView *) outlineView
          isGroupItem:(MyDirectoryElements *) item
 {
@@ -113,14 +115,28 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 }
 @end
 
+#pragma mark ProjectsOutlineView
+@implementation ProjectsOutlineView
+-(void)awakeFromNib{
+    [self reloadData];
+}
+@end
+
+#pragma mark ControllerMainMenu
 @implementation ControllerMainMenu
+-(void) awakeFromNib {
+    _logic = _delegate.getLogic;
+}
+
 - (IBAction)httrDowloadButton:(id)sender {
     NSLog(@"Push %@", [self.httrSiteUrl stringValue]);
     
-    [(AppDelegate*)([NSApplication sharedApplication].delegate) changeWindowSubtitle:[self.httrSiteUrl stringValue]];
+    [_delegate changeWindowSubtitle:[self.httrSiteUrl stringValue]];
     //[self.coreLogic indexOfDownloadedSites];
-    [[(AppDelegate*)([NSApplication sharedApplication].delegate) getLogic] dowloadSite:[self.httrSiteUrl stringValue] onError:^(NSDictionary *errorDictionary, NSErrorDomain domain) {
-        [(AppDelegate*)([NSApplication sharedApplication].delegate) warnUser:[[NSError alloc] initWithDomain:domain code:NSURLErrorBadURL userInfo:errorDictionary]];
+    [_logic
+     dowloadSite:[self.httrSiteUrl stringValue]
+     onError:^(NSDictionary *errorDictionary, NSErrorDomain domain) {
+        [_delegate warnUser:[[NSError alloc] initWithDomain:domain code:NSURLErrorBadURL userInfo:errorDictionary]];
     }];
 }
 
