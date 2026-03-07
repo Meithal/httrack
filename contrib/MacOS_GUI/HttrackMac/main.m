@@ -5,6 +5,11 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         // Setup code that might create autoreleased objects goes here.
     }
+    
+    printf("api min %d, api max %d\n", __MAC_OS_X_VERSION_MAX_ALLOWED,
+           __MAC_OS_X_VERSION_MIN_REQUIRED);
+    
+    //NSLog(@"GC %@\n", [NSGarbageCollector defaultCollector]);
 
     return NSApplicationMain(argc, argv);
 }

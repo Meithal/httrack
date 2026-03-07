@@ -10,6 +10,7 @@
 
 @implementation AppDelegate
 
+// MARK: Overrides
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
     
@@ -45,14 +46,28 @@
     }
 }
 
+// MARK: Our functions
 -(CoreLogic*)getLogic {
     if(_logic == nil)
         _logic = [[CoreLogic alloc] init];
     return _logic;
 }
 
--(void)warnUser:(NSError*)error
+-(void)warnUser:(NSString*)description domain:(NSErrorDomain) domain code:(NSInteger) code
 {
+    NSError * underlyingError = [[NSError alloc] initWithDomain:domain code:code userInfo:nil];
+    
+    NSDictionary<NSErrorUserInfoKey, id> * errorDictionary = @{
+        NSLocalizedDescriptionKey : description,
+        NSUnderlyingErrorKey : underlyingError,
+        NSLocalizedRecoverySuggestionErrorKey: @"Try a a different URL",
+        //NSURLErrorKey : url
+    };
+
+    NSError * error= [[NSError alloc] initWithDomain:domain code:code userInfo:errorDictionary];
     [[NSAlert alertWithError:error] runModal];
+//    [errorDictionary autorelease];
+//    [underlyingError autorelease];
+//    [error autorelease];
 }
 @end

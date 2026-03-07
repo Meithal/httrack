@@ -78,6 +78,46 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
 
 #pragma mark CoreLogic
 @implementation CoreLogic
+
+-(id)init{
+    self = [super init];
+    
+    if (self) {
+        NSLog(@"init core appellé");
+        
+        _httrack_opt = hts_create_opt();
+        
+        // On recupere le HOME sur mac
+        NSArray<NSURL *> * urls = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
+        NSURL * url = urls.firstObject;
+        url = [NSURL URLWithString:@"Mirrored Websites/" relativeToURL:url];
+
+        StringMemcpy(_httrack_opt->path_html, ([[url path] stringByAppendingString:@"/"]).UTF8String, [url path].length + 1);
+        StringCopyS(_httrack_opt->path_log, _httrack_opt->path_html);
+        StringCopyN(_httrack_opt->path_html_utf8, StringBuff(_httrack_opt->path_html),
+                          StringLength(_httrack_opt->path_html));
+        
+        htswrap_add(_httrack_opt, "loop", my_loop);
+        htswrap_add(_httrack_opt, "save-file", my_filesave);
+        htswrap_add(_httrack_opt, "save-file2", my_filesave2);
+        htswrap_add(_httrack_opt, "end", my_end);
+        htswrap_add(_httrack_opt, "free", my_uninit);
+        
+        _eventDispatcher = [[HtmrEventDispatcher alloc] init];
+    }
+    
+    return self;
+}
+
+- (void)dealloc
+{
+    hts_free_opt(_httrack_opt);
+    [_websites release];
+    [_eventDispatcher release];
+    
+    [super dealloc];
+}
+
 -(MyDirectoryElements *) websites
 {
     if(_websites == nil) {
@@ -89,28 +129,17 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
 }
 @synthesize websites = _websites;
 
--(void)dowloadSite:(NSString*) url onError:(void (^)(NSDictionary *, NSErrorDomain)) onError
+-(void)dowloadSite:(NSString*) url onError:(void (^)(NSString *, NSErrorDomain, NSInteger code)) onError
 {
-    
     // TODO: implement download cancellation and pause
     // - https://stackoverflow.com/questions/8113268/how-to-cancel-nsblockoperation
     NSBlockOperation * operation = [NSBlockOperation blockOperationWithBlock:^{
         int status = httpmirror([url UTF8String], _httrack_opt);
         
         if(_httrack_opt->state.exit_xh != 0) {
-            NSString * description = NSLocalizedString(@"Couldn't connect", @"When httpmirror returnn a faulty value");
-            
-            NSError * underlyingError = [[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorBadURL userInfo:nil];
-            
-            NSDictionary * errorDictionary = @{
-                NSLocalizedDescriptionKey : description,
-                NSUnderlyingErrorKey : underlyingError,
-                NSURLErrorKey : url
-            };
-            [underlyingError autorelease];
-
+            NSString * description = NSLocalizedString(@"Couldn't connect", @"When httpmirror return a faulty value");
             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                onError(errorDictionary, MacHttrackErrors);
+                onError(description, MacHttrackErrors, NSURLErrorBadURL);
             }];
         }
     }];
@@ -142,41 +171,17 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     return;
 }
 
--(id)init{
-    self = [super init];
-    
-    if (self) {
-        NSLog(@"init core appellé");
-        
-        _httrack_opt = hts_create_opt();
-        
-        // On recupere le HOME sur mac
-        NSArray<NSURL *> * urls = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
-        NSURL * url = urls.firstObject;
-        url = [NSURL URLWithString:@"Mirrored Websites/" relativeToURL:url];
+@end
 
-        StringMemcpy(_httrack_opt->path_html, ([[url path] stringByAppendingString:@"/"]).UTF8String, [url path].length + 1);
-        StringCopyS(_httrack_opt->path_log, _httrack_opt->path_html);
-        StringCopyN(_httrack_opt->path_html_utf8, StringBuff(_httrack_opt->path_html),
-                          StringLength(_httrack_opt->path_html));
-        
-        htswrap_add(_httrack_opt, "loop", my_loop);
-        htswrap_add(_httrack_opt, "save-file", my_filesave);
-        htswrap_add(_httrack_opt, "save-file2", my_filesave2);
-        htswrap_add(_httrack_opt, "end", my_end);
-        htswrap_add(_httrack_opt, "free", my_uninit);
-    }
-    
-    return self;
+#pragma mark HtmrEventDispatcher
+@implementation HtmrEventDispatcher
+
+- (BOOL)removeEventListener:(nonnull IMP)fun {
 }
 
-- (void)dealloc
-{
-    hts_free_opt(_httrack_opt);
-    [_websites release];
-    
-    [super dealloc];
+- (void)addEventListener:(nonnull IMP)fun {
 }
+
 @end
 
 NS_ASSUME_NONNULL_END

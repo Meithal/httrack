@@ -12,6 +12,12 @@ Ongoing
 - Garder le programme suffisamment intuitif pour n'avoir besoin ni de l'un ni de l'autre
 - Ameliorer le temps de demarrage
 
+Bugs
+---
+
+- [ ] Le listing de sites a gauche apparait une fois sur deux, sans bugs lancé par NSZombieObjects
+- [ ] Il reste des fuites de mémoire
+
 Taches
 ---
 
@@ -26,12 +32,9 @@ Taches
 - [x] Empecher que l'UI freeze quand on lance une copie
 - [ ] ... Griser le bouton pendant que le telechargement est en cours
 - [ ] ... Mettre un bouton de pause lors du telechargement
-- [ ] ... Migrer vers grand central dispatch avec la version SwiftUI
 - [ ] ... Avoir un feedback qu'une copie est en cours
 - [ ] ... Quand la fenetre associée est fermer, arrêter le thread de copie
-- [ ] ...... Avoir un systeme de background worker qui continue la copie
-meme quand le programme est arrêté et qui s'y reconnecte quand le programme
-est redémarré ?
+- [ ] ...... Avoir un systeme de background worker qui continue la copie meme quand le programme est arrêté et qui s'y reconnecte quand le programme est redémarré ?
 - [ ] Avoir un feedback des pages copiées
 - [ ] Avoir un bouton pour cacher sidebar <https://developer.apple.com/videos/play/wwdc2020/10104/?time=835> <https://stackoverflow.com/questions/54870957/nssplitviewcontroller-nssplitviewitem-support-in-xibs>
 - [x] ... résoudre le bug de double declaration d'enum HTTP_STATUS_OK
@@ -39,28 +42,22 @@ est redémarré ?
 - [x] Avoir un listing de sites copiés
 - [ ] ... Afficher l'avancement de chaque recopie
 - [ ] ... Faire en sorte que ce listing se mette a jour en temps reel
-- [ ] ... Le listing doit se faire sur un thred different
+- [ ] ... Le listing doit se faire sur un thread different
 - [ ] Avoir une icone a coté de chaque nom de site (favicon)
+- [ ] ... Mettre une option pour desactiver cette option
 - [ ] Avoir un listing de liens externes référencés par les diverses pages
 - [ ] Avoir un aperçu de chaque page copiée
 - [ ] Commencer a télécharger le favicon du site pour y associer une icone
 - [x] En proposer une vue arborescente comme dans un arbre FTP
-- [ ] S'assurer que le site web puisse s'imprimmer correctement. L'option
-"imprimer" ou "exporter en PDF" doit donner une vue qui fasse sens ?
+- [ ] S'assurer que le site web puisse s'imprimmer correctement. L'option "imprimer" ou "exporter en PDF" doit donner une vue qui fasse sens ?
 - [ ] Faire une maquette avec une grosse barre d'url en haut
 - [ ] Ajouter un feedback qui empeche de télécharger tant que l'url n'est pas correcte
-- [ ] Poposer un backend via nc pour naviguer sur le site en local et aussi
-proposer un site de test pour tester lle la lib fonctionne bien. il y a egalement htsserver.
+- [ ] Poposer un backend via nc pour naviguer sur le site en local et aussi proposer un site de test pour tester lle la lib fonctionne bien. il y a egalement htsserver.
 - [ ] Proposer une alternative plus moderne (storyboard? swift?_) <https://stackoverflow.com/questions/27807951/how-to-embed-a-custom-view-xib-in-a-storyboard-scene>
-- [ ] Version téléphone. UIKit ? SwiftUI pour version universelle ?
-Optionnel
+- [ ] Version téléphone. UIKit ? SwiftUI pour version universelle ? Optionnel
 - [ ] App Clip ? Widget ?
 - [ ] Pousser la retrompatibilité derrière big sur ? <https://github.com/devernay/xcodelegacy>
-- [ ] Permettre de verifier si les liens externes
-ne sont pas en fait des liens internes mais devenus
-morts suite a un changement de domaine. Ajouter
-une verification de type garde-fu pour les URL
-externes tres generiques.
+- [ ] Permettre de verifier si les liens externes ne sont pas en fait des liens internes mais devenus morts suite a un changement de domaine. Ajouter une verification de type garde-fu pour les URL externes tres generiques.
 - [ ] Ajouer un drop down d'urls deja entrées dans le passé
 - [ ] ... Pouvoir éditer cette liste
 - [ ] ... Avoir une option incognito pour ne jamais enregistrer cette info
@@ -73,41 +70,36 @@ externes tres generiques.
 - [ ] ... Signaler les modifications faites
 - [ ] Afficher en temps reel les liens trouvés sur chaque page
 - [ ] Permettre d'afficher la version locale du site d'un clic
-- [ ] Implementer le NSPasteboard
-protocol mpour glisser deposer des
-sites vers le finder.
+- [ ] Implementer le NSPasteboard protocol mpour glisser deposer des sites vers le finder.
 - [ ] Dans le listing de pages, pouvoir en modifier ou ajouter pour forcer le telechargement
 - [ ] Pouvoir exporter l'arborescence d'un site sous forme de json ou de graphe
 - [ ] Afficher une notification bureau quand le site a fini de se télécharger
 - [ ] Pouvoir mettre en pause et arrêter un téléchargement
-- [ ] Creer une fenetre separée pour lancer un nouveau telechargement ?
-Peut etre simpliste qui contient un simple textView et a l'aspect d'un crayon
+- [ ] Creer une fenetre separée pour lancer un nouveau telechargement ? Peut etre simpliste qui contient un simple textView et a l'aspect d'un crayon
 - [ ] Ajouter des settings
 - [ ] ... Le dossier où on veut faire le mirroir
 - [ ] Avoir une vue simpliste avec juste une barre de progression
 - [ ] Pouvoir drag et drop une url (page web safari?) sur la fenetre, ou coller du texte
-- [ ] Si on veut telecharger tous les PDF d'une page, separer visiblement les liens
-d'une certine arborescence d'une autre, et mettre un bouton "telecharger tout d'une
-arborescence" dans le outliner.
-- [ ] Utiliser NSdocument pour representer la copie d'un site? D'un reseau de sites interconnecté ?
-Permettrait undo/redo et icloud. Avoir un panel de sites visibles dans "fenetres" et pouvoir
-en ouvrir plusieurs.
-- [ ] Pouvoir customiser en profondeur l'apparence du site avant de l'imprimer en pdf, afficher
-les images d'un dossier en mosaique par exemple.
+- [ ] Si on veut telecharger tous les PDF d'une page, separer visiblement les liens d'une certine arborescence d'une autre, et mettre un bouton "telecharger tout d'une arborescence" dans le outliner.
+- [ ] Utiliser NSdocument pour representer la copie d'un site? D'un reseau de sites interconnecté ? Permettrait undo/redo et icloud. Avoir un panel de sites visibles dans "fenetres" et pouvoir en ouvrir plusieurs.
+- [ ] Pouvoir customiser en profondeur l'apparence du site avant de l'imprimer en pdf, afficher les images d'un dossier en mosaique par exemple.
 - [ ] Ajouter un pont vers AppleScript
+- [ ] ajouter un service de type texte qui permette de telecharger l'URL selectionnee dans safari ou n'importe ou
+- [ ] Afficher une barre de progression dans l'icone comme pour la stack de telechargement de safari
+- [ ] Idem pour l'icone de la toolbar qui ouvre un panel
 
 Plus tard
 ---
 
 - [ ] Avoir un REPL
+- [ ] Migrer vers grand central dispatch avec la version SwiftUI pour le listing de sites et le telechargement
 
 Doc utilisées
 ---
 
 - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithBlocks/WorkingwithBlocks.html> Bouts de fonction a executer plus tard.
 - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Blocks/Articles/00_Introduction.html> doc
-- <https://developer.apple.com/library/archive/documentation/General/Conceptual/ConcurrencyProgrammingGuide/OperationObjects/OperationObjects.html> Lancer un block en parellele,
-l'interrompre, etc.
+- <https://developer.apple.com/library/archive/documentation/General/Conceptual/ConcurrencyProgrammingGuide/OperationObjects/OperationObjects.html> Lancer un block en parellele, l'interrompre, etc.
 
 Docs a utiliser
 ---

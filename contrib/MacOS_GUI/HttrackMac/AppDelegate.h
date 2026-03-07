@@ -7,9 +7,10 @@
 {
     CoreLogic* _logic;
 }
--(CoreLogic*)getLogic;
-// ours
+// MARK: overrides
 -(void)changeWindowSubtitle:(NSString*)newSubtitle;
--(void)warnUser:(NSError*)error; /* show a popup warning */
+// MARK: ours
+-(void)warnUser:(NSString*)description domain:(NSErrorDomain) domain code:(NSInteger) code; /* show a popup warning */
+-(CoreLogic*)getLogic;
 @end
 

@@ -8,8 +8,13 @@ cmake_minimum_required(VERSION 3.12)
 #     )
 #     set(CMAKE_OSX_SYSROOT "${_sdk_path}" CACHE PATH "macOS SDK" FORCE)
 # endif()
+set(MAX_SDK "10.14")
+if(APPLE)
+	set(CMAKE_OSX_DEPLOYMENT_TARGET ${MAX_SDK})
+	set(MACOSX_DEPLOYMENT_TARGET ${MAX_SDK})
+endif()
 
-project(Httrack C)
+project(Httrack C OBJC)
 
 set(HTTRACK_SOURCES 
 	htscore.c htsparse.c htsback.c htscache.c 
@@ -44,9 +49,8 @@ set(SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../src)
 list(TRANSFORM HTTRACK_SOURCES PREPEND "${SRC_ROOT}/")
 list(TRANSFORM HTTRACK_HEADERS PREPEND "${SRC_ROOT}/")
 
-
-
-add_library(httr_lib STATIC ${HTTRACK_SOURCES} ${HTTRACK_HEADERS} )
+add_library(httr_lib STATIC ${HTTRACK_SOURCES})
+target_sources(httr_lib PRIVATE ${HTTRACK_HEADERS})
 
 target_include_directories(httr_lib PUBLIC 
 	"${SRC_ROOT}/coucal"
@@ -94,8 +98,6 @@ target_link_libraries(httr PUBLIC httr_lib)
 if(APPLE)
 	set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.github.meithal")
 	# set the lowest xcode 26 handles
-	set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6")
-	set(MACOSX_DEPLOYMENT_TARGET "10.6")
 
 	add_executable(
 		HttrackMac
@@ -112,24 +114,24 @@ if(APPLE)
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/CoreLogic.m
 	)
 
-	target_link_libraries(HttrackMac PRIVATE httr_lib)
+	target_sources(HttrackMac PRIVATE "${CMAKE_CURRENT_LIST_DIR}/TODO.md")
+
+	target_link_libraries(HttrackMac PRIVATE httr_lib "-framework AppKit")
 	target_include_directories(HttrackMac PRIVATE "${SRC_ROOT}")
 
 	set_source_files_properties(
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMac/Base.lproj/MainMenu.xib
-		PROPERTIES
-		MACOSX_PACKAGE_LOCATION Resources
-		MACOSX_BUNDLE_GUI_IDENTIFIER ${MACOSX_BUNDLE_GUI_IDENTIFIER}
+		  PROPERTIES
+		    MACOSX_PACKAGE_LOCATION Resources
 	)
 
 	set_target_properties(
 		HttrackMac
-		PROPERTIES
-		MACOSX_BUNDLE_INFO_PLIST
-		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/plist.in
+		  PROPERTIES
+		    MACOSX_BUNDLE
+		    MACOSX_BUNDLE_GUI_IDENTIFIER ${MACOSX_BUNDLE_GUI_IDENTIFIER}
+		    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/plist.in
 	)
-
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework AppKit ")
 
 	#enable_testing()
 	# cf https://stackoverflow.com/a/78355693/13577241
@@ -149,12 +151,14 @@ if(APPLE)
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMacUITests/HttrackMacUITests.m
 		${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/HttrackMacUITests/HttrackMacUITestsLaunchTests.m
 	)
-	set_target_properties(UITests 
-		PROPERTIES 
-	    XCODE_ATTRIBUTE_TEST_HOST ""
-		# XCODE_ATTRIBUTE_BUNDLE_LOADER ""
-		# XCODE_ATTRIBUTE_TEST_TARGET_NAME HttrackMac
-		XCODE_PRODUCT_TYPE com.apple.product-type.bundle.ui-testing)
+	set_target_properties(
+		UITests 
+		 PROPERTIES 
+	      XCODE_ATTRIBUTE_TEST_HOST ""
+		  # XCODE_ATTRIBUTE_BUNDLE_LOADER ""
+		  # XCODE_ATTRIBUTE_TEST_TARGET_NAME HttrackMac
+		  XCODE_PRODUCT_TYPE com.apple.product-type.bundle.ui-testing
+	)
 
 endif()
 

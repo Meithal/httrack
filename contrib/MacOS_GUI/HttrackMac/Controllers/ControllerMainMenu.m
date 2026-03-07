@@ -2,8 +2,36 @@
 
 #import "ControllerMainMenu.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
+
+#pragma mark Notre barre de recherche
+@interface MySearchInputField: NSSearchField
+@property (copy) NSArray<NSString *> * placeholderStrings;
+@end
+@implementation MySearchInputField
+@dynamic placeholderStrings;
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.placeholderStrings = @[
+           @"toto",
+           @"tata",
+           @"titi"
+        ];
+    }
+    return self;
+}
+
+-(void)awakeFromNib
+{
+    NSSearchFieldCell * cell = [self cell];
+    if(@available(macOS 11.0, *)) {
+        [cell.searchButtonCell setImage: [NSImage imageWithSystemSymbolName:@"tray.and.arrow.down" accessibilityDescription:@"The URL to download"]];
+    }
+}
+@end
 
 @interface MainSplitViewDelegate : NSObject<NSSplitViewDelegate>
 {}
@@ -60,6 +88,7 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 - (BOOL)outlineView:(nonnull NSOutlineView *)outlineView isItemExpandable:(nonnull MyDirectoryElements *)item {
     if(item.class == MyDowloadableFile.class)
         return NO;
+    NSLevelIndicatorCell * c;
     return item.directories.count || item.files.count;
 }
 
@@ -90,7 +119,6 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
         else if(([tableColumn.identifier isEqual:@"Avancement"]))
             return item_cast.downloadAdvancement;
         else raise(42);
-
     }
 }
 
@@ -116,6 +144,7 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 @end
 
 #pragma mark ProjectsOutlineView
+
 @implementation ProjectsOutlineView
 -(void)awakeFromNib{
     [self reloadData];
@@ -125,21 +154,30 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 #pragma mark ControllerMainMenu
 @implementation ControllerMainMenu
 -(void) awakeFromNib {
+    
     _logic = _delegate.getLogic;
+    [[_httrSiteUrl window] makeKeyAndOrderFront:self]; // every second time the windows stays on background, look it up instead of forcing it here?
 }
 
-- (IBAction)httrDowloadButton:(id)sender {
+- (IBAction)httrDowloadButton:(NSButton *)sender {
+    NSLog(@"button click %@\n", sender);
     NSLog(@"Push %@", [self.httrSiteUrl stringValue]);
     
     [_delegate changeWindowSubtitle:[self.httrSiteUrl stringValue]];
     //[self.coreLogic indexOfDownloadedSites];
     [_logic
      dowloadSite:[self.httrSiteUrl stringValue]
-     onError:^(NSDictionary *errorDictionary, NSErrorDomain domain) {
-        [_delegate warnUser:[[NSError alloc] initWithDomain:domain code:NSURLErrorBadURL userInfo:errorDictionary]];
+     onError:^(NSString *description, NSErrorDomain domain, NSInteger code) {
+        [_delegate warnUser:description domain:domain code:code];
     }];
+    
+    [sender setEnabled:false];
 }
 
+- (BOOL)validateUserInterfaceItem:(nonnull id<NSValidatedUserInterfaceItem>)item {
+        NSLog(@"validated item %@\n", item);
+        NSMenu * m;
+}
 @end
 
 NS_ASSUME_NONNULL_END
