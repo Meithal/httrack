@@ -17,10 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Notre "controlleur" qui fait l'interface entre l'UI et la logique+données
  */
-@interface ControllerMainMenu : NSObject
+@interface ControllerMainMenu : NSObject<CoreLogicDelegate>
 {
-    IBOutlet AppDelegate *_delegate;
+    IBOutlet AppDelegate *_AppDelegate;
     CoreLogic* _logic;
+    CoreLogicDelegate * _logicDelegate;
+    IBOutlet NSButton* _downloadButton;
 }
 
 @property (assign) IBOutlet NSTextField *httrSiteUrl;

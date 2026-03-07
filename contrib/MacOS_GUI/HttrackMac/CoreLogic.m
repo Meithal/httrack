@@ -79,30 +79,15 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
 #pragma mark CoreLogic
 @implementation CoreLogic
 
+
 -(id)init{
     self = [super init];
     
     if (self) {
         NSLog(@"init core appellé");
         
-        _httrack_opt = hts_create_opt();
         
-        // On recupere le HOME sur mac
-        NSArray<NSURL *> * urls = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
-        NSURL * url = urls.firstObject;
-        url = [NSURL URLWithString:@"Mirrored Websites/" relativeToURL:url];
-
-        StringMemcpy(_httrack_opt->path_html, ([[url path] stringByAppendingString:@"/"]).UTF8String, [url path].length + 1);
-        StringCopyS(_httrack_opt->path_log, _httrack_opt->path_html);
-        StringCopyN(_httrack_opt->path_html_utf8, StringBuff(_httrack_opt->path_html),
-                          StringLength(_httrack_opt->path_html));
-        
-        htswrap_add(_httrack_opt, "loop", my_loop);
-        htswrap_add(_httrack_opt, "save-file", my_filesave);
-        htswrap_add(_httrack_opt, "save-file2", my_filesave2);
-        htswrap_add(_httrack_opt, "end", my_end);
-        htswrap_add(_httrack_opt, "free", my_uninit);
-        
+        [self initHttrack];
         _eventDispatcher = [[HtmrEventDispatcher alloc] init];
     }
     
@@ -117,6 +102,36 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     
     [super dealloc];
 }
+
+-(void)setDelegate:(CoreLogicDelegate*)newDelegate {
+    _delegate = newDelegate;
+}
+
+-(CoreLogicDelegate*):delegate {
+    return _delegate;
+}
+
+-(void)initHttrack {
+    _httrack_opt = hts_create_opt();
+    
+    // On recupere le HOME sur mac
+    NSArray<NSURL *> * urls = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
+    NSURL * url = urls.firstObject;
+    url = [NSURL URLWithString:@"Mirrored Websites/" relativeToURL:url];
+
+    StringMemcpy(_httrack_opt->path_html, ([[url path] stringByAppendingString:@"/"]).UTF8String, [url path].length + 1);
+    StringCopyS(_httrack_opt->path_log, _httrack_opt->path_html);
+    StringCopyN(_httrack_opt->path_html_utf8, StringBuff(_httrack_opt->path_html),
+                      StringLength(_httrack_opt->path_html));
+    
+    htswrap_add(_httrack_opt, "loop", my_loop);
+    htswrap_add(_httrack_opt, "save-file", my_filesave);
+    htswrap_add(_httrack_opt, "save-file2", my_filesave2);
+    htswrap_add(_httrack_opt, "end", my_end);
+    htswrap_add(_httrack_opt, "free", my_uninit);
+}
+
+
 
 -(MyDirectoryElements *) websites
 {
@@ -142,10 +157,15 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
                 onError(description, MacHttrackErrors, NSURLErrorBadURL);
             }];
         }
+        [_delegate coreLogicDownloadDidStop:self];
     }];
     
     NSOperationQueue * queue = [[NSOperationQueue alloc] init];
+    if(![_delegate coreLogicDownloadWillStart:self]) {
+        return;
+    }
     [queue addOperation:operation];
+
     [queue autorelease];
 }
 
@@ -176,10 +196,10 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
 #pragma mark HtmrEventDispatcher
 @implementation HtmrEventDispatcher
 
-- (BOOL)removeEventListener:(nonnull IMP)fun {
+- (BOOL)removeEventListener:(nonnull void (^)(void))fun {
 }
 
-- (void)addEventListener:(nonnull IMP)fun {
+- (void)addEventListener:(nonnull void (^)(void))fun {
 }
 
 @end

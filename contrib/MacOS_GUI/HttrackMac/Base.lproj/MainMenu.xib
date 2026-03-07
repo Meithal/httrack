@@ -778,10 +778,10 @@
                                             <string key="keyEquivalent" base64-UTF8="YES">
 DQ
 </string>
-                                            <connections>
-                                                <action selector="httrDowloadButton:" target="-1" id="T33-23-Hwx"/>
-                                            </connections>
                                         </buttonCell>
+                                        <connections>
+                                            <action selector="httrDowloadButton:" target="Nbn-6H-ZPH" id="cn9-jd-eEP"/>
+                                        </connections>
                                     </button>
                                     <levelIndicator verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0yK-AG-dxD">
                                         <rect key="frame" x="74" y="215" width="96" height="18"/>
@@ -840,7 +840,8 @@ DQ
         </window>
         <customObject id="Nbn-6H-ZPH" userLabel="ControllerMainMenu" customClass="ControllerMainMenu">
             <connections>
-                <outlet property="_delegate" destination="Voe-Tx-rLC" id="1Ya-O5-z6a"/>
+                <outlet property="_AppDelegate" destination="Voe-Tx-rLC" id="u0o-xm-Iaz"/>
+                <outlet property="_downloadButton" destination="5Ii-9n-Rqw" id="Zbp-pK-Btk"/>
                 <outlet property="httrSiteUrl" destination="9g4-Du-4T3" id="hT6-VU-v9n"/>
             </connections>
         </customObject>

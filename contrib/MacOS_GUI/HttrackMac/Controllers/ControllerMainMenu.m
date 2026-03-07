@@ -155,29 +155,36 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 @implementation ControllerMainMenu
 -(void) awakeFromNib {
     
-    _logic = _delegate.getLogic;
-    [[_httrSiteUrl window] makeKeyAndOrderFront:self]; // every second time the windows stays on background, look it up instead of forcing it here?
+    _logic = _AppDelegate.getLogic;
+    [_logic setDelegate:self];
 }
 
 - (IBAction)httrDowloadButton:(NSButton *)sender {
     NSLog(@"button click %@\n", sender);
     NSLog(@"Push %@", [self.httrSiteUrl stringValue]);
     
-    [_delegate changeWindowSubtitle:[self.httrSiteUrl stringValue]];
+    [_AppDelegate changeWindowSubtitle:[self.httrSiteUrl stringValue]];
     //[self.coreLogic indexOfDownloadedSites];
     [_logic
      dowloadSite:[self.httrSiteUrl stringValue]
      onError:^(NSString *description, NSErrorDomain domain, NSInteger code) {
-        [_delegate warnUser:description domain:domain code:code];
+        [_AppDelegate warnUser:description domain:domain code:code];
     }];
     
     [sender setEnabled:false];
 }
-
-- (BOOL)validateUserInterfaceItem:(nonnull id<NSValidatedUserInterfaceItem>)item {
-        NSLog(@"validated item %@\n", item);
-        NSMenu * m;
+-(BOOL)coreLogicDownloadWillStart:(CoreLogicDelegate *)sender {
+    NSLog(@"Download did start");
+    
+    [_downloadButton setEnabled:NO];
+    return YES;
 }
+
+-(void)coreLogicDownloadDidStop:(CoreLogic*)sender {
+    [_downloadButton setEnabled:YES];
+}
+
+
 @end
 
 NS_ASSUME_NONNULL_END

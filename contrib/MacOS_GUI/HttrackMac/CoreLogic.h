@@ -14,16 +14,28 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class HtmrEventDispatcher;
+@class CoreLogicDelegate;
 
 @interface CoreLogic : NSObject {
     httrackp *_httrack_opt;
     HtmrEventDispatcher * _eventDispatcher;
+    CoreLogicDelegate * _delegate;
 }
 @property (readonly) MyDirectoryElements * websites;
 
 -(void)dowloadSite:(NSString*) url onError:(void (^)(NSString *, NSErrorDomain, NSInteger)) onError;
 -(void)indexOfDownloadedSites:(MyDirectoryElements *) arbo;
+
+-(void)setDelegate:(id)newDelegate;
+-(CoreLogicDelegate*):delegate;
 @end
+
+
+@protocol CoreLogicDelegate<NSObject>
+-(BOOL)coreLogicDownloadWillStart:(CoreLogic*)sender;
+-(void)coreLogicDownloadDidStop:(CoreLogic*)sender;
+@end
+
 
 @interface HtmrEventDispatcher: NSObject {
     NSMutableArray<void(^)(void)> * listeners;
