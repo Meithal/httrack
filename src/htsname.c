@@ -152,13 +152,13 @@ int url_savename(lien_adrfilsave *const afs,
   lien_back *const back = sback->lnk;
 
   /* */
-  char BIGSTK fil[HTS_URLMAXSIZE * 2];       /* ="" */
+  char BIGSTK fil[HTS_URLMAXSIZE];       /* ="" */
 
   const char *const adr_complete = afs->af.adr;
   const char *const fil_complete = afs->af.fil;
 
   /*char BIGSTK normadr_[HTS_URLMAXSIZE*2]; */
-  char BIGSTK normadr_[HTS_URLMAXSIZE * 2], normfil_[HTS_URLMAXSIZE * 2];
+  char BIGSTK normadr_[HTS_URLMAXSIZE], normfil_[HTS_URLMAXSIZE];
   enum { PROTOCOL_HTTP, PROTOCOL_HTTPS, PROTOCOL_FTP, PROTOCOL_FILE,
       PROTOCOL_UNKNOWN };
   static const char *protocol_str[] =

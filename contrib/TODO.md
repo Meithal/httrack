@@ -18,6 +18,8 @@ Bugs
 - [ ] Le listing de sites a gauche apparait une fois sur deux, sans bugs lancé par NSZombieObjects
 - [ ] Il reste des fuites de mémoire
 - [ ] Apres avoir cliqué sur STOP, appuyer sur download ne fait rien
+- [ ] 1star.gif plante le cache_add
+- [x] Hash coucal plante pour les caracteres superieurs a 128
 
 Taches
 ---
@@ -37,6 +39,7 @@ Taches
 - [ ] ... Quand la fenetre associée est fermer, arrêter le thread de copie
 - [ ] ...... Avoir un systeme de background worker qui continue la copie meme quand le programme est arrêté et qui s'y reconnecte quand le programme est redémarré ?
 - [ ] Afficher hts_stat_struct update
+- [ ] ... Afficher les warnings, les infos et les erreurs
 - [ ] Autocompletion avec sites deja existants
 - [ ] Lorsque le cache est corrompu, on a des erreurs bizarres, et sigbus
 - [ ] ... Quitter l'application proprement avec des handlers de sortie

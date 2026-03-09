@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)setDelegate:(nullable id)newDelegate;
 -(CoreLogicDelegate*)delegate;
 
--(void)setLoopCallback:(SEL) callback withObject: (id) obj;
+-(void)setLoopCallback:(nullable SEL) callback withObject: (nullable id) obj;
 -(SEL)loopCallback;
 -(id)objCallback;
 -(nullable httrackp*)httrack_opt;

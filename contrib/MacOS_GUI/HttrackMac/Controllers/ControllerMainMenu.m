@@ -158,6 +158,7 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 
 -(void) dealloc {
     [_logic setDelegate:nil];
+    [_logic setLoopCallback:nil withObject:nil];
     [super dealloc];
 }
 
@@ -172,9 +173,6 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
      onError:^(NSString *description, NSErrorDomain domain, NSInteger code) {
         [_AppDelegate warnUser:description domain:domain code:code];
     }];
-}
-- (IBAction)pauseDownload:(id)sender {
-    [_logic pauseMirror:1];
 }
 
 -(IBAction)segmentedControl:(NSSegmentedControl*)sender {
@@ -198,7 +196,36 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     if(stats == NULL)
         return;
     
-    [_httrTotalRecvLabel setStringValue:[NSString stringWithFormat:@"%ld", stats->HTS_TOTAL_RECV]];
+    [_httrTotalRecvLabel setStringValue:[NSString stringWithFormat:@"%ld bytes", stats->HTS_TOTAL_RECV]];
+    [_httrTotalBytesWrittenLabel setStringValue:[NSString stringWithFormat:@"%ld bytes", stats->stat_bytes]];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterMediumStyle];
+    [formatter setLocale:[NSLocale currentLocale]];
+
+    NSString *localized = [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970: stats->stat_timestart]];
+    [_httrTimeStartLabel setStringValue:localized];
+    
+    [_httrTotalUnpackedReceivedLabel setStringValue:[NSString stringWithFormat:@"%ld", stats->total_unpacked]];
+    [_httrTotalPackedReceivedLabel setStringValue:[NSString stringWithFormat:@"%ld", stats->total_packed]];
+    [_httrTotalPackedFilesLabel setStringValue:[NSString stringWithFormat:@"%d", stats->total_packedfiles]];
+    [_httrTotalWrittenFilesLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_files]];
+    [_httrTotalUpdatedFilesLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_updated_files]];
+    [_httrTotalBackgroundFilesLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_background]];
+    [_httrTotalSockRequestsLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_nrequests]];
+    [_httrTotalSocksAllocatedLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_sockid]];
+    [_httrTotalSocksLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_nsocket]];
+    [_httrTotalErrorsLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_errors]];
+    [_httrTotalFrontErrorsLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_errors_front]];
+    [_httrTotalWarningsLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_warnings]];
+    [_httrTotalInfosLabel setStringValue:[NSString stringWithFormat:@"%d bytes", stats->stat_infos]];
+    [_httrTotalBackgroundAnticLabel setStringValue:[NSString stringWithFormat:@"%d", stats->nbk]];
+    [_httrTotalTransferedLabel setStringValue:[NSString stringWithFormat:@"%ld bytes", stats->nb]];
+    [_httrRateLabel setStringValue:[NSString stringWithFormat:@"%ld bytes/s", stats->rate]];
+    [_httrLastConnectLabel setStringValue:[formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970: stats->last_connect/1000]]];
+    [_httrLastRequestLabel setStringValue:[formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970: stats->last_request/1000]]];
+
+    [formatter release];
 }
 
 -(BOOL)coreLogicDownloadWillStart:(CoreLogicDelegate *)sender {

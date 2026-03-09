@@ -148,7 +148,7 @@ void cache_mayadd(httrackp * opt, cache_back * cache, htsblk * r,
               if (coucal_read
                   (cache->cached_tests,
                    concat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), url_adr, url_fil), NULL) == 0) {
-                char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+                char BIGSTK tempo[HTS_URLMAXSIZE];
 
                 sprintf(tempo, "%d", (int) r->statuscode);
                 if (r->location != NULL && r->location[0] != '\0') {
@@ -223,7 +223,7 @@ struct cache_back_zip_entry {
 void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
                const char *url_adr, const char *url_fil, const char *url_save,
                int all_in_cache, const char *path_prefix) {
-  char BIGSTK filename[HTS_URLMAXSIZE * 4];
+  char BIGSTK filename[HTS_URLMAXSIZE];
   char catbuff[CATBUFF_SIZE];
   int dataincache = 0;          // put data in cache ?
   char BIGSTK headers[8192];
@@ -416,7 +416,7 @@ void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
                char *url_adr, char *url_fil, char *url_save, int all_in_cache) {
   int pos;
   char s[256];
-  char BIGSTK buff[HTS_URLMAXSIZE * 4];
+  char BIGSTK buff[HTS_URLMAXSIZE];
   int ok = 1;
   int dataincache = 0;          // donnée en cache?
   FILE *cache_ndx = cache->ndx;
@@ -624,10 +624,10 @@ static htsblk cache_readex_new(httrackp * opt, cache_back * cache,
                                const char *adr, const char *fil,
                                const char *target_save, char *location,
                                char *return_save, int readonly) {
-  char BIGSTK location_default[HTS_URLMAXSIZE * 2];
-  char BIGSTK buff[HTS_URLMAXSIZE * 2];
-  char BIGSTK previous_save[HTS_URLMAXSIZE * 2];
-  char BIGSTK previous_save_[HTS_URLMAXSIZE * 2];
+  char BIGSTK location_default[HTS_URLMAXSIZE];
+  char BIGSTK buff[HTS_URLMAXSIZE];
+  char BIGSTK previous_save[HTS_URLMAXSIZE];
+  char BIGSTK previous_save_[HTS_URLMAXSIZE];
   char catbuff[CATBUFF_SIZE];
   intptr_t hash_pos;
   int hash_pos_return;
@@ -1010,9 +1010,9 @@ static htsblk cache_readex_old(httrackp * opt, cache_back * cache,
 #else
   char *a;
 #endif
-  char BIGSTK buff[HTS_URLMAXSIZE * 2];
-  char BIGSTK location_default[HTS_URLMAXSIZE * 2];
-  char BIGSTK previous_save[HTS_URLMAXSIZE * 2];
+  char BIGSTK buff[HTS_URLMAXSIZE];
+  char BIGSTK location_default[HTS_URLMAXSIZE];
+  char BIGSTK previous_save[HTS_URLMAXSIZE];
   char catbuff[CATBUFF_SIZE];
   htsblk r;
   int ok = 0;
@@ -1309,7 +1309,7 @@ static htsblk cache_readex_old(httrackp * opt, cache_back * cache,
 int cache_writedata(FILE * cache_ndx, FILE * cache_dat, const char *str1,
                     const char *str2, char *outbuff, int len) {
   if (cache_dat) {
-    char BIGSTK buff[HTS_URLMAXSIZE * 4];
+    char BIGSTK buff[HTS_URLMAXSIZE];
     char s[256];
     long pos;
 
@@ -1344,7 +1344,7 @@ int cache_readdata(cache_back * cache, const char *str1, const char *str2,
                    char **inbuff, int *inlen) {
 #if HTS_FAST_CACHE
   if (cache->hashtable) {
-    char BIGSTK buff[HTS_URLMAXSIZE * 4];
+    char BIGSTK buff[HTS_URLMAXSIZE];
     intptr_t pos;
 
     strcpybuff(buff, str1);
@@ -1594,7 +1594,7 @@ void cache_init(cache_back * cache, httrackp * opt) {
         /* Ready directory entries */
         if ((zErr = unzGoToFirstFile((unzFile) cache->zipInput)) == Z_OK) {
           char comment[128];
-          char BIGSTK filename[HTS_URLMAXSIZE * 4];
+          char BIGSTK filename[HTS_URLMAXSIZE];
           int entries = 0;
 
           memset(comment, 0, sizeof(comment));  // for truncated reads
@@ -1796,7 +1796,7 @@ void cache_init(cache_back * cache, httrackp * opt) {
           /* Create hash table for the cache (MUCH FASTER!) */
 #if HTS_FAST_CACHE
           if (cache->use) {
-            char BIGSTK line[HTS_URLMAXSIZE * 2];
+            char BIGSTK line[HTS_URLMAXSIZE];
             char linepos[256];
             int pos;
 

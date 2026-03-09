@@ -138,7 +138,7 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     return _delegate;
 }
 
--(void)setLoopCallback:(SEL) callback withObject:(id) obj {
+-(void)setLoopCallback:(nullable SEL) callback withObject:(nullable id) obj {
     _loopCallback = callback;
     _objCallback = obj;
 }
