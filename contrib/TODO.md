@@ -30,12 +30,16 @@ Taches
 - [x] Message d'erreur quand url non trouvée, url vide, etc.
 - [x] Changer le sous titre de la fenetre une fois la copie lancée
 - [x] Empecher que l'UI freeze quand on lance une copie
-- [ ] ... Griser le bouton pendant que le telechargement est en cours
+- [x] ... Griser le bouton pendant que le telechargement est en cours
 - [ ] ... Mettre un bouton de pause lors du telechargement
 - [ ] ... Avoir un feedback qu'une copie est en cours
 - [ ] ... Quand la fenetre associée est fermer, arrêter le thread de copie
 - [ ] ...... Avoir un systeme de background worker qui continue la copie meme quand le programme est arrêté et qui s'y reconnecte quand le programme est redémarré ?
+- [ ] Afficher hts_stat_struct update
+- [ ] Autocompletion avec sites deja existants
+- [ ] Lorsque le cache est corrompu, on a des erreurs bizarres, et sigbus
 - [ ] Avoir un feedback des pages copiées
+- [ ] Chercher le listing des pages dans httrack plutot que lister l'arborescence
 - [ ] Avoir un bouton pour cacher sidebar <https://developer.apple.com/videos/play/wwdc2020/10104/?time=835> <https://stackoverflow.com/questions/54870957/nssplitviewcontroller-nssplitviewitem-support-in-xibs>
 - [x] ... résoudre le bug de double declaration d'enum HTTP_STATUS_OK
 - [x] Sauvegarder le listing dans le dossier user plutot que l'endroit de l'executable.

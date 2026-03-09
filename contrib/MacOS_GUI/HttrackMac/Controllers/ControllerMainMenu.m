@@ -6,30 +6,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Notre barre de recherche
 @interface MySearchInputField: NSSearchField
-@property (copy) NSArray<NSString *> * placeholderStrings;
 @end
-@implementation MySearchInputField
-@dynamic placeholderStrings;
 
-- (instancetype)init
+@implementation MySearchInputField
+- (void)controlTextDidChange:(NSNotification *)notification
 {
-    self = [super init];
-    if (self) {
-        self.placeholderStrings = @[
-           @"toto",
-           @"tata",
-           @"titi"
-        ];
-    }
-    return self;
+    NSTextView *textView = notification.userInfo[@"NSFieldEditor"];
+    
+    // prevent calling "complete" too often
+    [textView complete:nil];
 }
+
 
 -(void)awakeFromNib
 {
+    //[self setDelegate:self]; // cause autocompletion incontrolable
     NSSearchFieldCell * cell = [self cell];
     if(@available(macOS 11.0, *)) {
         [cell.searchButtonCell setImage: [NSImage imageWithSystemSymbolName:@"tray.and.arrow.down" accessibilityDescription:@"The URL to download"]];
     }
+    //[self complete:nil];
 }
 @end
 
@@ -157,6 +153,12 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     
     _logic = _AppDelegate.getLogic;
     [_logic setDelegate:self];
+    [_logic setLoopCallback:@selector(updateStats:) withObject:self];
+}
+
+-(void) dealloc {
+    [_logic setDelegate:nil];
+    [super dealloc];
 }
 
 - (IBAction)httrDowloadButton:(NSButton *)sender {
@@ -170,18 +172,29 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
      onError:^(NSString *description, NSErrorDomain domain, NSInteger code) {
         [_AppDelegate warnUser:description domain:domain code:code];
     }];
-    
-    [sender setEnabled:false];
 }
+- (IBAction)pauseDownload:(id)sender {
+    
+}
+
+-(void)updateStats:(hts_stat_struct *) stats {
+    if(stats == NULL)
+        return;
+    
+    [_httrTotalRecvLabel setStringValue:[NSString stringWithFormat:@"%ld", stats->HTS_TOTAL_RECV]];
+}
+
 -(BOOL)coreLogicDownloadWillStart:(CoreLogicDelegate *)sender {
     NSLog(@"Download did start");
     
     [_downloadButton setEnabled:NO];
+    [_pauseButton setEnabled:YES];
     return YES;
 }
 
 -(void)coreLogicDownloadDidStop:(CoreLogic*)sender {
     [_downloadButton setEnabled:YES];
+    [_pauseButton setEnabled:NO];
 }
 
 

@@ -4610,7 +4610,7 @@ static SOCaddr* hts_ghbn(const t_dnscache *cache, const char *const iadr, SOCadd
 }
 
 static SOCaddr* hts_dns_resolve_nocache2_(const char *const hostname,
-                                          SOCaddr *const addr, 
+                                          SOCaddr *const addr,
                                           const char **error) {
   {
 #if HTS_INET6==0
@@ -4618,8 +4618,8 @@ static SOCaddr* hts_dns_resolve_nocache2_(const char *const hostname,
     struct hostent *const hp = gethostbyname(hostname);
 
     if (hp != NULL) {
-      SOCaddr_copyaddr2(addr, hp->h_addr_list[0], hp->h_length);
-      return SOCaddr_is_valid(addr) ? &addr : NULL;
+      SOCaddr_copyaddr2(*addr, hp->h_addr_list[0], hp->h_length);
+      return SOCaddr_is_valid(*addr) ? addr : NULL;
     } else {
       SOCaddr_clear(*addr);
     }

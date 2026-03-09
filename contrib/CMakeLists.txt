@@ -8,6 +8,8 @@ cmake_minimum_required(VERSION 3.12)
 #     )
 #     set(CMAKE_OSX_SYSROOT "${_sdk_path}" CACHE PATH "macOS SDK" FORCE)
 # endif()
+
+### set the lowest xcode 26 handles
 set(MAX_SDK "10.14")
 if(APPLE)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET ${MAX_SDK})
@@ -51,6 +53,7 @@ list(TRANSFORM HTTRACK_HEADERS PREPEND "${SRC_ROOT}/")
 
 add_library(httr_lib STATIC ${HTTRACK_SOURCES})
 target_sources(httr_lib PRIVATE ${HTTRACK_HEADERS})
+target_compile_definitions(httr_lib PRIVATE DEBUG=1 HDEBUG=1)
 
 target_include_directories(httr_lib PUBLIC 
 	"${SRC_ROOT}/coucal"
@@ -97,7 +100,6 @@ target_link_libraries(httr PUBLIC httr_lib)
 
 if(APPLE)
 	set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.github.meithal")
-	# set the lowest xcode 26 handles
 
 	add_executable(
 		HttrackMac
@@ -128,7 +130,7 @@ if(APPLE)
 	set_target_properties(
 		HttrackMac
 		  PROPERTIES
-		    MACOSX_BUNDLE
+		    MACOSX_BUNDLE 1
 		    MACOSX_BUNDLE_GUI_IDENTIFIER ${MACOSX_BUNDLE_GUI_IDENTIFIER}
 		    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_LIST_DIR}/MacOS_GUI/plist.in
 	)

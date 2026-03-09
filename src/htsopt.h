@@ -420,7 +420,7 @@ struct hts_stat_struct {
   TStamp stat_timestart;        // départ
   //
   LLint total_packed;           // flux entrant compressé reçu
-  LLint total_unpacked;         // flux entrant compressé reçu
+  LLint total_unpacked;         // flux entrant non compressé reçu
   int total_packedfiles;        // fichiers compressés
   //
   TStamp istat_timestart[2];    // départ pour calcul instantanné

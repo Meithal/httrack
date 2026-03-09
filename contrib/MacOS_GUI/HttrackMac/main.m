@@ -8,6 +8,8 @@ int main(int argc, const char * argv[]) {
     
     printf("api min %d, api max %d\n", __MAC_OS_X_VERSION_MAX_ALLOWED,
            __MAC_OS_X_VERSION_MIN_REQUIRED);
+    printf("is mutithreaded %d\n", [NSThread isMultiThreaded]);
+    
     
     //NSLog(@"GC %@\n", [NSGarbageCollector defaultCollector]);
 

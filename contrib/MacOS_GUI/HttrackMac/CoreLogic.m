@@ -4,6 +4,8 @@
 //
 //  Created by ivo on 13/02/2026.
 //
+#import <Cocoa/Cocoa.h>
+
 #import "CoreLogic.h"
 #import "Models/ModelsApp.h"
 
@@ -19,7 +21,15 @@ static int __cdecl my_loop(t_hts_callbackarg * carg, httrackp * opt, lien_back *
     // appelé à chaque boucle de HTTrack, permet d'arreter un telechargement
     // si besoin
     
-    //printf("loop\n");
+    //printf("loop lien :%s \n");
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        CoreLogic* logic = [[[NSApp delegate] getLogic] retain];
+        if([logic loopCallback])
+            [[logic objCallback] performSelector:[logic loopCallback] withObject:stats];
+        [logic release];
+    }];
+
+    
   return 1;
 }
 
@@ -103,7 +113,7 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     [super dealloc];
 }
 
--(void)setDelegate:(CoreLogicDelegate*)newDelegate {
+-(void)setDelegate:(nullable CoreLogicDelegate*)newDelegate {
     _delegate = newDelegate;
 }
 
@@ -111,8 +121,20 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     return _delegate;
 }
 
+-(void)setLoopCallback:(SEL) callback withObject:(id) obj {
+    _loopCallback = callback;
+    _objCallback = obj;
+}
+-(SEL)loopCallback {
+    return _loopCallback;
+}
+-(id)objCallback {
+    return _objCallback;
+}
+
 -(void)initHttrack {
     _httrack_opt = hts_create_opt();
+    //_httrack_opt->log = stderr;
     
     // On recupere le HOME sur mac
     NSArray<NSURL *> * urls = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
@@ -157,7 +179,10 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
                 onError(description, MacHttrackErrors, NSURLErrorBadURL);
             }];
         }
-        [_delegate coreLogicDownloadDidStop:self];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [_delegate coreLogicDownloadDidStop:self];
+        }];
+
     }];
     
     NSOperationQueue * queue = [[NSOperationQueue alloc] init];

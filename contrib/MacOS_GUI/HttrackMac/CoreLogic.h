@@ -20,14 +20,20 @@ NS_ASSUME_NONNULL_BEGIN
     httrackp *_httrack_opt;
     HtmrEventDispatcher * _eventDispatcher;
     CoreLogicDelegate * _delegate;
+    id _objCallback;
+    SEL _loopCallback;
 }
 @property (readonly) MyDirectoryElements * websites;
 
 -(void)dowloadSite:(NSString*) url onError:(void (^)(NSString *, NSErrorDomain, NSInteger)) onError;
 -(void)indexOfDownloadedSites:(MyDirectoryElements *) arbo;
 
--(void)setDelegate:(id)newDelegate;
+-(void)setDelegate:(nullable id)newDelegate;
 -(CoreLogicDelegate*):delegate;
+
+-(void)setLoopCallback:(SEL) callback withObject: (id) obj;
+-(SEL)loopCallback;
+-(id)objCallback;
 @end
 
 
