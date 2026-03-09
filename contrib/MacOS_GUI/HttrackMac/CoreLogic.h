@@ -29,19 +29,22 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)indexOfDownloadedSites:(MyDirectoryElements *) arbo;
 
 -(void)setDelegate:(nullable id)newDelegate;
--(CoreLogicDelegate*):delegate;
+-(CoreLogicDelegate*)delegate;
 
 -(void)setLoopCallback:(SEL) callback withObject: (id) obj;
 -(SEL)loopCallback;
 -(id)objCallback;
-@end
+-(nullable httrackp*)httrack_opt;
 
+-(void)pauseMirror:(int)p;
+-(void)stopMirror;
+@end
 
 @protocol CoreLogicDelegate<NSObject>
 -(BOOL)coreLogicDownloadWillStart:(CoreLogic*)sender;
 -(void)coreLogicDownloadDidStop:(CoreLogic*)sender;
+-(void)coreLogicDownloadDidPause:(CoreLogic*)sender;
 @end
-
 
 @interface HtmrEventDispatcher: NSObject {
     NSMutableArray<void(^)(void)> * listeners;

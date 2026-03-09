@@ -7,6 +7,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "CoreLogic.h"
+#import "AppDelegate.h"
 #import "Models/ModelsApp.h"
 
 #import "htscore.h"
@@ -23,10 +24,26 @@ static int __cdecl my_loop(t_hts_callbackarg * carg, httrackp * opt, lien_back *
     
     //printf("loop lien :%s \n");
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        CoreLogic* logic = [[[NSApp delegate] getLogic] retain];
-        if([logic loopCallback])
-            [[logic objCallback] performSelector:[logic loopCallback] withObject:stats];
-        [logic release];
+        if([[NSApp delegate] respondsToSelector:@selector(getLogic)]){
+            CoreLogic* logic = [[((AppDelegate*)[NSApp delegate]) getLogic] retain];
+            
+            httrackp * opt = [logic httrack_opt];
+            if(opt) {
+                if(opt->state.stop) {
+                    [[logic delegate] coreLogicDownloadDidStop:logic];
+                }
+                else if(opt->state._hts_setpause) {
+                    [[logic delegate] coreLogicDownloadDidPause:logic];
+                } else {
+                    [[logic delegate] coreLogicDownloadWillStart:logic];
+                }
+            }
+            
+            if([logic loopCallback]) {
+                [[logic objCallback] performSelector:[logic loopCallback] withObject:stats];
+            }
+            [logic release];
+        }
     }];
 
     
@@ -117,7 +134,7 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     _delegate = newDelegate;
 }
 
--(CoreLogicDelegate*):delegate {
+-(CoreLogicDelegate*)delegate {
     return _delegate;
 }
 
@@ -130,6 +147,9 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
 }
 -(id)objCallback {
     return _objCallback;
+}
+-(nullable httrackp*)httrack_opt {
+    return _httrack_opt;;
 }
 
 -(void)initHttrack {
@@ -214,6 +234,14 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     }
     
     return;
+}
+
+-(void)pauseMirror:(int)p {
+    hts_setpause(_httrack_opt, p);
+}
+
+-(void)stopMirror {
+    hts_request_stop(_httrack_opt, 0);
 }
 
 @end

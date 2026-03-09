@@ -3,6 +3,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+enum {
+    HTR_CONTROL_PLAY = 0,
+    HTR_CONTROL_PAUSE,
+    HTR_CONTROL_STOP,
+};
+
 @interface ProjectsDataSource: NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate>
 {
     IBOutlet AppDelegate *_delegate;
@@ -23,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
     CoreLogic* _logic;
     CoreLogicDelegate * _logicDelegate;
     IBOutlet NSButton* _downloadButton;
-    IBOutlet NSButton* _pauseButton;
+    IBOutlet NSSegmentedControl* _playpausestopControl;
     
     IBOutlet NSTextField* _httrTotalRecvLabel;
     IBOutlet NSTextField* _httrTotalBytesWrittenLabel;
@@ -50,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (assign) IBOutlet NSTextField *httrSiteUrl;
 
--(void)updateStats:(hts_stat_struct *) stats;
+-(void)updateState:(hts_stat_struct *) stats;
 
 @end
 

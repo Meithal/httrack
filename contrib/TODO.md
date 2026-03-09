@@ -17,6 +17,7 @@ Bugs
 
 - [ ] Le listing de sites a gauche apparait une fois sur deux, sans bugs lancé par NSZombieObjects
 - [ ] Il reste des fuites de mémoire
+- [ ] Apres avoir cliqué sur STOP, appuyer sur download ne fait rien
 
 Taches
 ---
@@ -31,13 +32,14 @@ Taches
 - [x] Changer le sous titre de la fenetre une fois la copie lancée
 - [x] Empecher que l'UI freeze quand on lance une copie
 - [x] ... Griser le bouton pendant que le telechargement est en cours
-- [ ] ... Mettre un bouton de pause lors du telechargement
-- [ ] ... Avoir un feedback qu'une copie est en cours
+- [x] ... Mettre un bouton de pause lors du telechargement
+- [x] ... Avoir un feedback qu'une copie est en cours
 - [ ] ... Quand la fenetre associée est fermer, arrêter le thread de copie
 - [ ] ...... Avoir un systeme de background worker qui continue la copie meme quand le programme est arrêté et qui s'y reconnecte quand le programme est redémarré ?
 - [ ] Afficher hts_stat_struct update
 - [ ] Autocompletion avec sites deja existants
 - [ ] Lorsque le cache est corrompu, on a des erreurs bizarres, et sigbus
+- [ ] ... Quitter l'application proprement avec des handlers de sortie
 - [ ] Avoir un feedback des pages copiées
 - [ ] Chercher le listing des pages dans httrack plutot que lister l'arborescence
 - [ ] Avoir un bouton pour cacher sidebar <https://developer.apple.com/videos/play/wwdc2020/10104/?time=835> <https://stackoverflow.com/questions/54870957/nssplitviewcontroller-nssplitviewitem-support-in-xibs>

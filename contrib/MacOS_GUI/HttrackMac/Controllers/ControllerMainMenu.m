@@ -153,7 +153,7 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     
     _logic = _AppDelegate.getLogic;
     [_logic setDelegate:self];
-    [_logic setLoopCallback:@selector(updateStats:) withObject:self];
+    [_logic setLoopCallback:@selector(updateState:) withObject:self];
 }
 
 -(void) dealloc {
@@ -174,10 +174,27 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     }];
 }
 - (IBAction)pauseDownload:(id)sender {
-    
+    [_logic pauseMirror:1];
 }
 
--(void)updateStats:(hts_stat_struct *) stats {
+-(IBAction)segmentedControl:(NSSegmentedControl*)sender {
+    //NSLog(@"Segment %@\n", [sender selectedSegment]);
+    switch ([sender selectedTag]) {
+        case HTR_CONTROL_PLAY:
+            [_logic pauseMirror:0];
+            break;
+        case HTR_CONTROL_PAUSE:
+            [_logic pauseMirror:1];
+            break;
+        case HTR_CONTROL_STOP:
+            [_logic stopMirror];
+            break;
+        default:
+            break;
+    }
+}
+
+-(void)updateState:(hts_stat_struct *) stats {
     if(stats == NULL)
         return;
     
@@ -188,15 +205,29 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     NSLog(@"Download did start");
     
     [_downloadButton setEnabled:NO];
-    [_pauseButton setEnabled:YES];
+    [_playpausestopControl setSelectedSegment:HTR_CONTROL_PLAY];
+    [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_PAUSE];
+    [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_STOP];
+    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PLAY];
     return YES;
 }
 
 -(void)coreLogicDownloadDidStop:(CoreLogic*)sender {
     [_downloadButton setEnabled:YES];
-    [_pauseButton setEnabled:NO];
+    [_playpausestopControl setSelectedSegment:HTR_CONTROL_STOP];
+    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PAUSE];
+    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_STOP];
+    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PLAY];
+
 }
 
+-(void)coreLogicDownloadDidPause:(CoreLogic*)sender {
+    [_playpausestopControl setSelectedSegment:HTR_CONTROL_PAUSE];
+    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PAUSE];
+    [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_STOP];
+    [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_PLAY];
+
+}
 
 @end
 
