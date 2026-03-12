@@ -177,7 +177,7 @@ Please visit our Website: http://www.httrack.com
   if (makeindex_fp) { \
   char BIGSTK tempo[1024]; \
   if (makeindex_links == 1) { \
-  char BIGSTK link_escaped[HTS_URLMAXSIZE*2]; \
+  char BIGSTK link_escaped[HTS_URLMAXSIZE]; \
   escape_uri_utf(makeindex_firstlink, link_escaped, sizeof(link_escaped)); \
   snprintf(tempo,sizeof(tempo),"<meta HTTP-EQUIV=\"Refresh\" CONTENT=\"0; URL=%s\">"CRLF,link_escaped); \
   } else \
@@ -576,8 +576,8 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                     }
 
                     if (makeindex_fp != NULL) {
-                      char BIGSTK tempo[HTS_URLMAXSIZE * 2];
-                      char BIGSTK s[HTS_URLMAXSIZE * 2];
+                      char BIGSTK tempo[HTS_URLMAXSIZE];
+                      char BIGSTK s[HTS_URLMAXSIZE];
                       char *a = NULL;
                       char *b = NULL;
 
@@ -721,7 +721,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                 eol = "\r\n";
               if (StringNotEmpty(opt->footer) || opt->urlmode != 4) {   /* != preserve */
                 if (StringNotEmpty(opt->footer)) {
-                  char BIGSTK tempo[1024 + HTS_URLMAXSIZE * 2];
+                  char BIGSTK tempo[1024 + HTS_URLMAXSIZE];
                   char gmttime[256];
 
                   tempo[0] = '\0';
@@ -874,7 +874,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                   int ok = 0;
                   int dot = 0;
 
-                  while(n < HTS_URLMAXSIZE / 2 && a[n] != '\0'
+                  while(n < HTS_URLMAXSIZE && a[n] != '\0'
                         && (!is_space((unsigned char) a[n]) || !(ok = 1))
                     ) {
                     if (a[n] == '.') {
@@ -883,7 +883,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                     n++;
                   }
                   if (ok && dot > 0) {
-                    char BIGSTK tmp[HTS_URLMAXSIZE / 2 + 2];
+                    char BIGSTK tmp[HTS_URLMAXSIZE + 2];
 
                     tmp[0] = '\0';
                     strncat(tmp, a + dot + 1, n - dot - 1);
@@ -958,7 +958,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                           break;
                         else
                           a++;  // caractère suivant
-                      } while((a - b) < HTS_URLMAXSIZE / 2);
+                      } while((a - b) < HTS_URLMAXSIZE);
                       if (*a == scriptgen_q) {  // fin du quote
                         a++;
                         while(is_realspace(*a))
@@ -1168,7 +1168,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                               b = strchr(a, '>');
                               if (b != NULL) {
                                 if (b - html < 1000) { // au total < 1Ko
-                                  char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+                                  char BIGSTK tempo[HTS_URLMAXSIZE];
                                   const size_t offset = html - r->adr;
                                   char *const modify = &r->adr[offset];
                                   assertf(modify == html);
@@ -1549,7 +1549,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                           c = *a;
                           if (strchr("),;>/+\r\n", c)) {        // exemple: ..img.gif";
                             // le / est pour funct("img.gif" /* URL */);
-                            char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+                            char BIGSTK tempo[HTS_URLMAXSIZE];
                             char type[256];
                             int url_ok = 0;     // url valide?
 
@@ -1879,7 +1879,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
             }
 
             if (ok == 0) {      // tester un lien
-              char BIGSTK lien[HTS_URLMAXSIZE * 2];
+              char BIGSTK lien[HTS_URLMAXSIZE];
               int meme_adresse = 0;     // 0 par défaut pour primary
 
               //char *copie_de_adr=html;
@@ -1947,7 +1947,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                     if (p > q) {    // après le ? (toto.cgi?param=1//2.3)
                       done = 1; // stopper
                     } else {
-                      char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+                      char BIGSTK tempo[HTS_URLMAXSIZE];
 
                       tempo[0] = '\0';
                       strncatbuff(tempo, a, p - a);
@@ -1998,7 +1998,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                   const char *const charset = str->page_charset_;
                   const int hasCharset = charset != NULL 
                     && *charset != '\0';
-                  char BIGSTK query[HTS_URLMAXSIZE * 2];
+                  char BIGSTK query[HTS_URLMAXSIZE];
 
                   // cut query string
                   {
@@ -2079,9 +2079,10 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
 
                 // supprimer le(s) ./
                 while((lien[0] == '.') && (lien[1] == '/')) {
-                  char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+                  char BIGSTK tempo[HTS_URLMAXSIZE];
 
-                  strcpybuff(tempo, lien + /* ./ */ 2);
+                  strncpy(tempo, lien + 2, sizeof(lien) - 2);
+                  //strcpybuff(tempo, lien + /* ./ */ 2); dangeureux vu que lien + 2 degenere en *char
                   strcpybuff(lien, tempo);
                 }
                 if (strnotempty(lien) == 0)     // sauf si plus de nom de fichier
@@ -2151,7 +2152,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                       b++;
                     }
                     if (port == defport) {      // port 80, default - c'est débile
-                      char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+                      char BIGSTK tempo[HTS_URLMAXSIZE];
 
                       tempo[0] = '\0';
                       strncatbuff(tempo, lien, a - lien);
@@ -2198,7 +2199,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
 
                     /* base has always authority */
                     if (p_type == 2 && !link_has_authority(lien)) {
-                      char BIGSTK tmp[HTS_URLMAXSIZE * 2];
+                      char BIGSTK tmp[HTS_URLMAXSIZE];
 
                       strcpybuff(tmp, "http://");
                       strcatbuff(tmp, lien);
@@ -2234,7 +2235,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                             *(a + 1) = '\0';
                           }
                         }
-                        //char BIGSTK tempo[HTS_URLMAXSIZE*2];
+                        //char BIGSTK tempo[HTS_URLMAXSIZE];
                         //strcpybuff(tempo,"http://");
                         //strcatbuff(tempo,urladr());    // host
                         //if (*lien!='/')
@@ -2303,7 +2304,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                             // mailto: and co: do NOT add base
                             if (ident_url_relatif
                                 (lien, urladr(), urlfil(), &afs.af) >= 0) {
-                              char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+                              char BIGSTK tempo[HTS_URLMAXSIZE];
 
                               // base est absolue
                               strcpybuff(tempo, _base);
@@ -2326,7 +2327,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                           lien_adrfil baseaf;
                           if (ident_url_absolute(_base, &baseaf) >= 0) {
                             if ((strlen(baseaf.adr) + strlen(lien)) < HTS_URLMAXSIZE) {
-                              char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+                              char BIGSTK tempo[HTS_URLMAXSIZE];
 
                               // base est absolue
                               tempo[0] = '\0';
@@ -2443,11 +2444,11 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                   // gif sont impliqués par exemple)
                   if ((p_type != 2) && (p_type != -2)) {        // pas base href ou codebase
                     if (forbidden_url != 1) {
-                      char BIGSTK last_adr[HTS_URLMAXSIZE * 2];
+                      char BIGSTK last_adr[HTS_URLMAXSIZE];
 
                       /* Calc */
                       last_adr[0] = '\0';
-                      //char last_fil[HTS_URLMAXSIZE*2]="";
+                      //char last_fil[HTS_URLMAXSIZE]="";
                       strcpybuff(last_adr, afs.af.adr);        // ancienne adresse
                       //strcpybuff(last_fil,fil);    // ancien chemin
                       r_sv =
@@ -2667,8 +2668,8 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                             }   // html,gif
 
                             if (patch_it) {
-                              char BIGSTK save[HTS_URLMAXSIZE * 2];
-                              char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+                              char BIGSTK save[HTS_URLMAXSIZE];
+                              char BIGSTK tempo[HTS_URLMAXSIZE];
 
                               strcpybuff(save, StringBuff(opt->path_html_utf8));
                               strcatbuff(save, cat_name);
@@ -2761,8 +2762,8 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                         } else {        // que le nom de fichier (classe java)
                           // en gros recopie de plus bas: copier codebase et base
                           if (p_flush) {
-                            char BIGSTK tempo[HTS_URLMAXSIZE * 2];      // <-- ajouté
-                            char BIGSTK tempo_pat[HTS_URLMAXSIZE * 2];
+                            char BIGSTK tempo[HTS_URLMAXSIZE];      // <-- ajouté
+                            char BIGSTK tempo_pat[HTS_URLMAXSIZE];
 
                             // Calculer chemin
                             tempo_pat[0] = '\0';
@@ -2787,7 +2788,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                               }
                               // Cut path/filename
                               if (a) {
-                                char BIGSTK tempo2[HTS_URLMAXSIZE * 2];
+                                char BIGSTK tempo2[HTS_URLMAXSIZE];
 
                                 strcpybuff(tempo2, a + 1);      // FICHIER
                                 strncatbuff(tempo_pat, tempo, (a - tempo) + 1);   // chemin
@@ -2797,7 +2798,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
 
                             // érire codebase="chemin"
                             if ((opt->getmode & 1) && (ptr > 0)) {
-                              char BIGSTK tempo4[HTS_URLMAXSIZE * 2];
+                              char BIGSTK tempo4[HTS_URLMAXSIZE];
 
                               tempo4[0] = '\0';
 
@@ -2850,7 +2851,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                       }
                       lastsaved = eadr - 1;     // dernier écrit+1 (enfin euh apres on fait un ++ alors hein)
                     } else if (opt->urlmode == 5) {     // transparent proxy URL
-                      char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+                      char BIGSTK tempo[HTS_URLMAXSIZE];
                       const char *uri;
                       int i;
                       char *pos;
@@ -2897,7 +2898,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                       }
                       lastsaved = eadr - 1;     // dernier écrit+1 (enfin euh apres on fait un ++ alors hein)
                     } else if (opt->urlmode == 2) {     // RELATIF
-                      char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+                      char BIGSTK tempo[HTS_URLMAXSIZE];
 
                       tempo[0] = '\0';
                       // calculer le lien relatif
@@ -2925,7 +2926,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                         if (p_type == -1) {     // que le nom de fichier
 
                           if (p_flush) {
-                            char BIGSTK tempo_pat[HTS_URLMAXSIZE * 2];
+                            char BIGSTK tempo_pat[HTS_URLMAXSIZE];
 
                             tempo_pat[0] = '\0';
                             {
@@ -2948,7 +2949,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                               }
 
                               if (a) {
-                                char BIGSTK tempo2[HTS_URLMAXSIZE * 2];
+                                char BIGSTK tempo2[HTS_URLMAXSIZE];
 
                                 strcpybuff(tempo2, a + 1);
                                 strncatbuff(tempo_pat, tempo, a - tempo + 1);   // chemin
@@ -2958,7 +2959,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
 
                             // érire codebase="chemin"
                             if ((opt->getmode & 1) && (ptr > 0)) {
-                              char BIGSTK tempo4[HTS_URLMAXSIZE * 2];
+                              char BIGSTK tempo4[HTS_URLMAXSIZE];
 
                               tempo4[0] = '\0';
 
@@ -3406,7 +3407,7 @@ int hts_mirror_check_moved(htsmoduleStruct * str,
       hts_log_print(opt, LOG_WARNING, "%s for %s%s", r->msg, urladr(), urlfil());
 
       {
-        char BIGSTK mov_url[HTS_URLMAXSIZE * 2];
+        char BIGSTK mov_url[HTS_URLMAXSIZE];
         lien_adrfilsave savedmoved;
         lien_adrfil *const moved = &savedmoved.af;
         int get_it = 0;         // ne pas prendre le fichier à la même adresse par défaut
@@ -3427,8 +3428,8 @@ int hts_mirror_check_moved(htsmoduleStruct * str,
 
           // check whether URLHack is harmless or not
           if (opt->urlhack) {
-            char BIGSTK n_adr[HTS_URLMAXSIZE * 2], n_fil[HTS_URLMAXSIZE * 2];
-            char BIGSTK pn_adr[HTS_URLMAXSIZE * 2], pn_fil[HTS_URLMAXSIZE * 2];
+            char BIGSTK n_adr[HTS_URLMAXSIZE], n_fil[HTS_URLMAXSIZE];
+            char BIGSTK pn_adr[HTS_URLMAXSIZE], pn_fil[HTS_URLMAXSIZE];
 
             n_adr[0] = n_fil[0] = '\0';
             (void) adr_normalized(moved->adr, n_adr);
@@ -3875,7 +3876,7 @@ void hts_mirror_process_user_interaction(htsmoduleStruct * str,
     lien_adrfilsave add;
 
     while(*opt->state._hts_addurl) {
-      char BIGSTK add_url[HTS_URLMAXSIZE * 2];
+      char BIGSTK add_url[HTS_URLMAXSIZE];
 
       add.af.adr[0] = add.af.fil[0] = add_url[0] = '\0';
       if (!link_has_authority(*opt->state._hts_addurl))
@@ -4593,7 +4594,7 @@ int hts_wait_delayed(htsmoduleStruct * str, lien_adrfilsave *afs,
           }
           /* Moved! */
           else if (HTTP_IS_REDIRECT(back[b].r.statuscode)) {
-            char BIGSTK mov_url[HTS_URLMAXSIZE * 2];
+            char BIGSTK mov_url[HTS_URLMAXSIZE];
 
             mov_url[0] = '\0';
             strcpybuff(mov_url, back[b].r.location);    // copier URL
