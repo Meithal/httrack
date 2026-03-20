@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.12)
 # endif()
 
 ### set the lowest xcode 26 handles
-set(MAX_SDK "10.14")
+set(MAX_SDK "10.8")
 if(APPLE)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET ${MAX_SDK})
 	set(MACOSX_DEPLOYMENT_TARGET ${MAX_SDK})

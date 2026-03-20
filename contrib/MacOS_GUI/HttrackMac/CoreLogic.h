@@ -22,9 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
     CoreLogicDelegate * _delegate;
     id _objCallback;
     SEL _loopCallback;
+    enum CoreLogicState {CORELOGIC_STATE_STOPPED,CORELOGIC_STATE_RUNNING, CORELOGIC_STATE_PAUSED} _state;
+    MyDirectoryElements * _websites;
 }
-@property (readonly) MyDirectoryElements * websites;
-
+-(MyDirectoryElements *) websites;
 -(void)dowloadSite:(NSString*) url onError:(void (^)(NSString *, NSErrorDomain, NSInteger)) onError;
 -(void)indexOfDownloadedSites:(MyDirectoryElements *) arbo;
 
@@ -38,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)pauseMirror:(int)p;
 -(void)stopMirror;
+-(enum CoreLogicState) state;
+-(void)setState:(enum CoreLogicState)state;
 @end
 
 @protocol CoreLogicDelegate<NSObject>

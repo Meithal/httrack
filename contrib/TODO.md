@@ -18,7 +18,7 @@ Bugs
 - [ ] Le listing de sites a gauche apparait une fois sur deux, sans bugs lancé par NSZombieObjects
 - [ ] Il reste des fuites de mémoire
 - [ ] Apres avoir cliqué sur STOP, appuyer sur download ne fait rien
-- [ ] 1star.gif plante le cache_add
+- [x] 1star.gif plante le cache_add
 - [x] Hash coucal plante pour les caracteres superieurs a 128
 
 Taches
@@ -38,13 +38,14 @@ Taches
 - [x] ... Avoir un feedback qu'une copie est en cours
 - [ ] ... Quand la fenetre associée est fermer, arrêter le thread de copie
 - [ ] ...... Avoir un systeme de background worker qui continue la copie meme quand le programme est arrêté et qui s'y reconnecte quand le programme est redémarré ?
-- [ ] Afficher hts_stat_struct update
+- [x] Afficher hts_stat_struct update
 - [ ] ... Afficher les warnings, les infos et les erreurs
-- [ ] Autocompletion avec sites deja existants
+- [ ] Autocompletion avec sites deja existants <https://developer.apple.com/library/archive/samplecode/SearchField/Introduction/Intro.html#//apple_ref/doc/uid/DTS10004112-Intro-DontLinkElementID_2>
 - [ ] Lorsque le cache est corrompu, on a des erreurs bizarres, et sigbus
 - [ ] ... Quitter l'application proprement avec des handlers de sortie
 - [ ] Avoir un feedback des pages copiées
 - [ ] Chercher le listing des pages dans httrack plutot que lister l'arborescence
+- [ ] Tester Crackman.TTF si Crackman.ttf n'est pas trouvé'
 - [ ] Avoir un bouton pour cacher sidebar <https://developer.apple.com/videos/play/wwdc2020/10104/?time=835> <https://stackoverflow.com/questions/54870957/nssplitviewcontroller-nssplitviewitem-support-in-xibs>
 - [x] ... résoudre le bug de double declaration d'enum HTTP_STATUS_OK
 - [x] Sauvegarder le listing dans le dossier user plutot que l'endroit de l'executable.

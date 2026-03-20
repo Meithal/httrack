@@ -682,7 +682,7 @@
             </items>
             <point key="canvasLocation" x="200" y="121"/>
         </menu>
-        <window title="Httmirror" subtitle="Website archiver" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
+        <window title="Mac HTTP mirror" subtitle="Website archiver" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="890" height="1062"/>
@@ -1231,9 +1231,9 @@ DQ
                             <segmentedCell key="cell" borderStyle="border" alignment="left" style="texturedSquare" trackingMode="selectOne" id="JCY-lm-YjG">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment image="play.fill" catalog="system" enabled="NO"/>
-                                    <segment image="pause.fill" catalog="system" enabled="NO" tag="1"/>
-                                    <segment image="stop.fill" catalog="system" enabled="NO" tag="2"/>
+                                    <segment image="NSTouchBarPlayTemplate" enabled="NO"/>
+                                    <segment image="NSTouchBarPauseTemplate" enabled="NO" tag="1"/>
+                                    <segment image="NSTouchBarRecordStopTemplate" enabled="NO" tag="2"/>
                                 </segments>
                             </segmentedCell>
                             <connections>
@@ -1298,7 +1298,7 @@ DQ
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <clipView key="contentView" id="ikk-yy-Bj3">
                         <rect key="frame" x="1" y="1" width="361" height="149"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <predicateEditor verticalHuggingPriority="750" nestingMode="compound" canRemoveAllRows="YES" rowHeight="32" id="Ahb-VG-bcf">
                                 <rect key="frame" x="0.0" y="0.0" width="361" height="149"/>
@@ -1400,8 +1400,8 @@ DQ
         </customObject>
     </objects>
     <resources>
-        <image name="pause.fill" catalog="system" width="11" height="13"/>
-        <image name="play.fill" catalog="system" width="12" height="13"/>
-        <image name="stop.fill" catalog="system" width="14" height="13"/>
+        <image name="NSTouchBarPauseTemplate" width="14" height="17"/>
+        <image name="NSTouchBarPlayTemplate" width="15" height="17"/>
+        <image name="NSTouchBarRecordStopTemplate" width="18" height="17"/>
     </resources>
 </document>

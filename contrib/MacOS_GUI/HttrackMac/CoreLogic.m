@@ -21,40 +21,52 @@ NSErrorDomain const MacHttrackErrors = @"com.github.meithal";
 static int __cdecl my_loop(t_hts_callbackarg * carg, httrackp * opt, lien_back * back, int back_max, int back_index, int lien_n, int lien_tot, int stat_time, hts_stat_struct * stats) {
     // appelé à chaque boucle de HTTrack, permet d'arreter un telechargement
     // si besoin
+//    if(CALLBACKARG_PREV_FUN(carg, loop) != NULL) {
+//        CALLBACKARG_PREV_FUN(carg, loop)(CALLBACKARG_PREV_CARG( carg), opt, back, back_max, back_index, lien_n, lien_tot, stat_time, stats);
+//    }
     
+
     //printf("loop lien :%s \n");
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        if([[NSApp delegate] respondsToSelector:@selector(getLogic)]){
-            CoreLogic* logic = [[((AppDelegate*)[NSApp delegate]) getLogic] retain];
-            
-            httrackp * opt = [logic httrack_opt];
-            if(opt) {
-                if(opt->state.stop) {
-                    [[logic delegate] coreLogicDownloadDidStop:logic];
-                }
-                else if(opt->state._hts_setpause) {
-                    [[logic delegate] coreLogicDownloadDidPause:logic];
-                } else {
-                    [[logic delegate] coreLogicDownloadWillStart:logic];
-                }
-            }
-            
-            if([logic loopCallback]) {
-                [[logic objCallback] performSelector:[logic loopCallback] withObject:stats];
-            }
-            [logic release];
+        if(![[NSApp delegate] respondsToSelector:@selector(getLogic)]){
+            return;
         }
+        
+        CoreLogic* logic = [((AppDelegate*)[NSApp delegate]) getLogic];
+
+        httrackp * opt = [logic httrack_opt];
+        enum CoreLogicState old_state = [logic state];
+        if(opt) {
+            if(opt->state.stop) {
+                if(old_state != CORELOGIC_STATE_STOPPED)
+                    [[logic delegate] coreLogicDownloadDidStop:logic];
+                [logic setState:CORELOGIC_STATE_STOPPED];
+            }
+            else if(opt->state._hts_setpause) {
+                if(old_state != CORELOGIC_STATE_PAUSED)
+                    [[logic delegate] coreLogicDownloadDidPause:logic];
+                [logic setState:CORELOGIC_STATE_PAUSED];
+            } else {
+                if(old_state != CORELOGIC_STATE_RUNNING)
+                    [[logic delegate] coreLogicDownloadWillStart:logic];
+                [logic setState:CORELOGIC_STATE_RUNNING];
+            }
+        }
+        
+        if([logic loopCallback]) {
+            [[logic objCallback] performSelector:[logic loopCallback] withObject:(id)stats];
+        }
+        
     }];
 
-    
-  return 1;
+    return 1;
 }
 
 static void __cdecl my_filesave(t_hts_callbackarg * carg,
                                httrackp * opt, const char *file) {
     // Appellé après avoir sauvegardé un fichier
     
-    printf("TOTO %s\n", file);
+    printf("TOTO my_filesave %s\n", file);
   return;
 }
 
@@ -66,20 +78,40 @@ static void __cdecl my_filesave2(
      int not_updated) {
     // Appellé avant de sauvegarder un fichier
     
-    printf("TOTO2 %s\n", file);
+    printf("TOTO2 my_filesave2 adr: %s file: %s sac: %s is new %d is modified %d not updated %d\n", adr, file, sav, is_new, is_modified, not_updated);
+    
+    for(int i=0; i < opt->lien_tot; i++) {
+        printf("lien %d: %s\n", i, opt->liens[i]->sav);
+    }
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        CoreLogic* logic = [((AppDelegate*)[NSApp delegate]) getLogic];
+
+        httrackp * opt = [logic httrack_opt];
+
+    }];
+    
   return;
 }
 
 static int __cdecl my_end(
     t_hts_callbackarg * carg, httrackp * opt) {
+    printf("TOTO my_end\n");
   return 1;
 }
 
 static void __cdecl my_uninit(t_hts_callbackarg * carg) {
   // hts_freevar();
+    printf("TOTO my_uninit\n");
     
     return 1;
 }
+
+static int __cdecl my_linkdetected(t_hts_callbackarg * carg,
+                                           httrackp * opt, char *link) {
+    printf("TOTO my_linkdetected %s\n", link);
+  return 1;
+}
+
 
 #pragma mark fonction coeur de metier
 
@@ -111,11 +143,10 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     self = [super init];
     
     if (self) {
-        NSLog(@"init core appellé");
-        
         
         [self initHttrack];
         _eventDispatcher = [[HtmrEventDispatcher alloc] init];
+        _state = CORELOGIC_STATE_STOPPED;
     }
     
     return self;
@@ -152,8 +183,10 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     return _httrack_opt;;
 }
 
+#pragma mark initHttrack
 -(void)initHttrack {
     _httrack_opt = hts_create_opt();
+    _httrack_opt->debug = LOG_ERROR;
     //_httrack_opt->log = stderr;
     
     // On recupere le HOME sur mac
@@ -171,9 +204,8 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     htswrap_add(_httrack_opt, "save-file2", my_filesave2);
     htswrap_add(_httrack_opt, "end", my_end);
     htswrap_add(_httrack_opt, "free", my_uninit);
+    htswrap_add(_httrack_opt, "link-detected", my_linkdetected);
 }
-
-
 
 -(MyDirectoryElements *) websites
 {
@@ -184,7 +216,6 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     
     return _websites;
 }
-@synthesize websites = _websites;
 
 -(void)dowloadSite:(NSString*) url onError:(void (^)(NSString *, NSErrorDomain, NSInteger code)) onError
 {
@@ -199,6 +230,7 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
                 onError(description, MacHttrackErrors, NSURLErrorBadURL);
             }];
         }
+
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
             [_delegate coreLogicDownloadDidStop:self];
         }];
@@ -206,11 +238,16 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     }];
     
     NSOperationQueue * queue = [[NSOperationQueue alloc] init];
-    if(![_delegate coreLogicDownloadWillStart:self]) {
+    [queue setName:@"Httrack download queue"];
+    
+    if(![_delegate coreLogicDownloadWillStart:self]) { // our delegate callback
         return;
     }
+    [operation setName:@"Httrack download operation"];
+    
     [queue addOperation:operation];
 
+    [operation autorelease];
     [queue autorelease];
 }
 
@@ -242,6 +279,13 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
 
 -(void)stopMirror {
     hts_request_stop(_httrack_opt, 0);
+}
+
+-(enum CoreLogicState) state {
+    return _state;
+}
+-(void)setState:(enum CoreLogicState)state {
+    _state = state;
 }
 
 @end

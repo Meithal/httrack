@@ -325,7 +325,7 @@ static int __cdecl htsshow_loop(t_hts_callbackarg * carg, httrackp * opt, lien_b
 
   //
   TStamp mytime;
-  long int rate = 0;
+  int rate = 0;
   char st[256];
 
   //
@@ -503,7 +503,7 @@ static int __cdecl htsshow_loop(t_hts_callbackarg * carg, httrackp * opt, lien_b
               }
 
               if (ok) {
-                char BIGSTK s[HTS_URLMAXSIZE * 2];
+                char BIGSTK s[HTS_URLMAXSIZE];
 
                 //
                 StatsBuffer[index].back = i;    // index pour + d'infos
@@ -534,10 +534,10 @@ static int __cdecl htsshow_loop(t_hts_callbackarg * carg, httrackp * opt, lien_b
                   // couper
                   StatsBuffer[index].name[0] = '\0';
                   strncatbuff(StatsBuffer[index].name, s,
-                              MAX_LEN_INPROGRESS / 2 - 2);
+                              MAX_LEN_INPROGRESS - 2);
                   strcatbuff(StatsBuffer[index].name, "...");
                   strcatbuff(StatsBuffer[index].name,
-                             s + l - MAX_LEN_INPROGRESS / 2 + 2);
+                             s + l - MAX_LEN_INPROGRESS + 2);
                 }
 
                 if (back[i].r.totalsize >= 0) { // taille prédéfinie
