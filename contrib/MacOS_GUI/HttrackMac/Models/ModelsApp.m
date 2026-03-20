@@ -25,12 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
     me.files = [[NSMutableArray alloc] init];
     return [me autorelease];
 }
-//-(void)dealloc {
-//    [super dealloc];
-//    
-//    //[self.files release];
-//    //[self.directories release];
-//}
 @end
 
 @implementation ModelsApp

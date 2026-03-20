@@ -82,7 +82,7 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 }
 #pragma mark NSOutlineViewDataSource
 - (BOOL)outlineView:(nonnull NSOutlineView *)outlineView isItemExpandable:(nonnull MyDirectoryElements *)item {
-    if(item.class == MyDowloadableFile.class)
+    if(item.class == MyDowloadableFile.class) // ou != MyDirectoryElements.class
         return NO;
     NSLevelIndicatorCell * c;
     return item.directories.count || item.files.count;
@@ -160,6 +160,10 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     [_logic setDelegate:nil];
     [_logic setLoopCallback:nil withObject:nil];
     [super dealloc];
+}
+
+-(ProjectsOutlineView*)projectsOutlineView {
+    return _projectsOutlineView;
 }
 
 - (IBAction)httrDowloadButton:(NSButton *)sender {
@@ -253,7 +257,10 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PAUSE];
     [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_STOP];
     [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_PLAY];
+}
 
+- (void)coreLogicPageAdded:(nonnull CoreLogic *)sender { 
+    [[self projectsOutlineView] reloadData];
 }
 
 @end

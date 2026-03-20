@@ -1280,6 +1280,7 @@ DQ
                 <outlet property="_httrTotalWarningsLabel" destination="RGU-6M-b96" id="MOP-vr-joF"/>
                 <outlet property="_httrTotalWrittenFilesLabel" destination="hE2-qT-ZI2" id="j3j-AR-Sxk"/>
                 <outlet property="_playpausestopControl" destination="piV-pD-az3" id="GOD-2k-wqW"/>
+                <outlet property="_projectsOutlineView" destination="508-O8-Dav" id="Zcq-uY-HJI"/>
                 <outlet property="httrSiteUrl" destination="9g4-Du-4T3" id="hT6-VU-v9n"/>
             </connections>
         </customObject>

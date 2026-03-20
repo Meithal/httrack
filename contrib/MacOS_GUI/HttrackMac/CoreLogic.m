@@ -83,20 +83,37 @@ static void __cdecl my_filesave2(
     for(int i=0; i < opt->lien_tot; i++) {
         printf("lien %d: %s\n", i, opt->liens[i]->sav);
     }
+    
+//    if(file[0] == '\0') // empty file
+//        return;
+    
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         CoreLogic* logic = [((AppDelegate*)[NSApp delegate]) getLogic];
 
         httrackp * opt = [logic httrack_opt];
-
+        for(int i=0; i<logic.websites.directories.count; i++) {
+            if([logic.websites.directories[i].name isEqualToString:@(adr)]) {
+                [ModelsApp addFile:@(file) toArborescence:logic.websites.directories[i]];
+                break;
+            }
+        }
+        
+        [[logic delegate] coreLogicPageAdded:logic];
     }];
     
-  return;
+    return;
 }
 
 static int __cdecl my_end(
     t_hts_callbackarg * carg, httrackp * opt) {
     printf("TOTO my_end\n");
-  return 1;
+    /* call parent functions if multiple callbacks are chained. you can skip this part, if you don't want previous callbacks to be called. */
+    if (CALLBACKARG_PREV_FUN(carg, end) != NULL) {
+      /* status is ok on our side, return other callabck's status */
+      return CALLBACKARG_PREV_FUN(carg, end)(CALLBACKARG_PREV_CARG(carg), opt);
+    }
+
+    return 1;
 }
 
 static void __cdecl my_uninit(t_hts_callbackarg * carg) {
@@ -214,13 +231,13 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
         [self indexOfDownloadedSites:_websites];
     }
     
+    
+    
     return _websites;
 }
 
 -(void)dowloadSite:(NSString*) url onError:(void (^)(NSString *, NSErrorDomain, NSInteger code)) onError
 {
-    // TODO: implement download cancellation and pause
-    // - https://stackoverflow.com/questions/8113268/how-to-cancel-nsblockoperation
     NSBlockOperation * operation = [NSBlockOperation blockOperationWithBlock:^{
         int status = httpmirror([url UTF8String], _httrack_opt);
         
@@ -247,7 +264,7 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     
     [queue addOperation:operation];
 
-    [operation autorelease];
+    //[operation autorelease];
     [queue autorelease];
 }
 
@@ -265,7 +282,9 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
         {
             if([NSFileManager.defaultManager fileExistsAtPath:[[[url path] stringByAppendingPathComponent:file] stringByAppendingPathComponent:@"index.html"]]) {
                 
-                parseDirectoriesRecurse([ModelsApp addDirectory:file toArborescene:arbo], [url URLByAppendingPathComponent:file]);
+                [ModelsApp addDirectory:file toArborescene:arbo];
+                // dans le temps on parcourait les sites recursivement, plus necessaire
+                //parseDirectoriesRecurse([ModelsApp addDirectory:file toArborescene:arbo], [url URLByAppendingPathComponent:file]);
             }
         }
     }

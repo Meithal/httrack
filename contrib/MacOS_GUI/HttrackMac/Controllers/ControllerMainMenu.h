@@ -28,6 +28,8 @@ enum {
     IBOutlet AppDelegate *_AppDelegate;
     CoreLogic* _logic;
     CoreLogicDelegate * _logicDelegate;
+    
+    IBOutlet ProjectsOutlineView * _projectsOutlineView;
     IBOutlet NSButton* _downloadButton;
     IBOutlet NSSegmentedControl* _playpausestopControl;
     
@@ -57,6 +59,7 @@ enum {
 @property (assign) IBOutlet NSTextField *httrSiteUrl;
 
 -(void)updateState:(hts_stat_struct *) stats;
+-(ProjectsOutlineView*)projectsOutlineView;
 
 @end
 

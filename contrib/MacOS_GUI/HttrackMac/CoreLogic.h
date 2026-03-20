@@ -47,6 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(BOOL)coreLogicDownloadWillStart:(CoreLogic*)sender;
 -(void)coreLogicDownloadDidStop:(CoreLogic*)sender;
 -(void)coreLogicDownloadDidPause:(CoreLogic*)sender;
+-(void)coreLogicPageAdded:(CoreLogic*)sender;
 @end
 
 @interface HtmrEventDispatcher: NSObject {

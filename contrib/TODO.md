@@ -44,19 +44,26 @@ Taches
 - [ ] Lorsque le cache est corrompu, on a des erreurs bizarres, et sigbus
 - [ ] ... Quitter l'application proprement avec des handlers de sortie
 - [ ] Avoir un feedback des pages copiées
-- [ ] Chercher le listing des pages dans httrack plutot que lister l'arborescence
+- [x] ... Chercher le listing des pages dans httrack plutot que lister l'arborescence
+- [ ] ... Afficher une barre d'avancement de telechargement
 - [ ] Tester Crackman.TTF si Crackman.ttf n'est pas trouvé'
 - [ ] Avoir un bouton pour cacher sidebar <https://developer.apple.com/videos/play/wwdc2020/10104/?time=835> <https://stackoverflow.com/questions/54870957/nssplitviewcontroller-nssplitviewitem-support-in-xibs>
 - [x] ... résoudre le bug de double declaration d'enum HTTP_STATUS_OK
 - [x] Sauvegarder le listing dans le dossier user plutot que l'endroit de l'executable.
 - [x] Avoir un listing de sites copiés
 - [ ] ... Afficher l'avancement de chaque recopie
-- [ ] ... Faire en sorte que ce listing se mette a jour en temps reel
-- [ ] ... Le listing doit se faire sur un thread different
+- [x] ... Faire en sorte que ce listing se mette a jour en temps reel
+- [x] ... Le listing doit se faire sur un thread different
 - [ ] Avoir une icone a coté de chaque nom de site (favicon)
 - [ ] ... Mettre une option pour desactiver cette option
+- [ ] Avoir un apercu de chaque item
+- [ ] ... image pour image
+- [ ] ...... ouvrir l'image dans apercu
+- [ ] ... video pour video
+- [ ] ...... pouvoir lancer la video
+- [ ] ...... ouvrir la video dans un programme externe (quicktime, vlc...)
+- [ ] ... Vebview pour page
 - [ ] Avoir un listing de liens externes référencés par les diverses pages
-- [ ] Avoir un aperçu de chaque page copiée
 - [ ] Commencer a télécharger le favicon du site pour y associer une icone
 - [x] En proposer une vue arborescente comme dans un arbre FTP
 - [ ] S'assurer que le site web puisse s'imprimmer correctement. L'option "imprimer" ou "exporter en PDF" doit donner une vue qui fasse sens ?
