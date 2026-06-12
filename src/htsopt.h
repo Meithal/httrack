@@ -560,14 +560,14 @@ struct lien_back {
 #if DEBUG_CHECKINT
   char magic;
 #endif
-  char url_adr[HTS_URLMAXSIZE * 2];     // adresse
-  char url_fil[HTS_URLMAXSIZE * 2];     // nom du fichier distant
-  char url_sav[HTS_URLMAXSIZE * 2];     // nom à sauver sur disque (avec chemin éventuel)
-  char referer_adr[HTS_URLMAXSIZE * 2]; // adresse host page referer
-  char referer_fil[HTS_URLMAXSIZE * 2]; // fichier page referer
-  char location_buffer[HTS_URLMAXSIZE * 2];     // "location" en cas de "moved" (302,..)
+  char url_adr[HTS_URLMAXSIZE];     // adresse
+  char url_fil[HTS_URLMAXSIZE];     // nom du fichier distant
+  char url_sav[HTS_URLMAXSIZE];     // nom à sauver sur disque (avec chemin éventuel)
+  char referer_adr[HTS_URLMAXSIZE]; // adresse host page referer
+  char referer_fil[HTS_URLMAXSIZE]; // fichier page referer
+  char location_buffer[HTS_URLMAXSIZE];     // "location" en cas de "moved" (302,..)
   char *tmpfile;                // nom à sauver temporairement (compressé)
-  char tmpfile_buffer[HTS_URLMAXSIZE * 2];      // buffer pour le nom à sauver temporairement
+  char tmpfile_buffer[HTS_URLMAXSIZE];      // buffer pour le nom à sauver temporairement
   char send_too[1024];          // données à envoyer en même temps que le header
   int status;                   // status (-1=non utilisé, 0: prêt, >0: opération en cours)
   int locked;                   // locked (to be used soon)

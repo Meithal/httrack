@@ -138,7 +138,7 @@ const char *hts_detectbeg[] = {
   ""
 };
 
-/* ne pas détcter de liens dedans */
+/* ne pas détecter de liens dedans */
 const char *hts_nodetect[] = {
   "accept-charset",
   "accesskey",
