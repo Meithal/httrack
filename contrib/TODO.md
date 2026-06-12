@@ -66,6 +66,8 @@ Taches
 - [ ] Avoir un listing de liens externes référencés par les diverses pages
 - [ ] Commencer a télécharger le favicon du site pour y associer une icone
 - [x] En proposer une vue arborescente comme dans un arbre FTP
+- [ ] Montrer le nombre d'octets telechargés par page comme dans le process
+monitor app, en vue tableau.
 - [ ] S'assurer que le site web puisse s'imprimmer correctement. L'option "imprimer" ou "exporter en PDF" doit donner une vue qui fasse sens ?
 - [ ] Faire une maquette avec une grosse barre d'url en haut
 - [ ] Ajouter un feedback qui empeche de télécharger tant que l'url n'est pas correcte
@@ -104,6 +106,8 @@ Taches
 - [ ] ajouter un service de type texte qui permette de telecharger l'URL selectionnee dans safari ou n'importe ou
 - [ ] Afficher une barre de progression dans l'icone comme pour la stack de telechargement de safari
 - [ ] Idem pour l'icone de la toolbar qui ouvre un panel
+- [ ] Utiliser PaperKit pour montrer comment les pages sont liées entre elles avec
+des fleches, en mode Figma, afficher le contenu des pages avec webkit.
 
 Plus tard
 ---

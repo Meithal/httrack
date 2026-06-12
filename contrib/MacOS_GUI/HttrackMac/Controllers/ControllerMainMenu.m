@@ -5,7 +5,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Notre barre de recherche
-@interface MySearchInputField: NSSearchField
+@interface MySearchInputField: NSSearchField<NSToolbarDelegate>
 @end
 
 @implementation MySearchInputField
@@ -262,6 +262,11 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 - (void)coreLogicPageAdded:(nonnull CoreLogic *)sender { 
     [[self projectsOutlineView] reloadData];
 }
+
+- (void)coreLogicDownloadDidAdvance:(nonnull CoreLogic *)sender path:(nonnull NSString *)path domain:(nonnull NSString *)domain ratio:(float)ratio { 
+    [[self projectsOutlineView] reloadData];
+}
+
 
 @end
 

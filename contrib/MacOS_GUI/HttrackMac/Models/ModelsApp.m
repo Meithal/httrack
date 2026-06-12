@@ -25,6 +25,21 @@ NS_ASSUME_NONNULL_BEGIN
     me.files = [[NSMutableArray alloc] init];
     return [me autorelease];
 }
+
+
+- (BOOL)updateAdvancement:(nonnull NSString *)path site:(NSString*)site ratio:(float)ratio {
+    NSLog(@"me: %@ path: %@ site: %@ ratio: %.2f\n", _name, path, site, ratio);
+    for(int i=0; i<self.directories.count; i++) {
+        if([self.directories[i].name isEqualToString:site]) {
+            for(int j=0;j<self.directories[i].directories.count; j++)
+                if([self.directories[i].files[j].name isEqualToString:path])
+                    self.directories[i].files[j].downloadAdvancement = @(ratio);            
+            break;
+        }
+    }
+
+}
+
 @end
 
 @implementation ModelsApp

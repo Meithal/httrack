@@ -21,11 +21,10 @@ NSErrorDomain const MacHttrackErrors = @"com.github.meithal";
 static int __cdecl my_loop(t_hts_callbackarg * carg, httrackp * opt, lien_back * back, int back_max, int back_index, int lien_n, int lien_tot, int stat_time, hts_stat_struct * stats) {
     // appelé à chaque boucle de HTTrack, permet d'arreter un telechargement
     // si besoin
-//    if(CALLBACKARG_PREV_FUN(carg, loop) != NULL) {
-//        CALLBACKARG_PREV_FUN(carg, loop)(CALLBACKARG_PREV_CARG( carg), opt, back, back_max, back_index, lien_n, lien_tot, stat_time, stats);
-//    }
+    if(CALLBACKARG_PREV_FUN(carg, loop) != NULL) {
+        CALLBACKARG_PREV_FUN(carg, loop)(CALLBACKARG_PREV_CARG( carg), opt, back, back_max, back_index, lien_n, lien_tot, stat_time, stats);
+    }
     
-
     //printf("loop lien :%s \n");
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         if(![[NSApp delegate] respondsToSelector:@selector(getLogic)]){
@@ -53,10 +52,15 @@ static int __cdecl my_loop(t_hts_callbackarg * carg, httrackp * opt, lien_back *
             }
         }
         
-        if([logic loopCallback]) {
+        if([logic loopCallback]) { // met a jour l'affichage des stats
             [[logic objCallback] performSelector:[logic loopCallback] withObject:(id)stats];
         }
         
+        if(back && back->r.totalsize > 0) {
+            float ratio = (float)back->r.size / back->r.totalsize;
+            [[logic websites] updateAdvancement:@(back->url_fil) site:@(back->url_adr) ratio:ratio];
+            [[logic delegate] coreLogicDownloadDidAdvance:logic path:@(back->url_fil) domain:@(back->url_adr) ratio:ratio];
+        }
     }];
 
     return 1;
@@ -67,7 +71,8 @@ static void __cdecl my_filesave(t_hts_callbackarg * carg,
     // Appellé après avoir sauvegardé un fichier
     
     printf("TOTO my_filesave %s\n", file);
-  return;
+    
+    return;
 }
 
 static void __cdecl my_filesave2(
@@ -116,19 +121,11 @@ static int __cdecl my_end(
     return 1;
 }
 
-static void __cdecl my_uninit(t_hts_callbackarg * carg) {
-  // hts_freevar();
-    printf("TOTO my_uninit\n");
-    
-    return 1;
-}
-
 static int __cdecl my_linkdetected(t_hts_callbackarg * carg,
                                            httrackp * opt, char *link) {
-    printf("TOTO my_linkdetected %s\n", link);
+    printf("TOTOLINK my_linkdetected %s\n", link);
   return 1;
 }
-
 
 #pragma mark fonction coeur de metier
 
@@ -154,7 +151,6 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
 
 #pragma mark CoreLogic
 @implementation CoreLogic
-
 
 -(id)init{
     self = [super init];
@@ -220,7 +216,6 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
     htswrap_add(_httrack_opt, "save-file", my_filesave);
     htswrap_add(_httrack_opt, "save-file2", my_filesave2);
     htswrap_add(_httrack_opt, "end", my_end);
-    htswrap_add(_httrack_opt, "free", my_uninit);
     htswrap_add(_httrack_opt, "link-detected", my_linkdetected);
 }
 
@@ -230,8 +225,6 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
         _websites = [[MyDirectoryElements createFromString:@"racine"] retain];
         [self indexOfDownloadedSites:_websites];
     }
-    
-    
     
     return _websites;
 }
@@ -251,7 +244,6 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
             [_delegate coreLogicDownloadDidStop:self];
         }];
-
     }];
     
     NSOperationQueue * queue = [[NSOperationQueue alloc] init];

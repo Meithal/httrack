@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property NSInteger depth;
 
 +(instancetype) createFromString:(NSString *) name;
+-(BOOL) updateAdvancement:(NSString*)path site:(NSString*)site ratio:(float)ratio;
 @end
 
 @interface ModelsApp : NSObject
