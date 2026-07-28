@@ -232,6 +232,7 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
 -(void)dowloadSite:(NSString*) url onError:(void (^)(NSString *, NSErrorDomain, NSInteger code)) onError
 {
     NSBlockOperation * operation = [NSBlockOperation blockOperationWithBlock:^{
+        hts_init(); // ensure that openSSLctx is initialized
         int status = httpmirror([url UTF8String], _httrack_opt);
         
         if(_httrack_opt->state.exit_xh != 0) {
