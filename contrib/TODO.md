@@ -15,11 +15,9 @@ Ongoing
 Bugs
 ---
 
-- [ ] Le listing de sites a gauche apparait une fois sur deux, sans bugs lancé par NSZombieObjects
+- [ ] Le listing fait appraitre grabag deux fois de suite au lieu de teletype.com
 - [ ] Il reste des fuites de mémoire
 - [ ] Apres avoir cliqué sur STOP, appuyer sur download ne fait rien
-- [x] 1star.gif plante le cache_add
-- [x] Hash coucal plante pour les caracteres superieurs a 128
 
 Taches
 ---
@@ -108,11 +106,13 @@ monitor app, en vue tableau.
 - [ ] Idem pour l'icone de la toolbar qui ouvre un panel
 - [ ] Utiliser PaperKit pour montrer comment les pages sont liées entre elles avec
 des fleches, en mode Figma, afficher le contenu des pages avec webkit.
+- [ ] Faire que le panel de stats soit lié au bouton de la toolbar (qui reste actif
+tant que le panel est ouvert), ce bouton doit permettre de "toggle" le panel.
 
 Plus tard
 ---
 
-- [ ] Avoir un REPL
+- [ ] Avoir un REPL (que faire en cas de decouverte de nouveaux liens)
 - [ ] Migrer vers grand central dispatch avec la version SwiftUI pour le listing de sites et le telechargement
 
 Doc utilisées
@@ -134,3 +134,11 @@ Docs a utiliser
 - Mise a jour listing temps reel : <https://developer.apple.com/documentation/foundation/improving-performance-and-stability-when-accessing-the-file-system?language=objc> (File presenter & coordinator)
 - Listing multithreadé : <https://developer.apple.com/documentation/foundation/nsfilecoordinator?language=objc>
 - NSdocument : <https://developer.apple.com/documentation/appkit/nsdocument?language=objc>
+
+
+Fixed bugs
+---
+
+- [x] 1star.gif plante le cache_add
+- [x] Hash coucal plante pour les caracteres superieurs a 128
+- [x] Le listing de sites a gauche apparait une fois sur deux, sans bugs lancé par NSZombieObjects

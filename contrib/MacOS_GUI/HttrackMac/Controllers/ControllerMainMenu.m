@@ -89,10 +89,8 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 }
 
 - (NSInteger)outlineView:(nonnull NSOutlineView *)outlineView numberOfChildrenOfItem:(nullable MyDirectoryElements *)item {
-    if(!_logic)
-        return 0;
     if(item == nil)
-        return _logic.websites.directories.count;
+        return _delegate.getLogic.websites.directories.count;
     else if (item.class == MyDowloadableFile.class)
         return 0;
     else
