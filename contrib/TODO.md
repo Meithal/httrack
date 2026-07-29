@@ -15,7 +15,6 @@ Ongoing
 Bugs
 ---
 
-- [ ] Le listing fait appraitre grabag deux fois de suite au lieu de teletype.com
 - [ ] Il reste des fuites de mémoire
 - [ ] Apres avoir cliqué sur STOP, appuyer sur download ne fait rien
 
@@ -142,3 +141,4 @@ Fixed bugs
 - [x] 1star.gif plante le cache_add
 - [x] Hash coucal plante pour les caracteres superieurs a 128
 - [x] Le listing de sites a gauche apparait une fois sur deux, sans bugs lancé par NSZombieObjects
+- [x] Le listing fait appraitre grabag deux fois de suite au lieu de teletype.com

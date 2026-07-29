@@ -118,7 +118,7 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 
 - (nonnull id)outlineView:(nonnull NSOutlineView *)outlineView child:(NSInteger)index ofItem:(nullable MyDirectoryElements*)item {
     if(item == nil)
-        return _logic.websites.directories[0];
+        return _delegate.getLogic.websites.directories[index];
     else {
         if(index < item.directories.count)
             return item.directories[index];

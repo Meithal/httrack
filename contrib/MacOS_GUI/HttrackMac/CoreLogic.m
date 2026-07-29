@@ -275,9 +275,9 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
         {
             if([NSFileManager.defaultManager fileExistsAtPath:[[[url path] stringByAppendingPathComponent:file] stringByAppendingPathComponent:@"index.html"]]) {
                 
-                [ModelsApp addDirectory:file toArborescene:arbo];
+                //[ModelsApp addDirectory:file toArborescene:arbo];
                 // dans le temps on parcourait les sites recursivement, plus necessaire
-                //parseDirectoriesRecurse([ModelsApp addDirectory:file toArborescene:arbo], [url URLByAppendingPathComponent:file]);
+                parseDirectoriesRecurse([ModelsApp addDirectory:file toArborescene:arbo], [url URLByAppendingPathComponent:file]);
             }
         }
     }
