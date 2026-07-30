@@ -105,13 +105,20 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
             return item.name;
         else if(([tableColumn.identifier isEqual:@"Avancement"]))
             return nil;
+        else if([tableColumn.identifier isEqual:@"Icone"])
+            return nil;
         else raise(42);
     } else if (item.class == MyDowloadableFile.class) {
         MyDowloadableFile * item_cast = (MyDowloadableFile*)item;
         if([tableColumn.identifier isEqual:@"PageName"])
             return item_cast.name;
-        else if(([tableColumn.identifier isEqual:@"Avancement"]))
+        else if([tableColumn.identifier isEqual:@"Avancement"])
             return item_cast.downloadAdvancement;
+        else if([tableColumn.identifier isEqual:@"Icone"]) {
+            NSImage * im = [[NSImage alloc] initByReferencingFile:[NSString stringWithFormat:@"%@/%@", item_cast.hd_path, item_cast.name]];
+            [im autorelease];
+            return im;
+        }
         else raise(42);
     }
 }
@@ -134,6 +141,11 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     if(item.class != MyDirectoryElements.class)
         return NO;
     return item.depth < 2;
+}
+
+- (void) outlineViewSelectionDidChange:(NSNotification *) notification
+{
+    NSLog(@"click %@", notification);
 }
 @end
 
@@ -194,6 +206,7 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     }
 }
 
+#pragma mark mise a jour de l'appli en fonction des infos de httrack
 -(void)updateState:(hts_stat_struct *) stats {
     if(stats == NULL)
         return;
@@ -230,6 +243,7 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     [formatter release];
 }
 
+#pragma mark logique des boutons pause et play, y compris venant de httrack
 -(BOOL)coreLogicDownloadWillStart:(CoreLogicDelegate *)sender {
     NSLog(@"Download did start");
     
@@ -257,14 +271,14 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_PLAY];
 }
 
-- (void)coreLogicPageAdded:(nonnull CoreLogic *)sender { 
+#pragma mark mise a jour de l'outline view
+- (void)coreLogicPageAdded:(nonnull CoreLogic *)sender {
     [[self projectsOutlineView] reloadData];
 }
 
 - (void)coreLogicDownloadDidAdvance:(nonnull CoreLogic *)sender path:(nonnull NSString *)path domain:(nonnull NSString *)domain ratio:(float)ratio { 
     [[self projectsOutlineView] reloadData];
 }
-
 
 @end
 

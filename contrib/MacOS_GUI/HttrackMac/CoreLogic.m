@@ -98,7 +98,7 @@ static void __cdecl my_filesave2(
         httrackp * opt = [logic httrack_opt];
         for(int i=0; i<logic.websites.directories.count; i++) {
             if([logic.websites.directories[i].name isEqualToString:@(adr)]) {
-                [ModelsApp addFile:@(file) toArborescence:logic.websites.directories[i]];
+                [ModelsApp addFile:@(file) toArborescence:logic.websites.directories[i] sittingAt:adr];
                 break;
             }
         }
@@ -143,7 +143,7 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
             if(isDir) {
                 parseDirectoriesRecurse([ModelsApp addDirectory:file toArborescene:dir], [adress URLByAppendingPathComponent:file]);
             } else {
-                [ModelsApp addFile:file toArborescence:dir];
+                [ModelsApp addFile:file toArborescence:dir sittingAt:[adress path]];
             }
         }
     }

@@ -15,6 +15,10 @@ Ongoing
 Bugs
 ---
 
+- [x] 1star.gif plante le cache_add
+- [x] Hash coucal plante pour les caracteres superieurs a 128
+- [x] Le listing de sites a gauche apparait une fois sur deux, sans bugs lancé par NSZombieObjects
+- [x] Le listing fait appraitre grabag deux fois de suite au lieu de teletype.com
 - [ ] Il reste des fuites de mémoire
 - [ ] Apres avoir cliqué sur STOP, appuyer sur download ne fait rien
 
@@ -33,7 +37,7 @@ Taches
 - [x] ... Griser le bouton pendant que le telechargement est en cours
 - [x] ... Mettre un bouton de pause lors du telechargement
 - [x] ... Avoir un feedback qu'une copie est en cours
-- [ ] ... Quand la fenetre associée est fermer, arrêter le thread de copie
+- [ ] ... Quand la fenetre associée est fermée, arrêter le thread de copie (?)
 - [ ] ...... Avoir un systeme de background worker qui continue la copie meme quand le programme est arrêté et qui s'y reconnecte quand le programme est redémarré ?
 - [x] Afficher hts_stat_struct update
 - [ ] ... Afficher les warnings, les infos et les erreurs
@@ -107,6 +111,13 @@ monitor app, en vue tableau.
 des fleches, en mode Figma, afficher le contenu des pages avec webkit.
 - [ ] Faire que le panel de stats soit lié au bouton de la toolbar (qui reste actif
 tant que le panel est ouvert), ce bouton doit permettre de "toggle" le panel.
+- [ ] Quand dans l'outline on clique sur un fichier html,
+afficher la page (dans un panel, ou dans la vue principale?)
+- [ ] Quand dans l'outline on clique sur une image,
+afficher l'image (dans un panel, ou dans la vue principale?)
+- [ ] Quand dans l'outline on clique sur un dossier zip,
+afficher son contenu (dans un panel, ou dans la vue principale?)
+- [x] Dans l'outline, a coté de chaque image en afficher une miniature
 
 Plus tard
 ---
@@ -134,11 +145,3 @@ Docs a utiliser
 - Listing multithreadé : <https://developer.apple.com/documentation/foundation/nsfilecoordinator?language=objc>
 - NSdocument : <https://developer.apple.com/documentation/appkit/nsdocument?language=objc>
 
-
-Fixed bugs
----
-
-- [x] 1star.gif plante le cache_add
-- [x] Hash coucal plante pour les caracteres superieurs a 128
-- [x] Le listing de sites a gauche apparait une fois sur deux, sans bugs lancé par NSZombieObjects
-- [x] Le listing fait appraitre grabag deux fois de suite au lieu de teletype.com

@@ -685,8 +685,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="449" height="1062"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="fullWidth" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="systemDefault" indentationPerLevel="13" autoresizesOutlineColumn="YES" outlineTableColumn="eEH-ST-yrq" id="508-O8-Dav" customClass="ProjectsOutlineView">
-                                                    <rect key="frame" x="0.0" y="0.0" width="449" height="1062"/>
+                                                <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="fullWidth" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="systemDefault" headerView="a3x-8R-fXX" indentationPerLevel="13" autoresizesOutlineColumn="YES" outlineTableColumn="eEH-ST-yrq" id="508-O8-Dav" customClass="ProjectsOutlineView">
+                                                    <rect key="frame" x="0.0" y="0.0" width="449" height="1034"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="17" height="0.0"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -704,7 +704,7 @@
                                                             </textFieldCell>
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         </tableColumn>
-                                                        <tableColumn identifier="Avancement" width="68" minWidth="10" maxWidth="3.4028234663852886e+38" id="jmS-kM-DPA">
+                                                        <tableColumn identifier="Avancement" editable="NO" width="68" minWidth="10" maxWidth="3.4028234663852886e+38" id="jmS-kM-DPA">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -712,6 +712,14 @@
                                                             <levelIndicatorCell key="dataCell" state="on" alignment="left" doubleValue="3" maxValue="3" warningValue="3" criticalValue="3" levelIndicatorStyle="continuousCapacity" id="1wo-aJ-obr">
                                                                 <font key="font" metaFont="system"/>
                                                             </levelIndicatorCell>
+                                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                        </tableColumn>
+                                                        <tableColumn identifier="Icone" editable="NO" width="64" minWidth="10" maxWidth="3.4028234663852886e+38" id="l2s-28-elw">
+                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
+                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            </tableHeaderCell>
+                                                            <imageCell key="dataCell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="vdb-dP-pkZ"/>
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         </tableColumn>
                                                     </tableColumns>
@@ -731,6 +739,10 @@
                                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
+                                        <tableHeaderView key="headerView" wantsLayer="YES" id="a3x-8R-fXX">
+                                            <rect key="frame" x="0.0" y="0.0" width="449" height="28"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableHeaderView>
                                     </scrollView>
                                 </subviews>
                             </customView>

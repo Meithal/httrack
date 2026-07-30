@@ -13,7 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy) NSString * name;
 @property (assign) NSNumber * downloadAdvancement; /** 0.0 - 1.0 */
 @property (assign) NSDate * dateCreated;
-+(instancetype) createFromString:(NSString *) name;
+@property (copy) NSString * hd_path;
++(instancetype) createFromString:(NSString *) name atPath:(NSString*) path;
 @end
 
 @interface MyDirectoryElements : NSObject
@@ -29,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ModelsApp : NSObject
 +(MyDirectoryElements *)allocArborescence;
 +(MyDirectoryElements*)addDirectory:(NSString *)dirname toArborescene:(MyDirectoryElements *)arbo;
-+(id)addFile:(NSString*) file toArborescence:(MyDirectoryElements *)arbo;
++(id)addFile:(NSString*) file toArborescence:(MyDirectoryElements *)arbo sittingAt:(NSString*) path;
 @end
 
 NS_ASSUME_NONNULL_END

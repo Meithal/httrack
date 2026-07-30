@@ -10,9 +10,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation MyDowloadableFile
-+ (nonnull instancetype)createFromString:(nonnull NSString *)name {
++ (nonnull instancetype)createFromString:(nonnull NSString *)name
+atPath:(nonnull NSString *)path {
     MyDowloadableFile * me =[[MyDowloadableFile alloc] init];
     me.name = name;
+    me.hd_path = path;
     return [me autorelease];
 }
 @end
@@ -49,8 +51,8 @@ NS_ASSUME_NONNULL_BEGIN
     return dir;
 }
 
-+ (nonnull id)addFile:(nonnull NSString *)file toArborescence:(nonnull MyDirectoryElements *)arbo {
-    [arbo.files addObject:[MyDowloadableFile createFromString:file]];
++ (nonnull id)addFile:(nonnull NSString *)file toArborescence:(nonnull MyDirectoryElements *)arbo sittingAt:(NSString*) path {
+    [arbo.files addObject:[MyDowloadableFile createFromString:file atPath:path]];
     
     return self;
 }
