@@ -16,9 +16,19 @@ enum {
 }
 @end
 
+@class ControllerMainMenu;
+
 @interface ProjectsOutlineView: NSOutlineView
+{
+    IBOutlet ControllerMainMenu* _mainController;
+}
+-(ControllerMainMenu*)mainController;
 @end
 
+@interface MonContenuPreview: NSView {
+}
+-(void)mainChangePreview:(NSString*)chemin;
+@end
 
 /**
  Notre "controlleur" qui fait l'interface entre l'UI et la logique+données
@@ -54,12 +64,15 @@ enum {
     IBOutlet NSTextField* _httrRateLabel;
     IBOutlet NSTextField* _httrLastConnectLabel;
     IBOutlet NSTextField* _httrLastRequestLabel;
+    
+    IBOutlet MonContenuPreview* _contenuPreview;
 }
 
 @property (assign) IBOutlet NSTextField *httrSiteUrl;
 
 -(void)updateState:(hts_stat_struct *) stats;
 -(ProjectsOutlineView*)projectsOutlineView;
+-(MonContenuPreview*) contenuPreview;
 
 @end
 

@@ -663,30 +663,30 @@
         <window title="Mac HTTP mirror" subtitle="Website archiver" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="335" y="390" width="890" height="1062"/>
+            <rect key="contentRect" x="335" y="390" width="895" height="521"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1512" height="944"/>
             <value key="minSize" type="size" width="419" height="307"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="890" height="1062"/>
+                <rect key="frame" x="0.0" y="0.0" width="895" height="521"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <splitView arrangesAllSubviews="NO" dividerStyle="thin" vertical="YES" id="LEU-ZN-iGX">
-                        <rect key="frame" x="0.0" y="0.0" width="890" height="1062"/>
+                        <rect key="frame" x="0.0" y="0.0" width="895" height="521"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <customView fixedFrame="YES" id="8xI-RN-m18">
-                                <rect key="frame" x="0.0" y="0.0" width="449" height="1062"/>
+                                <rect key="frame" x="0.0" y="0.0" width="451" height="521"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" allowsMagnification="YES" usesPredominantAxisScrolling="NO" id="LTy-Ps-CcN">
-                                        <rect key="frame" x="0.0" y="0.0" width="449" height="1062"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="451" height="521"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" drawsBackground="NO" id="ce6-tH-sD8">
-                                            <rect key="frame" x="0.0" y="0.0" width="449" height="1062"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="451" height="521"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="fullWidth" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="systemDefault" headerView="a3x-8R-fXX" indentationPerLevel="13" autoresizesOutlineColumn="YES" outlineTableColumn="eEH-ST-yrq" id="508-O8-Dav" customClass="ProjectsOutlineView">
-                                                    <rect key="frame" x="0.0" y="0.0" width="449" height="1034"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="451" height="493"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="17" height="0.0"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -724,6 +724,7 @@
                                                         </tableColumn>
                                                     </tableColumns>
                                                     <connections>
+                                                        <outlet property="_mainController" destination="Nbn-6H-ZPH" id="fhw-jq-3j1"/>
                                                         <outlet property="dataSource" destination="ekE-Pl-wKh" id="38C-oN-gI6"/>
                                                         <outlet property="delegate" destination="ekE-Pl-wKh" id="TKJ-YK-tIw"/>
                                                     </connections>
@@ -740,18 +741,18 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <tableHeaderView key="headerView" wantsLayer="YES" id="a3x-8R-fXX">
-                                            <rect key="frame" x="0.0" y="0.0" width="449" height="28"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="451" height="28"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableHeaderView>
                                     </scrollView>
                                 </subviews>
                             </customView>
                             <customView fixedFrame="YES" id="9T3-Qw-mWp">
-                                <rect key="frame" x="450" y="0.0" width="440" height="1062"/>
+                                <rect key="frame" x="452" y="0.0" width="443" height="521"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <button tag="1234" verticalHuggingPriority="750" id="5Ii-9n-Rqw">
-                                        <rect key="frame" x="332" y="12" width="95" height="32"/>
+                                        <rect key="frame" x="335" y="12" width="95" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <buttonCell key="cell" type="push" title="Download" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="CUC-uB-izS">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -760,10 +761,11 @@
 DQ
 </string>
                                         </buttonCell>
-                                        <connections>
-                                            <action selector="httrDowloadButton:" target="Nbn-6H-ZPH" id="cn9-jd-eEP"/>
-                                        </connections>
                                     </button>
+                                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L3y-5D-Mzt" customClass="MonContenuPreview">
+                                        <rect key="frame" x="20" y="59" width="403" height="442"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    </customView>
                                 </subviews>
                             </customView>
                         </subviews>
@@ -833,11 +835,12 @@ DQ
                 <outlet property="delegate" destination="Voe-Tx-rLC" id="top-28-M4D"/>
                 <outlet property="initialFirstResponder" destination="9g4-Du-4T3" id="ycP-Ng-Ixb"/>
             </connections>
-            <point key="canvasLocation" x="234" y="372"/>
+            <point key="canvasLocation" x="236.5" y="101.5"/>
         </window>
         <customObject id="Nbn-6H-ZPH" userLabel="ControllerMainMenu" customClass="ControllerMainMenu">
             <connections>
                 <outlet property="_AppDelegate" destination="Voe-Tx-rLC" id="u0o-xm-Iaz"/>
+                <outlet property="_contenuPreview" destination="L3y-5D-Mzt" id="HPR-54-c7c"/>
                 <outlet property="_downloadButton" destination="5Ii-9n-Rqw" id="Zbp-pK-Btk"/>
                 <outlet property="_httrLastConnectLabel" destination="gi9-fV-jFH" id="FWT-rQ-ioS"/>
                 <outlet property="_httrLastRequestLabel" destination="cwc-pv-FTk" id="NkX-S9-ncZ"/>

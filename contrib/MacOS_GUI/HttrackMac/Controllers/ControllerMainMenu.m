@@ -116,6 +116,7 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
             return item_cast.downloadAdvancement;
         else if([tableColumn.identifier isEqual:@"Icone"]) {
             NSImage * im = [[NSImage alloc] initByReferencingFile:[NSString stringWithFormat:@"%@/%@", item_cast.hd_path, item_cast.name]];
+            
             [im autorelease];
             return im;
         }
@@ -145,7 +146,15 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 
 - (void) outlineViewSelectionDidChange:(NSNotification *) notification
 {
-    NSLog(@"click %@", notification);
+    if([notification.userInfo objectForKey:@"NSTableViewCurrentRowSelectionUserInfoKey"] == nil)
+        return;
+    
+    NSUInteger idx =((NSIndexSet*)notification.userInfo[@"NSTableViewCurrentRowSelectionUserInfoKey"]).firstIndex;
+    
+    MyDowloadableFile* orow = [((ProjectsOutlineView*)notification.object) itemAtRow:idx ];
+    if([orow respondsToSelector:@selector(hd_path)]) {
+        [((ProjectsOutlineView*)notification.object).mainController.contenuPreview mainChangePreview:[NSString stringWithFormat:@"%@/%@", orow.hd_path, orow.name]];
+    }
 }
 @end
 
@@ -155,6 +164,10 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 -(void)awakeFromNib{
     [self reloadData];
 }
+-(ControllerMainMenu*)mainController {
+    return _mainController;
+}
+
 @end
 
 #pragma mark ControllerMainMenu
@@ -176,8 +189,12 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
     return _projectsOutlineView;
 }
 
+-(MonContenuPreview*) contenuPreview {
+    return _contenuPreview;
+}
+
+
 - (IBAction)httrDowloadButton:(NSButton *)sender {
-    NSLog(@"button click %@\n", sender);
     NSLog(@"Push %@", [self.httrSiteUrl stringValue]);
     
     [_AppDelegate changeWindowSubtitle:[self.httrSiteUrl stringValue]];
@@ -278,6 +295,23 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 
 - (void)coreLogicDownloadDidAdvance:(nonnull CoreLogic *)sender path:(nonnull NSString *)path domain:(nonnull NSString *)domain ratio:(float)ratio { 
     [[self projectsOutlineView] reloadData];
+}
+
+@end
+
+@implementation MonContenuPreview
+
+-(void)mainChangePreview:(NSString*)chemin {
+    for (NSView* v in [self subviews]) {
+        [v removeFromSuperview];
+    }
+    NSImage* im = [[NSImage alloc] initByReferencingFile:chemin];
+    NSImageView* iv = [NSImageView imageViewWithImage:im];
+    [iv setFrame:NSMakeRect(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height)];
+    [im autorelease];
+    [iv setAutoresizingMask:self.autoresizingMask];
+
+    [self addSubview:iv];
 }
 
 @end
