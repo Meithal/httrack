@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
+#import <WebKit/WebKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,7 +26,7 @@ enum {
 -(ControllerMainMenu*)mainController;
 @end
 
-@interface MonContenuPreview: NSView {
+@interface MonContenuPreview: NSView<WKUIDelegate> {
 }
 -(void)mainChangePreview:(NSString*)chemin;
 @end
@@ -33,7 +34,7 @@ enum {
 /**
  Notre "controlleur" qui fait l'interface entre l'UI et la logique+données
  */
-@interface ControllerMainMenu : NSObject<CoreLogicDelegate>
+@interface ControllerMainMenu : NSViewController<CoreLogicDelegate>
 {
     IBOutlet AppDelegate *_AppDelegate;
     CoreLogic* _logic;

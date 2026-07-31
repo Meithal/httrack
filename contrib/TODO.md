@@ -113,17 +113,26 @@ des fleches, en mode Figma, afficher le contenu des pages avec webkit.
 tant que le panel est ouvert), ce bouton doit permettre de "toggle" le panel.
 - [ ] Quand dans l'outline on clique sur un fichier html,
 afficher la page (dans un panel, ou dans la vue principale?)
-- [ ] Quand dans l'outline on clique sur une image,
+- [x] Quand dans l'outline on clique sur une image,
 afficher l'image (dans un panel, ou dans la vue principale?)
+- [ ] Afficher toutes les images dans un CollectionLayout <https://developer.apple.com/documentation/appkit/nscollectionview>
 - [ ] Quand dans l'outline on clique sur un dossier zip,
 afficher son contenu (dans un panel, ou dans la vue principale?)
 - [x] Dans l'outline, a coté de chaque image en afficher une miniature
+- [ ] Utiliser NsWorkBench pour ouvrir safari ou questionner les navigateurs disponibles <https://developer.apple.com/documentation/appkit/nsworkspace>
+- [ ] NSSharing service qui compresse le site web et l'envoye par mail & autre.
 
 Plus tard
 ---
 
 - [ ] Avoir un REPL (que faire en cas de decouverte de nouveaux liens)
 - [ ] Migrer vers grand central dispatch avec la version SwiftUI pour le listing de sites et le telechargement
+- [ ] Creer une version Mac Catalyst pour que l'App tourne sur iPad et MacBook
+- [ ] Version compatible avec Rhapsody et compilable avec Interface Builder for Windows ?
+- [ ] Afficher l'avancée des téléchargements
+dans une status bar <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/StatusBar/StatusBar.html>
+- [ ] Imprimer le site recopié, regrouper les pages en use seule vue ?
+images séparées ? Version webview allégée (focus lecture).
 
 Doc utilisées
 ---

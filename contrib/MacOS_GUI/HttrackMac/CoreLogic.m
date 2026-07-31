@@ -4,7 +4,6 @@
 //
 //  Created by ivo on 13/02/2026.
 //
-#import <Cocoa/Cocoa.h>
 
 #import "CoreLogic.h"
 #import "AppDelegate.h"
@@ -98,7 +97,7 @@ static void __cdecl my_filesave2(
         httrackp * opt = [logic httrack_opt];
         for(int i=0; i<logic.websites.directories.count; i++) {
             if([logic.websites.directories[i].name isEqualToString:@(adr)]) {
-                [ModelsApp addFile:@(file) toArborescence:logic.websites.directories[i] sittingAt:adr];
+                [ModelsApp addFile:@(file) toArborescence:logic.websites.directories[i] sittingAt:[NSString stringWithCString:adr encoding:NSUnicodeStringEncoding]];
                 break;
             }
         }
@@ -275,9 +274,8 @@ void parseDirectoriesRecurse(MyDirectoryElements * dir, NSURL * adress)
         {
             if([NSFileManager.defaultManager fileExistsAtPath:[[[url path] stringByAppendingPathComponent:file] stringByAppendingPathComponent:@"index.html"]]) {
                 
-                //[ModelsApp addDirectory:file toArborescene:arbo];
-                // dans le temps on parcourait les sites recursivement, plus necessaire
                 parseDirectoriesRecurse([ModelsApp addDirectory:file toArborescene:arbo], [url URLByAppendingPathComponent:file]);
+                
             }
         }
     }

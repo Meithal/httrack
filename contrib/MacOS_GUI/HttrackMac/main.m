@@ -16,6 +16,7 @@ int main(int argc, const char * argv[]) {
     printf("is mutithreaded %d\n", [NSThread isMultiThreaded]);
     
     //NSLog(@"GC %@\n", [NSGarbageCollector defaultCollector]);
+    //NSLog(@"%@", NSAppKitVersionNumber);
 
     return NSApplicationMain(argc, argv);
 }

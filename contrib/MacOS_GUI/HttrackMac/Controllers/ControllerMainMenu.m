@@ -2,6 +2,8 @@
 
 #import "ControllerMainMenu.h"
 
+#import <WebKit/WebKit.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Notre barre de recherche
@@ -302,16 +304,46 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 @implementation MonContenuPreview
 
 -(void)mainChangePreview:(NSString*)chemin {
+    
+    if(0) { /// a garder en tete pour comment envoyer des notifications plus tard
+        NSUserNotification* note = [[NSUserNotification alloc] init];
+        note.title = @"Salut";
+        [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification: note];
+        
+        NSString* s = @("foo");
+        [NSColor underPageBackgroundColor];
+        
+    }
+
     for (NSView* v in [self subviews]) {
         [v removeFromSuperview];
     }
+    
+    if([chemin.pathExtension.lowercaseString isEqualTo:@"html"]) {
+        WKWebViewConfiguration* wvc = [[WKWebViewConfiguration alloc] init];
+        WKWebView* wv = [[WKWebView alloc] initWithFrame:self.safeAreaRect];
+        
+        [wv setUIDelegate:self];
+        [wv loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:chemin]]];
+        
+        [wvc autorelease];
+        [wv autorelease];
+        [wv setAutoresizingMask:self.autoresizingMask];
+        
+        
+        [self addSubview:wv];
+    }
+    
     NSImage* im = [[NSImage alloc] initByReferencingFile:chemin];
-    NSImageView* iv = [NSImageView imageViewWithImage:im];
-    [iv setFrame:NSMakeRect(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height)];
-    [im autorelease];
-    [iv setAutoresizingMask:self.autoresizingMask];
-
-    [self addSubview:iv];
+    if([im isValid]) {
+        NSImageView* iv = [NSImageView imageViewWithImage:im];
+        [iv setFrame:NSMakeRect(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height)];
+        [im autorelease];
+        [iv setAutoresizingMask:self.autoresizingMask];
+        
+        [self addSubview:iv];
+    }
+    
 }
 
 @end

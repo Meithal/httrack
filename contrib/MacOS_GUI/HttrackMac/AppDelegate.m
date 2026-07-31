@@ -14,6 +14,9 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
     
+    
+    //[NSApp setPresentationOptions:NSApplicationPresentationDisableAppleMenu];
+    
     NSLog(@"tile size= %@", NSStringFromSize( _window.dockTile.size));
     NSView* w = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 128, 128)];
     self.AppIcon.wantsLayer = YES;
