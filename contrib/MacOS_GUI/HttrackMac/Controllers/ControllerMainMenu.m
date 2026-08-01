@@ -6,6 +6,188 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#pragma mark ControllerMainMenu
+@implementation ControllerMainMenu
+-(void) awakeFromNib {
+    
+    _logic = _AppDelegate.getLogic;
+    [_logic setDelegate:self];
+    [_logic setLoopCallback:@selector(updateState:) withObject:self];
+}
+
+-(void) dealloc {
+    [_logic setDelegate:nil];
+    [_logic setLoopCallback:nil withObject:nil];
+    [super dealloc];
+}
+
+-(ProjectsOutlineView*)projectsOutlineView {
+    return _projectsOutlineView;
+}
+
+-(MonContenuPreview*) contenuPreview {
+    return _contenuPreview;
+}
+
+
+- (IBAction)httrDowloadButton:(NSButton *)sender {
+    NSLog(@"Push %@", [self.httrSiteUrl stringValue]);
+    
+    [_AppDelegate changeWindowSubtitle:[self.httrSiteUrl stringValue]];
+    //[self.coreLogic indexOfDownloadedSites];
+    [_logic
+     dowloadSite:[self.httrSiteUrl stringValue]
+     onError:^(NSString *description, NSErrorDomain domain, NSInteger code) {
+        [_AppDelegate warnUser:description domain:domain code:code];
+    }];
+}
+
+-(IBAction)segmentedControl:(NSSegmentedControl*)sender {
+    //NSLog(@"Segment %@\n", [sender selectedSegment]);
+    switch ([sender selectedTag]) {
+        case HTR_CONTROL_PLAY:
+            [_logic pauseMirror:0];
+            break;
+        case HTR_CONTROL_PAUSE:
+            [_logic pauseMirror:1];
+            break;
+        case HTR_CONTROL_STOP:
+            [_logic stopMirror];
+            break;
+        default:
+            break;
+    }
+}
+
+#pragma mark mise a jour de l'appli en fonction des infos de httrack
+-(void)updateState:(hts_stat_struct *) stats {
+    if(stats == NULL)
+        return;
+    
+    [_httrTotalRecvLabel setStringValue:[NSString stringWithFormat:@"%ld bytes", stats->HTS_TOTAL_RECV]];
+    [_httrTotalBytesWrittenLabel setStringValue:[NSString stringWithFormat:@"%ld bytes", stats->stat_bytes]];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterMediumStyle];
+    [formatter setLocale:[NSLocale currentLocale]];
+
+    NSString *localized = [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970: stats->stat_timestart]];
+    [_httrTimeStartLabel setStringValue:localized];
+    
+    [_httrTotalUnpackedReceivedLabel setStringValue:[NSString stringWithFormat:@"%ld", stats->total_unpacked]];
+    [_httrTotalPackedReceivedLabel setStringValue:[NSString stringWithFormat:@"%ld", stats->total_packed]];
+    [_httrTotalPackedFilesLabel setStringValue:[NSString stringWithFormat:@"%d", stats->total_packedfiles]];
+    [_httrTotalWrittenFilesLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_files]];
+    [_httrTotalUpdatedFilesLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_updated_files]];
+    [_httrTotalBackgroundFilesLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_background]];
+    [_httrTotalSockRequestsLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_nrequests]];
+    [_httrTotalSocksAllocatedLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_sockid]];
+    [_httrTotalSocksLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_nsocket]];
+    [_httrTotalErrorsLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_errors]];
+    [_httrTotalFrontErrorsLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_errors_front]];
+    [_httrTotalWarningsLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_warnings]];
+    [_httrTotalInfosLabel setStringValue:[NSString stringWithFormat:@"%d bytes", stats->stat_infos]];
+    [_httrTotalBackgroundAnticLabel setStringValue:[NSString stringWithFormat:@"%d", stats->nbk]];
+    [_httrTotalTransferedLabel setStringValue:[NSString stringWithFormat:@"%ld bytes", stats->nb]];
+    [_httrRateLabel setStringValue:[NSString stringWithFormat:@"%ld bytes/s", stats->rate]];
+    [_httrLastConnectLabel setStringValue:[formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970: stats->last_connect/1000]]];
+    [_httrLastRequestLabel setStringValue:[formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970: stats->last_request/1000]]];
+
+    [formatter release];
+}
+
+#pragma mark logique des boutons pause et play, y compris venant de httrack
+-(BOOL)coreLogicDownloadWillStart:(CoreLogicDelegate *)sender {
+    NSLog(@"Download did start");
+    
+    [_downloadButton setEnabled:NO];
+    [_playpausestopControl setSelectedSegment:HTR_CONTROL_PLAY];
+    [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_PAUSE];
+    [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_STOP];
+    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PLAY];
+    return YES;
+}
+
+-(void)coreLogicDownloadDidStop:(CoreLogic*)sender {
+    [_downloadButton setEnabled:YES];
+    [_playpausestopControl setSelectedSegment:HTR_CONTROL_STOP];
+    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PAUSE];
+    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_STOP];
+    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PLAY];
+
+}
+
+-(void)coreLogicDownloadDidPause:(CoreLogic*)sender {
+    [_playpausestopControl setSelectedSegment:HTR_CONTROL_PAUSE];
+    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PAUSE];
+    [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_STOP];
+    [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_PLAY];
+}
+
+#pragma mark mise a jour de l'outline view
+- (void)coreLogicPageAdded:(nonnull CoreLogic *)sender {
+    [[self projectsOutlineView] reloadData];
+}
+
+- (void)coreLogicDownloadDidAdvance:(nonnull CoreLogic *)sender path:(nonnull NSString *)path domain:(nonnull NSString *)domain ratio:(float)ratio { 
+    [[self projectsOutlineView] reloadData];
+}
+
+@end
+
+@implementation MonContenuPreview
+
+-(void)mainChangePreview:(NSString*)chemin {
+    
+    //NSBeginCriticalAlertSheet(@"hello", @"ok?", @"nvm", @"what", [NSApp mainWindow], nil, nil, nil, NULL, @"Un truc s'est mal passé");
+    NSAlert * na = [[NSAlert alloc] init];
+    //NSDottedFrameRect(NSMakeRect(10, 10, 400, 300));
+    //NSDrawButton(<#NSRect rect#>, <#NSRect clipRect#>)
+    
+    if(0) { /// a garder en tete pour comment envoyer des notifications plus tard
+        NSUserNotification* note = [[NSUserNotification alloc] init];
+        note.title = @"Salut";
+        [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification: note];
+        
+        NSString* s = @("foo");
+        [NSColor underPageBackgroundColor];
+        
+    }
+
+    for (NSView* v in [self subviews]) {
+        [v removeFromSuperview];
+    }
+    
+    if([chemin.pathExtension.lowercaseString isEqualTo:@"html"]) {
+        WKWebViewConfiguration* wvc = [[WKWebViewConfiguration alloc] init];
+        WKWebView* wv = [[WKWebView alloc] initWithFrame:self.safeAreaRect];
+        
+        [wv setUIDelegate:self];
+        [wv loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:chemin]]];
+        
+        [wvc autorelease];
+        [wv autorelease];
+        [wv setAutoresizingMask:self.autoresizingMask];
+        
+        
+        [self addSubview:wv];
+    }
+    
+    NSImage* im = [[NSImage alloc] initByReferencingFile:chemin];
+    if([im isValid]) {
+        NSImageView* iv = [NSImageView imageViewWithImage:im];
+        [iv setFrame:NSMakeRect(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height)];
+        [im autorelease];
+        [iv setAutoresizingMask:self.autoresizingMask];
+        
+        [self addSubview:iv];
+    }
+    
+}
+
+@end
+
+
 #pragma mark Notre barre de recherche
 @interface MySearchInputField: NSSearchField<NSToolbarDelegate>
 @end
@@ -172,180 +354,6 @@ constrainMaxCoordinate:(CGFloat) proposedMinimumPosition
 
 @end
 
-#pragma mark ControllerMainMenu
-@implementation ControllerMainMenu
--(void) awakeFromNib {
-    
-    _logic = _AppDelegate.getLogic;
-    [_logic setDelegate:self];
-    [_logic setLoopCallback:@selector(updateState:) withObject:self];
-}
 
--(void) dealloc {
-    [_logic setDelegate:nil];
-    [_logic setLoopCallback:nil withObject:nil];
-    [super dealloc];
-}
-
--(ProjectsOutlineView*)projectsOutlineView {
-    return _projectsOutlineView;
-}
-
--(MonContenuPreview*) contenuPreview {
-    return _contenuPreview;
-}
-
-
-- (IBAction)httrDowloadButton:(NSButton *)sender {
-    NSLog(@"Push %@", [self.httrSiteUrl stringValue]);
-    
-    [_AppDelegate changeWindowSubtitle:[self.httrSiteUrl stringValue]];
-    //[self.coreLogic indexOfDownloadedSites];
-    [_logic
-     dowloadSite:[self.httrSiteUrl stringValue]
-     onError:^(NSString *description, NSErrorDomain domain, NSInteger code) {
-        [_AppDelegate warnUser:description domain:domain code:code];
-    }];
-}
-
--(IBAction)segmentedControl:(NSSegmentedControl*)sender {
-    //NSLog(@"Segment %@\n", [sender selectedSegment]);
-    switch ([sender selectedTag]) {
-        case HTR_CONTROL_PLAY:
-            [_logic pauseMirror:0];
-            break;
-        case HTR_CONTROL_PAUSE:
-            [_logic pauseMirror:1];
-            break;
-        case HTR_CONTROL_STOP:
-            [_logic stopMirror];
-            break;
-        default:
-            break;
-    }
-}
-
-#pragma mark mise a jour de l'appli en fonction des infos de httrack
--(void)updateState:(hts_stat_struct *) stats {
-    if(stats == NULL)
-        return;
-    
-    [_httrTotalRecvLabel setStringValue:[NSString stringWithFormat:@"%ld bytes", stats->HTS_TOTAL_RECV]];
-    [_httrTotalBytesWrittenLabel setStringValue:[NSString stringWithFormat:@"%ld bytes", stats->stat_bytes]];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateStyle:NSDateFormatterMediumStyle];
-    [formatter setTimeStyle:NSDateFormatterMediumStyle];
-    [formatter setLocale:[NSLocale currentLocale]];
-
-    NSString *localized = [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970: stats->stat_timestart]];
-    [_httrTimeStartLabel setStringValue:localized];
-    
-    [_httrTotalUnpackedReceivedLabel setStringValue:[NSString stringWithFormat:@"%ld", stats->total_unpacked]];
-    [_httrTotalPackedReceivedLabel setStringValue:[NSString stringWithFormat:@"%ld", stats->total_packed]];
-    [_httrTotalPackedFilesLabel setStringValue:[NSString stringWithFormat:@"%d", stats->total_packedfiles]];
-    [_httrTotalWrittenFilesLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_files]];
-    [_httrTotalUpdatedFilesLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_updated_files]];
-    [_httrTotalBackgroundFilesLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_background]];
-    [_httrTotalSockRequestsLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_nrequests]];
-    [_httrTotalSocksAllocatedLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_sockid]];
-    [_httrTotalSocksLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_nsocket]];
-    [_httrTotalErrorsLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_errors]];
-    [_httrTotalFrontErrorsLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_errors_front]];
-    [_httrTotalWarningsLabel setStringValue:[NSString stringWithFormat:@"%d", stats->stat_warnings]];
-    [_httrTotalInfosLabel setStringValue:[NSString stringWithFormat:@"%d bytes", stats->stat_infos]];
-    [_httrTotalBackgroundAnticLabel setStringValue:[NSString stringWithFormat:@"%d", stats->nbk]];
-    [_httrTotalTransferedLabel setStringValue:[NSString stringWithFormat:@"%ld bytes", stats->nb]];
-    [_httrRateLabel setStringValue:[NSString stringWithFormat:@"%ld bytes/s", stats->rate]];
-    [_httrLastConnectLabel setStringValue:[formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970: stats->last_connect/1000]]];
-    [_httrLastRequestLabel setStringValue:[formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970: stats->last_request/1000]]];
-
-    [formatter release];
-}
-
-#pragma mark logique des boutons pause et play, y compris venant de httrack
--(BOOL)coreLogicDownloadWillStart:(CoreLogicDelegate *)sender {
-    NSLog(@"Download did start");
-    
-    [_downloadButton setEnabled:NO];
-    [_playpausestopControl setSelectedSegment:HTR_CONTROL_PLAY];
-    [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_PAUSE];
-    [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_STOP];
-    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PLAY];
-    return YES;
-}
-
--(void)coreLogicDownloadDidStop:(CoreLogic*)sender {
-    [_downloadButton setEnabled:YES];
-    [_playpausestopControl setSelectedSegment:HTR_CONTROL_STOP];
-    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PAUSE];
-    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_STOP];
-    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PLAY];
-
-}
-
--(void)coreLogicDownloadDidPause:(CoreLogic*)sender {
-    [_playpausestopControl setSelectedSegment:HTR_CONTROL_PAUSE];
-    [_playpausestopControl setEnabled:NO forSegment:HTR_CONTROL_PAUSE];
-    [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_STOP];
-    [_playpausestopControl setEnabled:YES forSegment:HTR_CONTROL_PLAY];
-}
-
-#pragma mark mise a jour de l'outline view
-- (void)coreLogicPageAdded:(nonnull CoreLogic *)sender {
-    [[self projectsOutlineView] reloadData];
-}
-
-- (void)coreLogicDownloadDidAdvance:(nonnull CoreLogic *)sender path:(nonnull NSString *)path domain:(nonnull NSString *)domain ratio:(float)ratio { 
-    [[self projectsOutlineView] reloadData];
-}
-
-@end
-
-@implementation MonContenuPreview
-
--(void)mainChangePreview:(NSString*)chemin {
-    
-    if(0) { /// a garder en tete pour comment envoyer des notifications plus tard
-        NSUserNotification* note = [[NSUserNotification alloc] init];
-        note.title = @"Salut";
-        [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification: note];
-        
-        NSString* s = @("foo");
-        [NSColor underPageBackgroundColor];
-        
-    }
-
-    for (NSView* v in [self subviews]) {
-        [v removeFromSuperview];
-    }
-    
-    if([chemin.pathExtension.lowercaseString isEqualTo:@"html"]) {
-        WKWebViewConfiguration* wvc = [[WKWebViewConfiguration alloc] init];
-        WKWebView* wv = [[WKWebView alloc] initWithFrame:self.safeAreaRect];
-        
-        [wv setUIDelegate:self];
-        [wv loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:chemin]]];
-        
-        [wvc autorelease];
-        [wv autorelease];
-        [wv setAutoresizingMask:self.autoresizingMask];
-        
-        
-        [self addSubview:wv];
-    }
-    
-    NSImage* im = [[NSImage alloc] initByReferencingFile:chemin];
-    if([im isValid]) {
-        NSImageView* iv = [NSImageView imageViewWithImage:im];
-        [iv setFrame:NSMakeRect(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height)];
-        [im autorelease];
-        [iv setAutoresizingMask:self.autoresizingMask];
-        
-        [self addSubview:iv];
-    }
-    
-}
-
-@end
 
 NS_ASSUME_NONNULL_END

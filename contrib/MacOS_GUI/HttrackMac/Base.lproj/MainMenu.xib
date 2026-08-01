@@ -663,30 +663,30 @@
         <window title="Mac HTTP mirror" subtitle="Website archiver" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="335" y="390" width="808" height="483"/>
+            <rect key="contentRect" x="335" y="390" width="878" height="486"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1800" height="1125"/>
             <value key="minSize" type="size" width="419" height="307"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="808" height="483"/>
+                <rect key="frame" x="0.0" y="0.0" width="878" height="486"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <splitView arrangesAllSubviews="NO" dividerStyle="thin" vertical="YES" id="LEU-ZN-iGX">
-                        <rect key="frame" x="0.0" y="0.0" width="808" height="483"/>
+                        <rect key="frame" x="0.0" y="0.0" width="878" height="486"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <customView fixedFrame="YES" id="8xI-RN-m18">
-                                <rect key="frame" x="0.0" y="0.0" width="451" height="483"/>
+                                <rect key="frame" x="0.0" y="0.0" width="451" height="486"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="LTy-Ps-CcN">
-                                        <rect key="frame" x="0.0" y="0.0" width="451" height="483"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="451" height="486"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <clipView key="contentView" drawsBackground="NO" id="ce6-tH-sD8">
-                                            <rect key="frame" x="0.0" y="0.0" width="451" height="483"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="451" height="486"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="fullWidth" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="systemDefault" headerView="a3x-8R-fXX" indentationPerLevel="13" autoresizesOutlineColumn="YES" outlineTableColumn="eEH-ST-yrq" id="508-O8-Dav" customClass="ProjectsOutlineView">
-                                                    <rect key="frame" x="0.0" y="0.0" width="451" height="455"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="451" height="458"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="17" height="0.0"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -748,11 +748,11 @@
                                 </subviews>
                             </customView>
                             <customView fixedFrame="YES" id="9T3-Qw-mWp">
-                                <rect key="frame" x="452" y="0.0" width="356" height="483"/>
+                                <rect key="frame" x="452" y="0.0" width="426" height="486"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <button tag="1234" verticalHuggingPriority="750" id="5Ii-9n-Rqw">
-                                        <rect key="frame" x="248" y="12" width="95" height="32"/>
+                                        <rect key="frame" x="318" y="12" width="95" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <buttonCell key="cell" type="push" title="Download" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="CUC-uB-izS">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -762,12 +762,23 @@ DQ
 </string>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="httrDowloadButton:" target="Nbn-6H-ZPH" id="DUc-13-J6b"/>
+                                            <action selector="httrDowloadButton:" target="Nbn-6H-ZPH" id="vz4-Dz-N2q"/>
                                         </connections>
                                     </button>
                                     <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L3y-5D-Mzt" customClass="MonContenuPreview">
-                                        <rect key="frame" x="20" y="59" width="316" height="404"/>
+                                        <rect key="frame" x="20" y="59" width="386" height="407"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <subviews>
+                                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dFg-uj-TMH">
+                                                <rect key="frame" x="-2" y="337" width="309" height="70"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                <textFieldCell key="cell" lineBreakMode="clipping" title="HTTrack for Mac" id="WBQ-2Z-y0n">
+                                                    <font key="font" size="47" name="AppleGaramond"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                        </subviews>
                                     </customView>
                                 </subviews>
                             </customView>
@@ -787,7 +798,7 @@ DQ
                     <toolbarItem implicitItemIdentifier="NSToolbarShowColorsItem" id="h1O-xQ-r4q"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="HpB-6i-Uuh"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarShowFontsItem" id="VCw-il-hsB"/>
-                    <toolbarItem implicitItemIdentifier="C2C7BCFA-C39E-4F4F-BC16-0B19B34AA976" label="Stats" paletteLabel="Stats" toolTip="Show httrack statistics" tag="-1" image="NSTouchBarGetInfoTemplate" catalog="system" sizingBehavior="auto" id="gGH-d2-S7a" userLabel="Stats">
+                    <toolbarItem implicitItemIdentifier="C2C7BCFA-C39E-4F4F-BC16-0B19B34AA976" label="Stats" paletteLabel="Stats" toolTip="Show httrack statistics" tag="-1" image="NSTouchBarGetInfoTemplate" sizingBehavior="auto" id="gGH-d2-S7a" userLabel="Stats">
                         <connections>
                             <action selector="makeKeyAndOrderFront:" target="N1X-Rc-Vy8" id="x2V-rd-cvW"/>
                         </connections>
@@ -814,9 +825,9 @@ DQ
                             <segmentedCell key="cell" borderStyle="border" alignment="left" style="texturedSquare" trackingMode="selectOne" id="JCY-lm-YjG">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment image="NSTouchBarPlayTemplate" catalog="system" enabled="NO"/>
-                                    <segment image="NSTouchBarPauseTemplate" catalog="system" enabled="NO" tag="1"/>
-                                    <segment image="NSTouchBarRecordStopTemplate" catalog="system" enabled="NO" tag="2"/>
+                                    <segment image="NSTouchBarPlayTemplate" enabled="NO"/>
+                                    <segment image="NSTouchBarPauseTemplate" enabled="NO" tag="1"/>
+                                    <segment image="NSTouchBarRecordStopTemplate" enabled="NO" tag="2"/>
                                 </segments>
                             </segmentedCell>
                             <connections>
@@ -836,7 +847,7 @@ DQ
                 <outlet property="delegate" destination="Voe-Tx-rLC" id="top-28-M4D"/>
                 <outlet property="initialFirstResponder" destination="9g4-Du-4T3" id="ycP-Ng-Ixb"/>
             </connections>
-            <point key="canvasLocation" x="193" y="82.5"/>
+            <point key="canvasLocation" x="228" y="84"/>
         </window>
         <customObject id="Nbn-6H-ZPH" userLabel="ControllerMainMenu" customClass="ControllerMainMenu">
             <connections>
@@ -1286,9 +1297,9 @@ DQ
         </window>
     </objects>
     <resources>
-        <image name="NSTouchBarGetInfoTemplate" catalog="system" width="20" height="20"/>
-        <image name="NSTouchBarPauseTemplate" catalog="system" width="14" height="17"/>
-        <image name="NSTouchBarPlayTemplate" catalog="system" width="15" height="17"/>
-        <image name="NSTouchBarRecordStopTemplate" catalog="system" width="18" height="17"/>
+        <image name="NSTouchBarGetInfoTemplate" width="20" height="20"/>
+        <image name="NSTouchBarPauseTemplate" width="14" height="17"/>
+        <image name="NSTouchBarPlayTemplate" width="15" height="17"/>
+        <image name="NSTouchBarRecordStopTemplate" width="18" height="17"/>
     </resources>
 </document>

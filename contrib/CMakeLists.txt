@@ -118,7 +118,7 @@ if(APPLE)
 
 	target_sources(HttrackMac PRIVATE "${CMAKE_CURRENT_LIST_DIR}/TODO.md")
 
-	target_link_libraries(HttrackMac PRIVATE httr_lib "-framework AppKit")
+	target_link_libraries(HttrackMac PRIVATE httr_lib "-framework AppKit -framework WebKit")
 	target_include_directories(HttrackMac PRIVATE "${SRC_ROOT}")
 
 	set_source_files_properties(

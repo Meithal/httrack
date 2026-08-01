@@ -121,6 +121,7 @@ afficher son contenu (dans un panel, ou dans la vue principale?)
 - [x] Dans l'outline, a coté de chaque image en afficher une miniature
 - [ ] Utiliser NsWorkBench pour ouvrir safari ou questionner les navigateurs disponibles <https://developer.apple.com/documentation/appkit/nsworkspace>
 - [ ] NSSharing service qui compresse le site web et l'envoye par mail & autre.
+- [ ] Utiliser le pasteboard pour automatiquement commencer une copie, aussi un service et pouvoir drag@drop
 
 Plus tard
 ---
@@ -133,6 +134,7 @@ Plus tard
 dans une status bar <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/StatusBar/StatusBar.html>
 - [ ] Imprimer le site recopié, regrouper les pages en use seule vue ?
 images séparées ? Version webview allégée (focus lecture).
+- [ ] Implementer restoreState pour retablir l'application apres fermeture : <https://developer.apple.com/fr/videos/play/wwdc2026/289>
 
 Doc utilisées
 ---

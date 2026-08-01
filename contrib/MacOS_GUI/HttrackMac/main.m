@@ -17,6 +17,8 @@ int main(int argc, const char * argv[]) {
     
     //NSLog(@"GC %@\n", [NSGarbageCollector defaultCollector]);
     //NSLog(@"%@", NSAppKitVersionNumber);
+    //[NSImage imageUnfilteredFileTypes];
+    //NSBeep();
 
     return NSApplicationMain(argc, argv);
 }
