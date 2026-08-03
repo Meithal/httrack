@@ -670,7 +670,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="878" height="486"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <splitView arrangesAllSubviews="NO" dividerStyle="thin" vertical="YES" id="LEU-ZN-iGX">
+                    <splitView arrangesAllSubviews="NO" autosaveName="mainSplitHttrack" dividerStyle="thin" vertical="YES" id="LEU-ZN-iGX">
                         <rect key="frame" x="0.0" y="0.0" width="878" height="486"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>

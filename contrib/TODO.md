@@ -47,7 +47,7 @@ Taches
 - [ ] Avoir un feedback des pages copiées
 - [x] ... Chercher le listing des pages dans httrack plutot que lister l'arborescence
 - [ ] ... Afficher une barre d'avancement de telechargement
-- [ ] Tester Crackman.TTF si Crackman.ttf n'est pas trouvé'
+- [ ] Tester Crackman.TTF si Crackman.ttf n'est pas trouvé
 - [ ] Avoir un bouton pour cacher sidebar <https://developer.apple.com/videos/play/wwdc2020/10104/?time=835> <https://stackoverflow.com/questions/54870957/nssplitviewcontroller-nssplitviewitem-support-in-xibs>
 - [x] ... résoudre le bug de double declaration d'enum HTTP_STATUS_OK
 - [x] Sauvegarder le listing dans le dossier user plutot que l'endroit de l'executable.
@@ -125,6 +125,12 @@ afficher son contenu (dans un panel, ou dans la vue principale?)
 
 Plus tard
 ---
+
+Dans l'ordre se debarasser de NSOperation et utiliser pthread, 
+adopter KVC pour apple scripting, ce ui permet d'utliser les bindng de
+Tiger et Leopard avec leur NSController, puis autoLayout et NSSplitViewController,
+implementer CoreData, remettre les NSOperation. Faire une verson tablette
+avec UIKit, et une version Catalyst. Utiliser IKImageBrowserView
 
 - [ ] Avoir un REPL (que faire en cas de decouverte de nouveaux liens)
 - [ ] Migrer vers grand central dispatch avec la version SwiftUI pour le listing de sites et le telechargement

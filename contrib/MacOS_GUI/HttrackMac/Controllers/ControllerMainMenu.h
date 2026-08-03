@@ -9,28 +9,8 @@ enum {
     HTR_CONTROL_PAUSE,
     HTR_CONTROL_STOP,
 };
-
-@interface ProjectsDataSource: NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate>
-{
-    IBOutlet AppDelegate *_delegate;
-    CoreLogic* _logic;
-}
-@end
-
-@class ControllerMainMenu;
-
-@interface ProjectsOutlineView: NSOutlineView
-{
-    IBOutlet ControllerMainMenu* _mainController;
-}
--(ControllerMainMenu*)mainController;
-@end
-
-@interface MonContenuPreview: NSView<WKUIDelegate> {
-}
--(void)mainChangePreview:(NSString*)chemin;
-@end
-
+@class ProjectsOutlineView;
+@class MonContenuPreview;
 /**
  Notre "controlleur" qui fait l'interface entre l'UI et la logique+données
  */
@@ -75,6 +55,28 @@ enum {
 -(ProjectsOutlineView*)projectsOutlineView;
 -(MonContenuPreview*) contenuPreview;
 
+@end
+
+
+@interface ProjectsDataSource: NSObject<NSOutlineViewDataSource, NSOutlineViewDelegate>
+{
+    IBOutlet AppDelegate *_delegate;
+    CoreLogic* _logic;
+}
+@end
+
+@class ControllerMainMenu;
+
+@interface ProjectsOutlineView: NSOutlineView
+{
+    IBOutlet ControllerMainMenu* _mainController;
+}
+-(ControllerMainMenu*)mainController;
+@end
+
+@interface MonContenuPreview: NSView<WKUIDelegate> {
+}
+-(void)mainChangePreview:(NSString*)chemin;
 @end
 
 
