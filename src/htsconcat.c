@@ -37,8 +37,8 @@ Please visit our Website: http://www.httrack.com
 #include "httrack.h"
 #include "httrack-library.h"
 
-// concat, concatËne deux chaines et renvoi le rÈsultat
-// permet d'allÈger grandement le code
+// concat, concatène deux chaines et renvoi le résultat
+// permet d'alléger grandement le code
 #undef concat
 HTSEXT_API char *concat(char *catbuff, size_t size, const char *a, const char *b) {
   size_t max = 0;

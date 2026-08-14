@@ -1541,7 +1541,7 @@ int back_add(struct_back * sback, httrackp * opt, cache_back * cache, const char
 #else
       if (cache->use) {
 #endif
-        char BIGSTK buff[HTS_URLMAXSIZE * 4];
+        char BIGSTK buff[HTS_URLMAXSIZE * 2];
 
 #if HTS_FAST_CACHE
         strcpybuff(buff, adr);
@@ -1581,7 +1581,7 @@ int back_add(struct_back * sback, httrackp * opt, cache_back * cache, const char
 
                 /* It is possible that the file has been moved due to changes in build structure */
                 {
-                  char BIGSTK previous_save[HTS_URLMAXSIZE * 2];
+                  char BIGSTK previous_save[HTS_URLMAXSIZE];
                   htsblk r;
 
                   previous_save[0] = '\0';
@@ -2778,7 +2778,7 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
                     if (strcmp(back[i].url_fil, "/robots.txt")) {
                       if (back[i].r.statuscode == HTTP_OK) {    // 'OK'
                         if (!is_hypertext_mime(opt, back[i].r.contenttype, back[i].url_fil)) {  // pas HTML
-                          if (opt->getmode & 2) {       // on peut ecrire des non html
+                          if (opt->getmode & HTS_DOWNLOAD_NON_HTML) {       // on peut ecrire des non html
                             int fcheck = 0;
                             int last_errno = 0;
 
@@ -3659,7 +3659,7 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
 #endif
                       if (sz >= 0) {
                         if (!is_hypertext_mime(opt, back[i].r.contenttype, back[i].url_sav)) {  // pas HTML
-                          if (opt->getmode & 2) {       // on peut ecrire des non html  **sinon ben euhh sera intercepté plus loin, donc rap sur ce qui va sortir**
+                          if (opt->getmode & HTS_DOWNLOAD_NON_HTML) {       // on peut ecrire des non html  **sinon ben euhh sera intercepté plus loin, donc rap sur ce qui va sortir**
                             filenote(&opt->state.strc, back[i].url_sav, NULL);  // noter fichier comme connu
                             file_notify(opt, back[i].url_adr, back[i].url_fil,
                                         back[i].url_sav, 0, 1,
@@ -4005,7 +4005,7 @@ void back_info(struct_back * sback, int i, int j, FILE * fp) {
 
   assertf(i >= 0 && i < back_max);
   if (back[i].status >= 0) {
-    char BIGSTK s[HTS_URLMAXSIZE * 2 + 1024];
+    char BIGSTK s[HTS_URLMAXSIZE + 1024];
 
     s[0] = '\0';
     back_infostr(sback, i, j, s);
@@ -4089,7 +4089,7 @@ void back_infostr(struct_back * sback, int i, int j, char *s) {
 
     if (aff) {
       {
-        char BIGSTK s2[HTS_URLMAXSIZE * 2 + 1024];
+        char BIGSTK s2[HTS_URLMAXSIZE + 1024];
 
         sprintf(s2, "\"%s", back[i].url_adr);
         strcatbuff(s, s2);

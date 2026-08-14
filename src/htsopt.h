@@ -212,6 +212,13 @@ typedef struct htsmutex_s htsmutex_s, *htsmutex;
 typedef struct struct_coucal struct_coucal, *coucal;
 #endif
 
+/* Modes du parseur (bitfield) */
+typedef enum hts_parser_mode {
+  HTS_DOWNLOAD_HTML = 1 << 1, // (1) si on sauvegarde le html en local, sinon c'est un "dry run"
+  HTS_DOWNLOAD_NON_HTML = 1 << 2, // (2) on peut dl du non HTML (si 0, seul le HTML est dl)
+  HTS_DOWNLOAD_NON_HTML_LATER = 1 << 3, // (4) on telecharge le html d'abord, puis le reste ensuite (va avec (2))
+} hts_parser_mode;
+
 /* Structure état du miroir */
 #ifndef HTS_DEF_FWSTRUCT_htsoptstate
 #define HTS_DEF_FWSTRUCT_htsoptstate

@@ -412,7 +412,7 @@ if (!makeindex_done) { \
 if (makeindex_fp) { \
   char BIGSTK tempo[1024]; \
   if (makeindex_links == 1) { \
-    char BIGSTK link_escaped[HTS_URLMAXSIZE*2]; \
+    char BIGSTK link_escaped[HTS_URLMAXSIZE]; \
     escape_uri_utf(makeindex_firstlink, link_escaped, sizeof(link_escaped)); \
     snprintf(tempo,sizeof(tempo),"<meta HTTP-EQUIV=\"Refresh\" CONTENT=\"0; URL=%s\">"CRLF, link_escaped); \
   } else \
@@ -472,7 +472,7 @@ int httpmirror(const char *url1, httrackp * opt) {
   int makeindex_done = 0;       // lorsque l'index sera fait
   FILE *makeindex_fp = NULL;
   int makeindex_links = 0;
-  char BIGSTK makeindex_firstlink[HTS_URLMAXSIZE * 2];
+  char BIGSTK makeindex_firstlink[HTS_URLMAXSIZE];
 
   // statistiques (mode #Z)
   FILE *makestat_fp = NULL;     // fichier de stats taux transfert
@@ -482,8 +482,8 @@ int httpmirror(const char *url1, httrackp * opt) {
   int makestat_lnk = 0;         // idem, pour le nombre de liens
 
   //
-  char BIGSTK codebase[HTS_URLMAXSIZE * 2];     // base pour applet java
-  char BIGSTK base[HTS_URLMAXSIZE * 2]; // base pour les autres fichiers
+  char BIGSTK codebase[HTS_URLMAXSIZE];     // base pour applet java
+  char BIGSTK base[HTS_URLMAXSIZE]; // base pour les autres fichiers
 
   //
   cache_back BIGSTK cache;
@@ -654,7 +654,7 @@ int httpmirror(const char *url1, httrackp * opt) {
 
       if (joker) {              // joker ou filters
         //char* p;
-        char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+        char BIGSTK tempo[HTS_URLMAXSIZE];
         int type;
         int plus = 0;
 
@@ -714,7 +714,7 @@ int httpmirror(const char *url1, httrackp * opt) {
         }
 
       } else {                  // adresse normale
-        char BIGSTK url[HTS_URLMAXSIZE * 2];
+        char BIGSTK url[HTS_URLMAXSIZE];
 
         // prochaine adresse
         i = 0;
@@ -762,7 +762,7 @@ int httpmirror(const char *url1, httrackp * opt) {
       if (filelist_buff) {
         int filelist_ptr = 0;
         int n = 0;
-        char BIGSTK line[HTS_URLMAXSIZE * 2];
+        char BIGSTK line[HTS_URLMAXSIZE];
         char *primary_ptr = primary + strlen(primary);
 
         while(filelist_ptr < filelist_sz) {
@@ -974,7 +974,7 @@ int httpmirror(const char *url1, httrackp * opt) {
     int store_errpage = 0;      // c'est une erreur mais on enregistre le html
     int is_binary = 0;          // is a binary file
     int is_loaded_from_file = 0;        // has been loaded from a file (implies is_write=1)
-    char BIGSTK loc[HTS_URLMAXSIZE * 2];        // adresse de relocation
+    char BIGSTK loc[HTS_URLMAXSIZE];        // adresse de relocation
 
     // Ici on charge le fichier (html, gif..) en mémoire
     // Les HTMLs sont traités (si leur priorité est suffisante)
@@ -1203,6 +1203,7 @@ int httpmirror(const char *url1, httrackp * opt) {
                 /*|| (may_be_hypertext_mime(r.contenttype, urlfil()) && (r.adr) ) */
                 /* Is real media, .. */
               ) {
+              
               if (strnotempty(r.cdispo)) {      // Content-disposition set!
                 if (ishtml(opt, savename()) == 0) {       // Non HTML!!
                   // patch it!
@@ -1241,31 +1242,6 @@ int httpmirror(const char *url1, httrackp * opt) {
         if (HTTP_IS_OK(r.statuscode) && (is_hypertext_mime(opt, r.contenttype, urlfil())  /* Is HTML or Js, .. */
                                          ||may_be_hypertext_mime(opt, r.contenttype, urlfil()))   /* Is real media, .. */
           ) {
-
-          /* Convert charset to UTF-8 - NOT! (what about links ? remote server side will have troubles with converted names) */
-          //if (r.adr != NULL && r.size != 0 && opt->convert_utf8) {
-          //  char *charset;
-          //  char *pos;
-          //  if (r.charset[0] != '\0') {
-          //    charset = strdup(r.charset);
-          //  } else {
-          //    charset = hts_getCharsetFromMeta(r.adr, r.size);
-          //  }
-          //  if (charset != NULL) {
-          //    char *const utf8 = hts_convertStringToUTF8(r.adr, r.size, charset);
-          //    /* Use new buffer */
-          //    if (utf8 != NULL) {
-          //      freet(r.adr);
-          //      r.size = strlen(utf8);
-          //      r.adr = utf8;
-          //      /* New UTF-8 charset */
-          //      r.charset[0] = '\0';
-          //      strcpy(r.charset, "utf-8");
-          //    }
-          //    /* Free charset */
-          //    free(charset);
-          //  }
-          //}
 
           /* Check bogus chars */
           if ((r.adr) && (r.size)) {
@@ -1406,70 +1382,7 @@ int httpmirror(const char *url1, httrackp * opt) {
 
         }
       }
-      // MOVED IN back_finalize()
-      //
-      // -------------------- 
-      // REAL MEDIA HACK
-      // Check if we have to load locally the file
-      // --------------------
-      //if (!error) {
-      //  if (r.statuscode == HTTP_OK) {    // OK (ou 304 en backing)
-      //    if (r.adr==NULL) {    // Written file
-      //      if (may_be_hypertext_mime(r.contenttype, urlfil())) {   // to parse!
-      //        LLint sz;
-      //        sz=fsize_utf8(savename());
-      //        if (sz>0) {   // ok, exists!
-      //          if (sz < 8192) {   // ok, small file --> to parse!
-      //            FILE* fp=FOPEN(savename(),"rb");
-      //            if (fp) {
-      //              r.adr=malloct(sz + 1);
-      //              if (r.adr) {
-      //                if (fread(r.adr,1,sz,fp) == sz) {
-      //                  r.size=sz;
-      //                                                r.adr[sz] = '\0';
-      //                                                r.is_write = 0;
-      //                } else {
-      //                  freet(r.adr);
-      //                  r.size=0;
-      //                  r.adr = NULL;
-      //                  r.statuscode=STATUSCODE_INVALID;
-      //                  strcpybuff(r.msg, ".RAM read error");
-      //                }
-      //                fclose(fp);
-      //                fp=NULL;
-      //                // remove (temporary) file!
-      //                remove(savename());
-      //              }
-      //              if (fp)
-      //                fclose(fp);
-      //            }
-      //          }
-      //        }
-      //      }
-      //    }
-      //  }
-      //}
-      // EN OF REAL MEDIA HACK
 
-      // ---stockage en cache---
-      // stocker dans le cache?
-      /*
-         if (!error) {
-         if (ptr>0) {
-         if (heap(ptr)) {
-         xxcache_mayadd(opt,&cache,&r,urladr(),urlfil(),savename());
-         } else
-         error=1;
-         }
-         }
-       */
-      // ---fin stockage en cache---
-
-      /*
-       **************************************
-       Check "Moved permanently" and other similar errors, retrying URLs if necessary and handling
-       redirect pages.
-       */
       if (!error) {
         char BIGSTK buff_err_msg[1024];
         htsmoduleStruct BIGSTK str;
@@ -1896,7 +1809,7 @@ int httpmirror(const char *url1, httrackp * opt) {
           // fort, on supprimera le readme, et on scannera le fichier html!
           // note: sauté si store_errpage (càd si page d'erreur, non à scanner!)
           if ((is_hypertext_mime(opt, r.contenttype, urlfil())) && (!store_errpage) && (r.size > 0)) {    // c'est du html!!
-            char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+            char BIGSTK tempo[HTS_URLMAXSIZE];
             FILE *fp;
 
             tempo[0] = '\0';
@@ -1942,7 +1855,7 @@ int httpmirror(const char *url1, httrackp * opt) {
                           "Warning: store %s without scan: %s", r.contenttype,
                           savename());
           } else {
-            if ((opt->getmode & 2) != 0) {      // ok autorisé
+            if (opt->getmode & HTS_DOWNLOAD_NON_HTML) {      // ok autorisé
               hts_log_print(opt, LOG_DEBUG, "Store %s: %s", r.contenttype,
                             savename());
             } else {            // lien non autorisé! (ex: cgi-bin en html)
@@ -1991,7 +1904,7 @@ int httpmirror(const char *url1, httrackp * opt) {
            FILE* fp=FOPEN(savename(),"r+b");
            if (fp) {
            if (!fseek(fp,0,SEEK_SET)) {
-           char BIGSTK line[HTS_URLMAXSIZE*2];
+           char BIGSTK line[HTS_URLMAXSIZE];
            linput(fp,line,HTS_URLMAXSIZE);
            if (strnotempty(line)) {
            hts_log_print(opt, LOG_DEBUG, "(Real Media): detected %s",line);
@@ -2062,7 +1975,7 @@ int httpmirror(const char *url1, httrackp * opt) {
     ptr++;
 
     // faut-il sauter le(s) lien(s) suivant(s)? (fichiers images à passer après les html)
-    if (opt->getmode & 4) {     // sauver les non html après
+    if (opt->getmode & HTS_DOWNLOAD_NON_HTML_LATER) {     // sauver les non html après
       // sauter les fichiers selon la passe
       if (!numero_passe) {
         while((ptr < opt->lien_tot) ? (heap(ptr)->pass2) : 0)
@@ -2206,7 +2119,7 @@ int httpmirror(const char *url1, httrackp * opt) {
               while(!feof(old_lst)) {
                 linput(old_lst, line, 1000);
                 if (!strstr(adr, line)) {       // fichier non trouvé dans le nouveau?
-                  char BIGSTK file[HTS_URLMAXSIZE * 2];
+                  char BIGSTK file[HTS_URLMAXSIZE];
 
                   strcpybuff(file, StringBuff(opt->path_html));
                   strcatbuff(file, line + 1);
@@ -2230,7 +2143,7 @@ int httpmirror(const char *url1, httrackp * opt) {
                     line[strlen(line) - 1] = '\0';
                   if (strnotempty(line))
                     if (!strstr(adr, line)) {   // non trouvé?
-                      char BIGSTK file[HTS_URLMAXSIZE * 2];
+                      char BIGSTK file[HTS_URLMAXSIZE];
 
                       strcpybuff(file, StringBuff(opt->path_html));
                       strcatbuff(file, line + 1);
@@ -2547,14 +2460,14 @@ int filters_init(char ***ptrfilters, int maxfilter, int filterinc) {
     if (filters[0] == NULL) {
       filters[0] =
         (char *) malloct(sizeof(char) * (filter_max + 2) *
-                         (HTS_URLMAXSIZE * 2));
+                         (HTS_URLMAXSIZE));
       memset(filters[0], 0,
-             sizeof(char) * (filter_max + 2) * (HTS_URLMAXSIZE * 2));
+             sizeof(char) * (filter_max + 2) * (HTS_URLMAXSIZE));
     } else {
       filters[0] =
         (char *) realloct(filters[0],
                           sizeof(char) * (filter_max +
-                                          2) * (HTS_URLMAXSIZE * 2));
+                                          2) * (HTS_URLMAXSIZE));
     }
     if (filters[0] == NULL) {
       freet(filters);
@@ -2570,7 +2483,7 @@ int filters_init(char ***ptrfilters, int maxfilter, int filterinc) {
     else
       from = filter_max - filterinc;
     for(i = 0; i <= filter_max; i++) {  // PLUS UN (sécurité)
-      filters[i] = filters[0] + i * (HTS_URLMAXSIZE * 2);
+      filters[i] = filters[0] + i * (HTS_URLMAXSIZE);
     }
     for(i = from; i <= filter_max; i++) {       // PLUS UN (sécurité)
       filters[i][0] = '\0';     // clear
@@ -2593,7 +2506,7 @@ static int mkdir_compat(const char *pathname) {
 HTSEXT_API int dir_exists(const char *path) {
   const int err = errno;
   STRUCT_STAT st;
-  char BIGSTK file[HTS_URLMAXSIZE * 2];
+  char BIGSTK file[HTS_URLMAXSIZE];
   int i = 0;
 
   if (strnotempty(path) == 0) {
@@ -2630,8 +2543,8 @@ HTSEXT_API int dir_exists(const char *path) {
 /* Note: *not* UTF-8 */
 HTSEXT_API int structcheck(const char *path) {
   struct stat st;
-  char BIGSTK tmpbuf[HTS_URLMAXSIZE * 2];
-  char BIGSTK file[HTS_URLMAXSIZE * 2];
+  char BIGSTK tmpbuf[HTS_URLMAXSIZE];
+  char BIGSTK file[HTS_URLMAXSIZE];
   int i = 0;
   int npaths;
 
@@ -2738,8 +2651,8 @@ HTSEXT_API int structcheck(const char *path) {
 /* Note: UTF-8 */
 HTSEXT_API int structcheck_utf8(const char *path) {
   STRUCT_STAT st;
-  char BIGSTK tmpbuf[HTS_URLMAXSIZE * 2];
-  char BIGSTK file[HTS_URLMAXSIZE * 2];
+  char BIGSTK tmpbuf[HTS_URLMAXSIZE];
+  char BIGSTK file[HTS_URLMAXSIZE];
   int i = 0;
   int npaths;
 
@@ -2884,7 +2797,7 @@ int check_fatal_io_errno(void) {
 // ouvrir un fichier (avec chemin Un*x)
 /* Note: utf-8 */
 FILE *filecreate(filenote_strc * strc, const char *s) {
-  char BIGSTK fname[HTS_URLMAXSIZE * 2];
+  char BIGSTK fname[HTS_URLMAXSIZE];
   FILE *fp;
   int last_errno = 0;
 
@@ -2935,7 +2848,7 @@ FILE *filecreate(filenote_strc * strc, const char *s) {
 
 // ouvrir un fichier (avec chemin Un*x)
 FILE *fileappend(filenote_strc * strc, const char *s) {
-  char BIGSTK fname[HTS_URLMAXSIZE * 2];
+  char BIGSTK fname[HTS_URLMAXSIZE];
   FILE *fp;
 
   fname[0] = '\0';
@@ -2992,7 +2905,7 @@ int filenote(filenote_strc * strc, const char *s, filecreate_params * params) {
     strc->lst = params->lst;
     return 0;
   } else if (strc->lst) {
-    char BIGSTK savelst[HTS_URLMAXSIZE * 2];
+    char BIGSTK savelst[HTS_URLMAXSIZE];
     char catbuff[CATBUFF_SIZE];
 
     strcpybuff(savelst, fslash(catbuff, sizeof(catbuff), s));
@@ -3147,7 +3060,7 @@ static void postprocess_file(httrackp * opt, const char *save, const char *adr,
         if (fp != NULL) {
           char buff[60 * 100 + 2];
           char mimebuff[256];
-          char BIGSTK cid[HTS_URLMAXSIZE * 3];
+          char BIGSTK cid[HTS_URLMAXSIZE];
           size_t len;
           int isHtml = (ishtml(opt, save) == 1);
 
@@ -3765,7 +3678,7 @@ int htsAddLink(htsmoduleStruct * str, char *link) {
     ENGINE_LOAD_CONTEXT_BASE();
     /* */
     lien_adrfilsave afs;
-    char BIGSTK codebase[HTS_URLMAXSIZE * 2];
+    char BIGSTK codebase[HTS_URLMAXSIZE];
 
     /* */
     int pass_fix, prio_fix;
@@ -3809,7 +3722,7 @@ int htsAddLink(htsmoduleStruct * str, char *link) {
         *(a + 1) = '\0';        // couper
     } else {                    // couper http:// éventuel
       if (strfield(codebase, "http://")) {
-        char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+        char BIGSTK tempo[HTS_URLMAXSIZE];
         char *a = codebase + 7;
 
         a = strchr(a, '/');     // après host
@@ -3848,7 +3761,7 @@ int htsAddLink(htsmoduleStruct * str, char *link) {
 
           /* Link accepted */
           if (!forbidden_url) {
-            char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+            char BIGSTK tempo[HTS_URLMAXSIZE];
             int a, b;
 
             tempo[0] = '\0';

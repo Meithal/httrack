@@ -1834,175 +1834,77 @@ void cache_init(cache_back * cache, httrackp * opt) {
       structcheck(fconcat
                   (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log), "hts-cache/"));
 
-      if (1) {
-        /* Create ZIP file cache */
-        cache->zipOutput =
-          (void *)
-          zipOpen(fconcat
-                  (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                   "hts-cache/new.zip"), 0);
+      /* Create ZIP file cache */
+      cache->zipOutput =
+        (void *)
+        zipOpen(fconcat
+                (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+                 "hts-cache/new.zip"), 0);
 
-        if (cache->zipOutput != NULL) {
-          // supprimer old.lst
-          if (fexist
-              (fconcat
-               (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                "hts-cache/old.lst")))
-            remove(fconcat
-                   (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                    "hts-cache/old.lst"));
-          // renommer
-          if (fexist
-              (fconcat
-               (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                "hts-cache/new.lst")))
-            rename(fconcat
-                   (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                    "hts-cache/new.lst"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                                  StringBuff(opt->path_log),
-                                                  "hts-cache/old.lst"));
-          // ouvrir
-          cache->lst =
-            fopen(fconcat
-                  (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                   "hts-cache/new.lst"), "wb");
-          strcpybuff(opt->state.strc.path, StringBuff(opt->path_html));
-          opt->state.strc.lst = cache->lst;
-          //{
-          //filecreate_params tmp;
-          //strcpybuff(tmp.path,StringBuff(opt->path_html));    // chemin
-          //tmp.lst=cache->lst;                 // fichier lst
-          //filenote("",&tmp);        // initialiser filecreate
-          //}
-
-          // supprimer old.txt
-          if (fexist
-              (fconcat
-               (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                "hts-cache/old.txt")))
-            remove(fconcat
-                   (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                    "hts-cache/old.txt"));
-          // renommer
-          if (fexist
-              (fconcat
-               (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                "hts-cache/new.txt")))
-            rename(fconcat
-                   (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                    "hts-cache/new.txt"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                                  StringBuff(opt->path_log),
-                                                  "hts-cache/old.txt"));
-          // ouvrir
-          cache->txt =
-            fopen(fconcat
-                  (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                   "hts-cache/new.txt"), "wb");
-          if (cache->txt) {
-            fprintf(cache->txt,
-                    "date\tsize'/'remotesize\tflags(request:Update,Range state:File response:Modified,Chunked,gZipped)\t");
-            fprintf(cache->txt,
-                    "statuscode\tstatus ('servermsg')\tMIME\tEtag|Date\tURL\tlocalfile\t(from URL)"
-                    LF);
-          }
-        }
-      } else {
-        cache->dat =
+      if (cache->zipOutput != NULL) {
+        // supprimer old.lst
+        if (fexist
+            (fconcat
+             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+              "hts-cache/old.lst")))
+          remove(fconcat
+                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+                  "hts-cache/old.lst"));
+        // renommer
+        if (fexist
+            (fconcat
+             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+              "hts-cache/new.lst")))
+          rename(fconcat
+                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+                  "hts-cache/new.lst"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
+                                                StringBuff(opt->path_log),
+                                                "hts-cache/old.lst"));
+        // ouvrir
+        cache->lst =
           fopen(fconcat
                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                 "hts-cache/new.dat"), "wb");
-        cache->ndx =
+                 "hts-cache/new.lst"), "wb");
+        strcpybuff(opt->state.strc.path, StringBuff(opt->path_html));
+        opt->state.strc.lst = cache->lst;
+        //{
+        //filecreate_params tmp;
+        //strcpybuff(tmp.path,StringBuff(opt->path_html));    // chemin
+        //tmp.lst=cache->lst;                 // fichier lst
+        //filenote("",&tmp);        // initialiser filecreate
+        //}
+
+        // supprimer old.txt
+        if (fexist
+            (fconcat
+             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+              "hts-cache/old.txt")))
+          remove(fconcat
+                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+                  "hts-cache/old.txt"));
+        // renommer
+        if (fexist
+            (fconcat
+             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+              "hts-cache/new.txt")))
+          rename(fconcat
+                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+                  "hts-cache/new.txt"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
+                                                StringBuff(opt->path_log),
+                                                "hts-cache/old.txt"));
+        // ouvrir
+        cache->txt =
           fopen(fconcat
                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                 "hts-cache/new.ndx"), "wb");
-        // les deux doivent être ouvrables
-        if ((cache->dat == NULL) && (cache->ndx != NULL)) {
-          fclose(cache->ndx);
-          cache->ndx = NULL;
+                 "hts-cache/new.txt"), "wb");
+        if (cache->txt) {
+          fprintf(cache->txt,
+                  "date\tsize'/'remotesize\tflags(request:Update,Range state:File response:Modified,Chunked,gZipped)\t");
+          fprintf(cache->txt,
+                  "statuscode\tstatus ('servermsg')\tMIME\tEtag|Date\tURL\tlocalfile\t(from URL)"
+                  LF);
         }
-        if ((cache->dat != NULL) && (cache->ndx == NULL)) {
-          fclose(cache->dat);
-          cache->dat = NULL;
-        }
-
-        if (cache->ndx != NULL) {
-          char s[256];
-
-          cache_wstr(cache->dat, "CACHE-1.5");
-          fflush(cache->dat);
-          cache_wstr(cache->ndx, "CACHE-1.5");
-          fflush(cache->ndx);
-          //
-          time_gmt_rfc822(s);   // date et heure actuelle GMT pour If-Modified-Since..
-          cache_wstr(cache->ndx, s);
-          fflush(cache->ndx);   // un petit fflush au cas où
-
-          // supprimer old.lst
-          if (fexist
-              (fconcat
-               (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                "hts-cache/old.lst")))
-            remove(fconcat
-                   (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                    "hts-cache/old.lst"));
-          // renommer
-          if (fexist
-              (fconcat
-               (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                "hts-cache/new.lst")))
-            rename(fconcat
-                   (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                    "hts-cache/new.lst"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                                  StringBuff(opt->path_log),
-                                                  "hts-cache/old.lst"));
-          // ouvrir
-          cache->lst =
-            fopen(fconcat
-                  (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                   "hts-cache/new.lst"), "wb");
-          strcpybuff(opt->state.strc.path, StringBuff(opt->path_html));
-          opt->state.strc.lst = cache->lst;
-          //{
-          //  filecreate_params tmp;
-          //  strcpybuff(tmp.path,StringBuff(opt->path_html));    // chemin
-          //  tmp.lst=cache->lst;                 // fichier lst
-          //  filenote("",&tmp);        // initialiser filecreate
-          //}
-
-          // supprimer old.txt
-          if (fexist
-              (fconcat
-               (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                "hts-cache/old.txt")))
-            remove(fconcat
-                   (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                    "hts-cache/old.txt"));
-          // renommer
-          if (fexist
-              (fconcat
-               (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                "hts-cache/new.txt")))
-            rename(fconcat
-                   (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                    "hts-cache/new.txt"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                                  StringBuff(opt->path_log),
-                                                  "hts-cache/old.txt"));
-          // ouvrir
-          cache->txt =
-            fopen(fconcat
-                  (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                   "hts-cache/new.txt"), "wb");
-          if (cache->txt) {
-            fprintf(cache->txt,
-                    "date\tsize'/'remotesize\tflags(request:Update,Range state:File response:Modified,Chunked,gZipped)\t");
-            fprintf(cache->txt,
-                    "statuscode\tstatus ('servermsg')\tMIME\tEtag|Date\tURL\tlocalfile\t(from URL)"
-                    LF);
-          }
-          // test
-          // cache_writedata(cache->ndx,cache->dat,"//[TEST]//","test1","TEST PIPO",9);
-        }                       // cache->ndx!=NULL
-      }                         //cache->zipOutput != NULL
+      }
 
     } else {
       cache->lst = cache->dat = cache->ndx = NULL;

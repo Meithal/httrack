@@ -135,8 +135,8 @@ typedef struct filecreate_params filecreate_params;
 typedef struct lien_adrfil lien_adrfil;
 #endif
 struct lien_adrfil {
-  char adr[HTS_URLMAXSIZE * 2];      // adresse
-  char fil[HTS_URLMAXSIZE * 2];      // nom du fichier distant
+  char adr[HTS_URLMAXSIZE];      // adresse
+  char fil[HTS_URLMAXSIZE];      // nom du fichier distant
 };
 
 // adr, fil, save
@@ -146,7 +146,9 @@ typedef struct lien_adrfilsave lien_adrfilsave;
 #endif
 struct lien_adrfilsave {
   lien_adrfil af;
-  char save[HTS_URLMAXSIZE * 2];     // nom à sauver sur disque (avec chemin éventuel)
+  char save[HTS_URLMAXSIZE];     // nom à sauver sur disque (avec chemin éventuel)
+  // remarque yt : douteux vu qu'une URL peut faire 2000 caracteres,
+  // alors que PATH_MAX est bien plus court (250 caracteres)
 };
 
 #ifndef HTS_DEF_FWSTRUCT_struct_back
@@ -210,8 +212,8 @@ struct hash_struct {
   coucal former_adrfil;
   /** Buffers **/
   int normalized;
-  char normfil[HTS_URLMAXSIZE * 2];
-  char normfil2[HTS_URLMAXSIZE * 2];
+  char normfil[HTS_URLMAXSIZE];
+  char normfil2[HTS_URLMAXSIZE];
   char catbuff[CATBUFF_SIZE];
 };
 
@@ -221,7 +223,7 @@ typedef struct filecreate_params filecreate_params;
 #endif
 struct filecreate_params {
   FILE *lst;
-  char path[HTS_URLMAXSIZE * 2];
+  char path[HTS_URLMAXSIZE];
 };
 
 /* Access macros. */

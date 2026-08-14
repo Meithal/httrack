@@ -287,7 +287,7 @@ int index_keyword(const char *html_data, LLint size, const char *mime,
 
           if (coucal_read(WordIndexHash, line, &e)) {
             //if (e) {
-            char BIGSTK savelst[HTS_URLMAXSIZE * 2];
+            char BIGSTK savelst[HTS_URLMAXSIZE];
 
             e++;                /* 0 means "once" */
 

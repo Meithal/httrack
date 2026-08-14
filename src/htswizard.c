@@ -172,7 +172,7 @@ static int hts_acceptlink_(httrackp * opt, int ptr,
   // -------------------- PHASE 1 --------------------
 
   /* Doit-on traiter les non html? */
-  if ((opt->getmode & 2) == 0) {        // non on ne doit pas
+  if ((opt->getmode & HTS_DOWNLOAD_NON_HTML) == 0) {        // non on ne doit pas
     if (!ishtml(opt, fil)) {    // non il ne faut pas
       //adr[0]='\0';    // ne pas traiter ce lien, pas traiter
       forbidden_url = 1;        // interdire récupération du lien
@@ -209,8 +209,8 @@ static int hts_acceptlink_(httrackp * opt, int ptr,
     {                           // tester interdiction de descendre
       // MODIFIE : en cas de remontée puis de redescente, il se pouvait qu'on ne puisse pas atteindre certains fichiers
       // problème: si un fichier est virtuellement accessible via une page mais dont le lien est sur une autre *uniquement*..
-      char BIGSTK tempo[HTS_URLMAXSIZE * 2];
-      char BIGSTK tempo2[HTS_URLMAXSIZE * 2];
+      char BIGSTK tempo[HTS_URLMAXSIZE];
+      char BIGSTK tempo2[HTS_URLMAXSIZE];
 
       tempo[0] = tempo2[0] = '\0';
 
@@ -317,8 +317,8 @@ static int hts_acceptlink_(httrackp * opt, int ptr,
     }                           // tester interdiction de descendre?
 
     {                           // tester interdiction de monter
-      char BIGSTK tempo[HTS_URLMAXSIZE * 2];
-      char BIGSTK tempo2[HTS_URLMAXSIZE * 2];
+      char BIGSTK tempo[HTS_URLMAXSIZE];
+      char BIGSTK tempo2[HTS_URLMAXSIZE];
 
       if (lienrelatif(tempo, fil, heap(heap(ptr)->premier)->fil) == 0) {
         if (lienrelatif(tempo2, fil, heap(ptr)->fil) == 0) {
@@ -452,8 +452,8 @@ static int hts_acceptlink_(httrackp * opt, int ptr,
     int question = 1;           // poser une question                            
     int force_mirror = 0;       // pour mirror links
     int filters_answer = 0;     // décision prise par les filtres
-    char BIGSTK l[HTS_URLMAXSIZE * 2];
-    char BIGSTK lfull[HTS_URLMAXSIZE * 2];
+    char BIGSTK l[HTS_URLMAXSIZE];
+    char BIGSTK lfull[HTS_URLMAXSIZE];
 
     if (forbidden_url != -1)
       question = 0;             // pas de question, résolu
@@ -639,7 +639,7 @@ static int hts_acceptlink_(httrackp * opt, int ptr,
 
       // si primaire (plus bas) alors ...
       if ((ptr != 0) && (force_mirror == 0)) {
-        char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+        char BIGSTK tempo[HTS_URLMAXSIZE];
 
         tempo[0] = '\0';
         strcatbuff(tempo, adr);
@@ -907,8 +907,8 @@ int hts_testlinksize(httrackp * opt, const char *adr, const char *fil, LLint siz
   int jok = 0;
 
   if (size >= 0) {
-    char BIGSTK l[HTS_URLMAXSIZE * 2];
-    char BIGSTK lfull[HTS_URLMAXSIZE * 2];
+    char BIGSTK l[HTS_URLMAXSIZE];
+    char BIGSTK lfull[HTS_URLMAXSIZE];
 
     if (size >= 0) {
       LLint sz = size;

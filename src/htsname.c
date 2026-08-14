@@ -45,7 +45,7 @@ Please visit our Website: http://www.httrack.com
 
 #define ADD_STANDARD_PATH \
     {  /* ajout nom */\
-      char BIGSTK buff[HTS_URLMAXSIZE*2];\
+      char BIGSTK buff[HTS_URLMAXSIZE];\
       buff[0]='\0';\
       strncatbuff(buff,start_pos,nom_pos - start_pos);\
       url_savename_addstr(afs->save, buff);\
@@ -53,7 +53,7 @@ Please visit our Website: http://www.httrack.com
 
 #define ADD_STANDARD_NAME(shortname) \
     {  /* ajout nom */\
-      char BIGSTK buff[HTS_URLMAXSIZE*2];\
+      char BIGSTK buff[HTS_URLMAXSIZE];\
       standard_name(buff,dot_pos,nom_pos,fil_complete,(shortname));\
       url_savename_addstr(afs->save, buff);\
     }
@@ -157,7 +157,7 @@ int url_savename(lien_adrfilsave *const afs,
   const char *const adr_complete = afs->af.adr;
   const char *const fil_complete = afs->af.fil;
 
-  /*char BIGSTK normadr_[HTS_URLMAXSIZE*2]; */
+  /*char BIGSTK normadr_[HTS_URLMAXSIZE]; */
   char BIGSTK normadr_[HTS_URLMAXSIZE], normfil_[HTS_URLMAXSIZE];
   enum { PROTOCOL_HTTP, PROTOCOL_HTTPS, PROTOCOL_FTP, PROTOCOL_FILE,
       PROTOCOL_UNKNOWN };
@@ -280,7 +280,7 @@ int url_savename(lien_adrfilsave *const afs,
     }
     // chercher sans / ou avec / dans former
     {
-      char BIGSTK fil_complete_patche[HTS_URLMAXSIZE * 2];
+      char BIGSTK fil_complete_patche[HTS_URLMAXSIZE];
 
       strcpybuff(fil_complete_patche, normfil);
       // Version avec ou sans /
@@ -528,7 +528,7 @@ int url_savename(lien_adrfilsave *const afs,
                     if (HTTP_IS_REDIRECT(back[b].r.statuscode)) {       // agh moved.. un tit tour de plus
                       if ((petits_tours < 5) && former != NULL) { // on va pas tourner en rond non plus!
                         if (strnotempty(back[b].r.location)) {    // location existe!
-                          char BIGSTK mov_url[HTS_URLMAXSIZE * 2];
+                          char BIGSTK mov_url[HTS_URLMAXSIZE];
                           lien_adrfil moved;
                           mov_url[0] = moved.adr[0] = moved.fil[0] = '\0';
                           //
@@ -940,7 +940,7 @@ int url_savename(lien_adrfilsave *const afs,
             if (!short_ver) {   // Noms longs
               strncatbuff(b, fil, (int) (nom_pos - fil) - 1);
             } else {
-              char BIGSTK pth[HTS_URLMAXSIZE * 2], n83[HTS_URLMAXSIZE * 2];
+              char BIGSTK pth[HTS_URLMAXSIZE], n83[HTS_URLMAXSIZE];
 
               pth[0] = n83[0] = '\0';
               //
@@ -987,7 +987,7 @@ int url_savename(lien_adrfilsave *const afs,
           *b = '\0';
           {
             char digest[32 + 2];
-            char BIGSTK buff[HTS_URLMAXSIZE * 2];
+            char BIGSTK buff[HTS_URLMAXSIZE];
 
             digest[0] = buff[0] = '\0';
             strcpybuff(buff, adr);
@@ -1243,7 +1243,7 @@ int url_savename(lien_adrfilsave *const afs,
   {
     char* a = jump_identification(afs->save);
     if (a!=afs->save) {
-      char BIGSTK tempo[HTS_URLMAXSIZE*2];
+      char BIGSTK tempo[HTS_URLMAXSIZE];
       char *b;
       tempo[0]='\0';
       strcpybuff(tempo,"[");
@@ -1260,7 +1260,7 @@ int url_savename(lien_adrfilsave *const afs,
 
   // éviter les / au début (cause: N100)
   if (afs->save[0] == '/') {
-    char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+    char BIGSTK tempo[HTS_URLMAXSIZE];
 
     strcpybuff(tempo, afs->save + 1);
     strcpybuff(afs->save, tempo);
@@ -1317,7 +1317,7 @@ int url_savename(lien_adrfilsave *const afs,
         case '/':
         case '.':
           {
-            char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+            char BIGSTK tempo[HTS_URLMAXSIZE];
 
             tempo[0] = '\0';
             strncatbuff(tempo, afs->save, (int) (a - afs->save) + strlen(hts_tbdev[i]));
@@ -1340,7 +1340,7 @@ int url_savename(lien_adrfilsave *const afs,
 
   // conversion 8-3 .. y compris pour les répertoires
   if (opt->savename_83) {
-    char BIGSTK n83[HTS_URLMAXSIZE * 2];
+    char BIGSTK n83[HTS_URLMAXSIZE];
 
     long_to_83(opt->savename_83, n83, afs->save);
     strcpybuff(afs->save, n83);
@@ -1509,7 +1509,7 @@ int url_savename(lien_adrfilsave *const afs,
 
   // chemin primaire éventuel A METTRE AVANT
   if (strnotempty(StringBuff(opt->path_html_utf8))) {
-    char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+    char BIGSTK tempo[HTS_URLMAXSIZE];
 
     strcpybuff(tempo, StringBuff(opt->path_html_utf8));
     strcatbuff(tempo, afs->save);
@@ -1550,7 +1550,7 @@ int url_savename(lien_adrfilsave *const afs,
           printf("\nOK ALREADY DEFINED\n", 13, i);
 #endif
         } else {                // utilisé par un AUTRE, changer de nom
-          char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+          char BIGSTK tempo[HTS_URLMAXSIZE];
           char *a = afs->save + strlen(afs->save) - 1;
           char *b;
           int n = 2;
@@ -1665,7 +1665,7 @@ char *url_md5(char *digest, const char *fil) {
   a = strchr(fil, '?');
   if (a) {
     if (strlen(a)) {
-      char BIGSTK buff[HTS_URLMAXSIZE * 2];
+      char BIGSTK buff[HTS_URLMAXSIZE];
 
       a++;
       digest[0] = buff[0] = '\0';

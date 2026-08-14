@@ -45,9 +45,9 @@ struct t_StatsBuffer {
   char name[1024];
   char file[1024];
   char state[256];
-  char BIGSTK url_sav[HTS_URLMAXSIZE * 2];      // pour cancel
-  char BIGSTK url_adr[HTS_URLMAXSIZE * 2];
-  char BIGSTK url_fil[HTS_URLMAXSIZE * 2];
+  char BIGSTK url_sav[HTS_URLMAXSIZE];      // pour cancel
+  char BIGSTK url_adr[HTS_URLMAXSIZE];
+  char BIGSTK url_fil[HTS_URLMAXSIZE];
   LLint size;
   LLint sizetot;
   int offset;

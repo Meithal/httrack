@@ -2043,7 +2043,7 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                   cache.ro = 1; /* read only */
                   if (cache.hashtable) {
                     lien_adrfilsave afs;
-                    char BIGSTK url[HTS_URLMAXSIZE * 2];
+                    char BIGSTK url[HTS_URLMAXSIZE];
                     char linepos[256];
                     int pos;
                     char *cacheNdx =

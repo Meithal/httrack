@@ -287,8 +287,8 @@ int ident_url_relatif(const char *lien, const char *origin_adr,
 // créer dans s, à partir du chemin courant curr_fil, le lien vers link (absolu)
 // un ident_url_relatif a déja été fait avant, pour que link ne soit pas un chemin relatif
 int lienrelatif(char *s, const char *link, const char *curr_fil) {
-  char BIGSTK _curr[HTS_URLMAXSIZE * 2];
-  char BIGSTK newcurr_fil[HTS_URLMAXSIZE * 2], newlink[HTS_URLMAXSIZE * 2];
+  char BIGSTK _curr[HTS_URLMAXSIZE];
+  char BIGSTK newcurr_fil[HTS_URLMAXSIZE], newlink[HTS_URLMAXSIZE];
   char *curr;
 
   //int n=0;
@@ -877,7 +877,7 @@ HTSEXT_API int hts_buildtopindex(httrackp * opt, const char *path,
                                  const char *binpath) {
   FILE *fpo;
   int retval = 0;
-  char BIGSTK rpath[1024 * 2];
+  char BIGSTK rpath[1024];
   char *toptemplate_header = NULL, *toptemplate_body =
     NULL, *toptemplate_footer = NULL, *toptemplate_bodycat = NULL;
   char catbuff[CATBUFF_SIZE];
@@ -997,7 +997,7 @@ HTSEXT_API int hts_buildtopindex(httrackp * opt, const char *path,
 
             /* Build sorted index */
             for(i = 0; i < chainSize; i++) {
-              char BIGSTK hname[HTS_URLMAXSIZE * 2];
+              char BIGSTK hname[HTS_URLMAXSIZE];
 
               escape_uri_utf(sortedElts[i]->name, hname, sizeof(hname));
 

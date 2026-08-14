@@ -118,7 +118,7 @@ void infomsg(const char *msg) {
 }
 
 typedef struct help_wizard_buffers {
-  char urls[HTS_URLMAXSIZE * 2];
+  char urls[HTS_URLMAXSIZE];
   char mainpath[256];
   char projname[256];
   char stropt[2048];        // options
@@ -402,12 +402,12 @@ int help_query(const char *list, int def) {
 
 // Capture d'URL
 void help_catchurl(const char *dest_path) {
-  char BIGSTK adr_prox[HTS_URLMAXSIZE * 2];
+  char BIGSTK adr_prox[HTS_URLMAXSIZE];
   int port_prox;
   T_SOC soc = catch_url_init_std(&port_prox, adr_prox);
 
   if (soc != INVALID_SOCKET) {
-    char BIGSTK url[HTS_URLMAXSIZE * 2];
+    char BIGSTK url[HTS_URLMAXSIZE];
     char method[32];
     char BIGSTK data[32768];
 
@@ -419,7 +419,7 @@ void help_catchurl(const char *dest_path) {
            port_prox);
     //
     if (catch_url(soc, url, method, data)) {
-      char BIGSTK dest[HTS_URLMAXSIZE * 2];
+      char BIGSTK dest[HTS_URLMAXSIZE];
       int i = 0;
 
       do {
@@ -436,7 +436,7 @@ void help_catchurl(const char *dest_path) {
       }
       // former URL!
       {
-        char BIGSTK finalurl[HTS_URLMAXSIZE * 2];
+        char BIGSTK finalurl[HTS_URLMAXSIZE];
 
         inplace_escape_check_url(dest, sizeof(dest));
         snprintf(finalurl, sizeof(finalurl), "%s" POSTTOK "file:%s", url, dest);

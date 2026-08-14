@@ -198,7 +198,7 @@ Please visit our Website: http://www.httrack.com
 #endif
 
 /* Taille max d'une URL */
-#define HTS_URLMAXSIZE 1024
+#define HTS_URLMAXSIZE 2048  // https://github.com/w3c/dxwg/issues/592#issuecomment-472945792
 /* Taille max ligne de commande (>=HTS_URLMAXSIZE*2) */
 #define HTS_CDLMAXSIZE 1024
 

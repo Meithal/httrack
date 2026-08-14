@@ -103,7 +103,7 @@ int hts_extract_meta(const char *path) {
     if (unzGoToFirstFile(zFile) == Z_OK) {
       zip_fileinfo fi;
       unz_file_info ufi;
-      char BIGSTK filename[HTS_URLMAXSIZE * 4];
+      char BIGSTK filename[8192];
       char BIGSTK comment[8192];
 
       memset(comment, 0, sizeof(comment));      // for truncated reads

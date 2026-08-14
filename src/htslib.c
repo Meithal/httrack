@@ -655,7 +655,7 @@ T_SOC http_xfopen(httrackp * opt, int mode, int treat, int waitconnect,
   //htsblk retour;
   //int bufl=TAILLE_BUFFER;    // 8Ko de buffer
   T_SOC soc = INVALID_SOCKET;
-  char BIGSTK tempo_fil[HTS_URLMAXSIZE * 2];
+  char BIGSTK tempo_fil[HTS_URLMAXSIZE];
 
   //char *p,*q;
 
@@ -910,7 +910,7 @@ int http_sendhead(httrackp * opt, t_cookie * cookie, int mode,
                 OPT_GET_BUFF_SIZE(opt), search_tag + strlen(POSTTOK) + 5), "rb");
         if (fp) {
           char BIGSTK line[1100];
-          char BIGSTK protocol[256], url[HTS_URLMAXSIZE * 2], method[256];
+          char BIGSTK protocol[256], url[HTS_URLMAXSIZE], method[256];
 
           linput(fp, line, 1000);
           if (sscanf(line, "%s %s %s", method, url, protocol) == 3) {
@@ -956,13 +956,13 @@ int http_sendhead(httrackp * opt, t_cookie * cookie, int mode,
     if (retour->req.proxy.active && (strncmp(adr, "https://", 8) != 0)) {
       if (!link_has_authority(adr)) {   // default http
 #if HDEBUG
-        printf("Proxy Use: for %s%s proxy %d port %d\n", adr, fil,
+        printf("Proxy Use: for %s%s proxy %s port %d\n", adr, fil,
                retour->req.proxy.name, retour->req.proxy.port);
 #endif
         print_buffer(&bstr, "http://%s", jump_identification_const(adr));
       } else {                  // ftp:// en proxy http
 #if HDEBUG
-        printf("Proxy Use for ftp: for %s%s proxy %d port %d\n", adr, fil,
+        printf("Proxy Use for ftp: for %s%s proxy %s port %d\n", adr, fil,
                retour->req.proxy.name, retour->req.proxy.port);
 #endif
         direct_url = 1;         // ne pas analyser user/pass
@@ -975,7 +975,7 @@ int http_sendhead(httrackp * opt, t_cookie * cookie, int mode,
       print_buffer(&bstr, "/");
 
     {
-      char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+      char BIGSTK tempo[HTS_URLMAXSIZE];
 
       tempo[0] = '\0';
       if (search_tag)
@@ -2156,7 +2156,7 @@ T_SOC newhttp(httrackp * opt, const char *_iadr, htsblk * retour, int port,
 #endif
 
       if (a != NULL) {
-        char BIGSTK iadr2[HTS_URLMAXSIZE * 2];
+        char BIGSTK iadr2[HTS_URLMAXSIZE];
         int i = -1;
 
         iadr2[0] = '\0';
@@ -3264,7 +3264,7 @@ void map_characters(unsigned char *buffer, unsigned int size, unsigned int *map)
 // -2 : on sait pas, pas d'extension
 int ishtml(httrackp * opt, const char *fil) {
   /* User-defined MIME types (overrides ishtml()) */
-  char BIGSTK fil_noquery[HTS_URLMAXSIZE * 2];
+  char BIGSTK fil_noquery[HTS_URLMAXSIZE];
   char mime[256];
   char *a;
 
@@ -3288,7 +3288,7 @@ int ishtml(httrackp * opt, const char *fil) {
   for(a = fil_noquery + strlen(fil_noquery) - 1;
       *a != '.' && *a != '/' && a > fil_noquery; a--) ;
   if (*a == '.') {              // a une extension
-    char BIGSTK fil_noquery[HTS_URLMAXSIZE * 2];
+    char BIGSTK fil_noquery[HTS_URLMAXSIZE];
     char *b;
     int ret;
     char *dotted = a;
@@ -4698,7 +4698,7 @@ HTSEXT_API int check_hostname_dns(const char *const hostname) {
 // cache dns interne à HTS // ** FREE A FAIRE sur la chaine
 static SOCaddr* hts_dns_resolve_(httrackp * opt, const char *_iadr,
                                  SOCaddr *const addr, const char **error) {
-  char BIGSTK iadr[HTS_URLMAXSIZE * 2];
+  char BIGSTK iadr[HTS_URLMAXSIZE];
   t_dnscache *cache = hts_cache(opt);  // adresse du cache
   SOCaddr *sa;
 
@@ -5432,7 +5432,7 @@ HTSEXT_API httrackp *hts_create_opt(void) {
   opt->urlmode = 2;             // relatif par défaut
   opt->no_type_change = 0;      // change file types
   opt->debug = LOG_NOTICE;      // small log
-  opt->getmode = 3;             // linear scan
+  opt->getmode = HTS_DOWNLOAD_HTML | HTS_DOWNLOAD_NON_HTML;             // linear scan
   opt->maxsite = -1;            // taille max site (aucune)
   opt->maxfile_nonhtml = -1;    // taille max fichier non html
   opt->maxfile_html = -1;       // idem pour html

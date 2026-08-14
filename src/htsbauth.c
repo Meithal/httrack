@@ -414,7 +414,7 @@ const char *cookie_get(char *buffer, const char *cookie_base, int param) {
 
 /* déclarer un répertoire comme possédant une authentification propre */
 int bauth_add(t_cookie * cookie, const char *adr, const char *fil, const char *auth) {
-  char buffer[HTS_URLMAXSIZE * 2];
+  char buffer[HTS_URLMAXSIZE];
 
   if (cookie) {
     if (!bauth_check(cookie, adr, fil)) {       // n'existe pas déja
@@ -440,7 +440,7 @@ int bauth_add(t_cookie * cookie, const char *adr, const char *fil, const char *a
 /* tester adr et fil, et retourner authentification si nécessaire */
 /* sinon, retourne NULL */
 char *bauth_check(t_cookie * cookie, const char *adr, const char *fil) {
-  char buffer[HTS_URLMAXSIZE * 2];
+  char buffer[HTS_URLMAXSIZE];
 
   if (cookie) {
     bauth_chain *chain = &cookie->auth;

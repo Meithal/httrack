@@ -572,7 +572,7 @@ const char *hts_gethome(void) {
 /* Convert ~/foo into /home/smith/foo */
 void expand_home(String * str) {
   if (StringSub(*str, 1) == '~') {
-    char BIGSTK tempo[HTS_URLMAXSIZE * 2];
+    char BIGSTK tempo[HTS_URLMAXSIZE];
 
     strcpybuff(tempo, hts_gethome());
     strcatbuff(tempo, StringBuff(*str) + 1);
