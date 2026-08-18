@@ -126,7 +126,7 @@ Please visit our Website: http://www.httrack.com
   fflush(makeindex_fp); \
   fclose(makeindex_fp);  /* à ne pas oublier sinon on passe une nuit blanche */  \
   makeindex_fp=NULL; \
-  usercommand(opt,0,NULL,fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),  StringBuff(opt->path_html_utf8),"index.html"),"primary","primary");  \
+  usercommand(opt,0,NULL,fcat(StringBuff(opt->path_html_utf8),"index.html"),"primary","primary");  \
   } \
   } \
   makeindex_done=1;    /* ok c'est fait */  \
@@ -495,15 +495,11 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
 
               if (p) {      // ok center
                 if (makeindex_fp == NULL) {
-                  file_notify(opt, "", "",
-                              fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                      StringBuff(opt->path_html_utf8),
+                  file_notify(opt, "", "", fcat(StringBuff(opt->path_html_utf8),
                                       "index.html"), 1, 1, 0);
                   verif_backblue(opt, StringBuff(opt->path_html_utf8));     // générer gif
                   makeindex_fp =
-                    filecreate(&opt->state.strc,
-                               fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                       StringBuff(opt->path_html_utf8),
+                    filecreate(&opt->state.strc, fcat(StringBuff(opt->path_html_utf8),
                                        "index.html"));
                   if (makeindex_fp != NULL) {
 
@@ -2663,10 +2659,8 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                           if (verif_external(opt, cat_nb, 1)) {
                             FILE *fp =
                               filecreate(&opt->state.strc,
-                                         fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                                 StringBuff(opt->
-                                                            path_html_utf8),
-                                                 cat_name));
+                  fcat(StringBuff(opt->path_html_utf8),
+                        cat_name));
                             if (fp) {
                               if (cat_data_len == 0) {      // texte
                                 verif_backblue(opt,
@@ -2681,11 +2675,9 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                                 fwrite(cat_data, cat_data_len, 1, fp);
                               }
                               fclose(fp);
-                              usercommand(opt, 0, NULL,
-                                          fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                                  StringBuff(opt->
-                                                             path_html_utf8),
-                                                  cat_name), "", "");
+                              usercommand(
+             opt, 0, NULL, fcat(StringBuff(opt->path_html_utf8),
+                                  cat_name), "", "");
                             }
                           }
                         } else {    // écrire normalement le nom de fichier
@@ -3788,18 +3780,10 @@ void hts_mirror_process_user_interaction(htsmoduleStruct * str,
     int do_pause = 0;
 
     // user pause lockfile : create hts-paused.lock --> HTTrack will be paused
-    if (fexist
-        (fconcat
-         (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-         StringBuff(opt->path_log), "hts-stop.lock"))) {
+    if (fexist(fcat(StringBuff(opt->path_log), "hts-stop.lock"))) {
       // remove lockfile
-      remove(fconcat
-             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-             StringBuff(opt->path_log), "hts-stop.lock"));
-      if (!fexist
-          (fconcat
-           (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-           StringBuff(opt->path_log), "hts-stop.lock"))) {
+      remove(fcat(StringBuff(opt->path_log), "hts-stop.lock"));
+      if (!fexist(fcat(StringBuff(opt->path_log), "hts-stop.lock"))) {
         do_pause = 1;
       }
     }
@@ -3846,9 +3830,7 @@ void hts_mirror_process_user_interaction(htsmoduleStruct * str,
       // structcheck_init(1);
       {
         FILE *fp =
-          fopen(fconcat
-                (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                StringBuff(opt->path_log),
+          fopen(fcat(StringBuff(opt->path_log),
                  "hts-paused.lock"), "wb");
         if (fp) {
           fspc(NULL, fp, "info");       // dater
@@ -3862,10 +3844,10 @@ void hts_mirror_process_user_interaction(htsmoduleStruct * str,
       stat_fragment = HTS_STAT.stat_bytes;
       /* Info for wrappers */
       hts_log_print(opt, LOG_INFO, "engine: pause: %s",
-                    fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),  StringBuff(opt->path_log),
+                    fcat(StringBuff(opt->path_log),
                             "hts-paused.lock"));
       RUN_CALLBACK1(opt, pause,
-                    fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),  StringBuff(opt->path_log),
+                    fcat(StringBuff(opt->path_log),
                             "hts-paused.lock"));
     }
     //
@@ -4190,17 +4172,13 @@ int hts_mirror_wait_for_next_file(htsmoduleStruct * str,
             int a = 0;
 
             *stre->last_info_shell_ = tl;
-            if (fexist(fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),  StringBuff(opt->path_log), "hts-autopsy"))) { // débuggage: teste si le robot est vivant
+            if (fexist(fcat(StringBuff(opt->path_log), "hts-autopsy"))) { // débuggage: teste si le robot est vivant
               // (oui je sais un robot vivant.. mais bon.. il a le droit de vivre lui aussi)
               // (libérons les robots esclaves de l'internet!)
-              remove(fconcat
-                     (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                     StringBuff(opt->path_log),
+              remove(fcat(StringBuff(opt->path_log),
                       "hts-autopsy"));
               fp =
-                fopen(fconcat
-                      (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                      StringBuff(opt->path_log),
+                fopen(fcat(StringBuff(opt->path_log),
                        "hts-isalive"), "wb");
               a = 1;
             }

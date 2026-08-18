@@ -544,32 +544,27 @@ int verif_backblue(httrackp * opt, const char *base) {
     return 0;
   }
   if ((!opt->state.verif_backblue_done)
-      || (fsize_utf8(fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), base, "backblue.gif")) !=
+      || (fsize_utf8(fcat(base, "backblue.gif")) !=
           HTS_DATA_BACK_GIF_LEN)) {
     FILE *fp =
-      filecreate(&opt->state.strc,
-                 fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), base, "backblue.gif"));
+      filecreate(&opt->state.strc, fcat(base, "backblue.gif"));
     opt->state.verif_backblue_done = 1;
     if (fp) {
       if (fwrite(HTS_DATA_BACK_GIF, HTS_DATA_BACK_GIF_LEN, 1, fp) !=
           HTS_DATA_BACK_GIF_LEN)
         ret = 1;
       fclose(fp);
-      usercommand(opt, 0, NULL,
-                  fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), base, "backblue.gif"), "", "");
+      usercommand(opt, 0, NULL, fcat(base, "backblue.gif"), "", "");
     } else
       ret = 1;
-    //
-    fp =
-      filecreate(&opt->state.strc,
-                 fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), base, "fade.gif"));
+
+    fp = filecreate(&opt->state.strc, fcat(base, "fade.gif"));
     if (fp) {
       if (fwrite(HTS_DATA_FADE_GIF, HTS_DATA_FADE_GIF_LEN, 1, fp) !=
           HTS_DATA_FADE_GIF_LEN)
         ret = 1;
       fclose(fp);
-      usercommand(opt, 0, NULL, fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), base, "fade.gif"),
-                  "", "");
+      usercommand(opt, 0, NULL, fcat(base, "fade.gif"), "", "");
     } else
       ret = 1;
   }

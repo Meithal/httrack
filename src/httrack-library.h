@@ -340,6 +340,8 @@ typedef struct utimbuf STRUCT_UTIMBUF;
 #define concat(A,B,C,D) (COMPILE_TIME_CHECK_SIZE(B), concat(A,B,C,D))
 #define fconcat(A,B,C,D) (COMPILE_TIME_CHECK_SIZE(B), fconcat(A,B,C,D))
 #define fslash(A,B,C) (COMPILE_TIME_CHECK_SIZE(B), fslash(A,B,C))
+#define fcat(a, b) fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), a, b)
+
 
 #ifdef __cplusplus
 }

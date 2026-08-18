@@ -1396,62 +1396,54 @@ htsblk *cache_header(httrackp * opt, cache_back * cache, const char *adr,
 void cache_init(cache_back * cache, httrackp * opt) {
   // ---
   // utilisation du cache: renommer ancien éventuel et charger index
-  hts_log_print(opt, LOG_DEBUG, "Cache: enabled=%d, base=%s, ro=%d",
-                (int) opt->cache, fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                          StringBuff(opt->path_log),
-                                          "hts-cache/"), (int) cache->ro);
+  hts_log_print(opt, LOG_DEBUG,
+      "Cache: enabled=%d, base=%s, ro=%d",
+                (int) opt->cache,
+                fcat(StringBuff(opt->path_log), "hts-cache/"),
+                (int) cache->ro);
   if (opt->cache) {
 #if DEBUGCA
     printf("cache init: ");
 #endif
     if (!cache->ro) {
 #ifdef _WIN32
-      mkdir(fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log), "hts-cache"));
+      mkdir(fcat(StringBuff(opt->path_log), "hts-cache"));
 #else
-      mkdir(fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log), "hts-cache"),
+      mkdir(fcat(StringBuff(opt->path_log), "hts-cache"),
             HTS_PROTECT_FOLDER);
 #endif
-      if ((fexist(fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log), "hts-cache/new.zip")))) {       // il existe déja un cache précédent.. renommer
+      if ((fexist(fcat(StringBuff(opt->path_log), "hts-cache/new.zip")))) {       // il existe déja un cache précédent.. renommer
         /* Previous cache from the previous cache version */
 #if 0
         /* No.. reuse with old httrack releases! */
-        if (fexist
-            (fconcat
-             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+        if (fexist(fcat(StringBuff(opt->path_log),
               "hts-cache/old.dat")))
-          remove(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          remove(fcat(StringBuff(opt->path_log),
                   "hts-cache/old.dat"));
-        if (fexist
-            (fconcat
-             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+        if (fexist(fcat(StringBuff(opt->path_log),
               "hts-cache/old.ndx")))
-          remove(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          remove(fcat(StringBuff(opt->path_log),
                   "hts-cache/old.ndx"));
 #endif
         /* Previous cache version */
-        if ((fexist(fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log), "hts-cache/new.dat"))) && (fexist(fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log), "hts-cache/new.ndx")))) {     // il existe déja un cache précédent.. renommer
-          rename(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                  "hts-cache/new.dat"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                                StringBuff(opt->path_log),
-                                                "hts-cache/old.dat"));
-          rename(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                  "hts-cache/new.ndx"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                                StringBuff(opt->path_log),
-                                                "hts-cache/old.ndx"));
+        if ((fexist(fcat(StringBuff(opt->path_log),
+                         "hts-cache/new.dat")))
+            && (fexist(fcat(StringBuff(opt->path_log),
+                            "hts-cache/new.ndx")))) {     // il existe déja un cache précédent.. renommer
+          rename(fcat(StringBuff(opt->path_log),
+                  "hts-cache/new.dat"),
+                 fcat(StringBuff(opt->path_log),
+                  "hts-cache/old.dat"));
+          rename(fcat(StringBuff(opt->path_log),
+                  "hts-cache/new.ndx"),
+                 fcat(StringBuff(opt->path_log),
+                  "hts-cache/old.ndx"));
         }
 
         /* Remove OLD cache */
-        if (fexist
-            (fconcat
-             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+        if (fexist(fcat(StringBuff(opt->path_log),
               "hts-cache/old.zip"))) {
-          if (remove
-              (fconcat
-               (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          if (remove(fcat(StringBuff(opt->path_log),
                 "hts-cache/old.zip")) != 0) {
             hts_log_print(opt, LOG_WARNING | LOG_ERRNO,
                           "Cache: error while moving previous cache");
@@ -1461,61 +1453,52 @@ void cache_init(cache_back * cache, httrackp * opt) {
         /* Rename */
         if (hts_rename
             (opt,
-             fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                     "hts-cache/new.zip"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                                   StringBuff(opt->path_log),
-                                                   "hts-cache/old.zip")) != 0) {
+             fcat(StringBuff(opt->path_log),
+                     "hts-cache/new.zip"),
+             fcat(StringBuff(opt->path_log),
+                     "hts-cache/old.zip")) != 0) {
           hts_log_print(opt, LOG_WARNING | LOG_ERRNO,
                         "Cache: error while moving previous cache");
         } else {
           hts_log_print(opt, LOG_DEBUG, "Cache: successfully renamed");
         }
-      } else if ((fexist(fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log), "hts-cache/new.dat"))) && (fexist(fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log), "hts-cache/new.ndx")))) {        // il existe déja un cache précédent.. renommer
+      } else if ((fexist(fcat(StringBuff(opt->path_log),
+                              "hts-cache/new.dat")))
+                 && (fexist(fcat(StringBuff(opt->path_log),
+                                 "hts-cache/new.ndx")))) {
+        /// il existe déja un cache précédent.. renommer
 #if DEBUGCA
         printf("work with former cache\n");
 #endif
-        if (fexist
-            (fconcat
-             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+        if (fexist(fcat(StringBuff(opt->path_log),
               "hts-cache/old.dat")))
-          remove(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          remove(fcat(StringBuff(opt->path_log),
                   "hts-cache/old.dat"));
-        if (fexist
-            (fconcat
-             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+        if (fexist(fcat(StringBuff(opt->path_log),
               "hts-cache/old.ndx")))
-          remove(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          remove(fcat(StringBuff(opt->path_log),
                   "hts-cache/old.ndx"));
 
-        rename(fconcat
-               (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                "hts-cache/new.dat"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                              StringBuff(opt->path_log),
-                                              "hts-cache/old.dat"));
-        rename(fconcat
-               (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                "hts-cache/new.ndx"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                              StringBuff(opt->path_log),
-                                              "hts-cache/old.ndx"));
+        rename(fcat(StringBuff(opt->path_log),
+                "hts-cache/new.dat"),
+               fcat(StringBuff(opt->path_log),
+                "hts-cache/old.dat"));
+        rename(fcat(StringBuff(opt->path_log),
+                "hts-cache/new.ndx"),
+               fcat(StringBuff(opt->path_log),
+                "hts-cache/old.ndx"));
       } else {                  // un des deux (ou les deux) fichiers cache absents: effacer l'autre éventuel
 #if DEBUGCA
         printf("new cache\n");
 #endif
-        if (fexist
-            (fconcat
-             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+        if (fexist(fcat(StringBuff(opt->path_log),
               "hts-cache/new.dat")))
-          remove(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          remove(fcat(StringBuff(opt->path_log),
                   "hts-cache/new.dat"));
         if (fexist
-            (fconcat
-             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+            (fcat(StringBuff(opt->path_log),
               "hts-cache/new.ndx")))
-          remove(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          remove(fcat(StringBuff(opt->path_log),
                   "hts-cache/new.ndx"));
       }
     } else {
@@ -1523,31 +1506,22 @@ void cache_init(cache_back * cache, httrackp * opt) {
     }
     hts_log_print(opt, LOG_DEBUG, "Cache: size %d",
                   (int)
-                  fsize(fconcat
-                        (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+                  fsize(fcat(StringBuff(opt->path_log),
                          "hts-cache/old.zip")));
 
     // charger index cache précédent
-    if ((!cache->ro
-         &&
-         fsize(fconcat
-               (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+    if ((!cache->ro && fsize(fcat(StringBuff(opt->path_log),
                 "hts-cache/old.zip")) > 0)
-        || (cache->ro
-            &&
-            fsize(fconcat
-                  (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+        || (cache->ro && fsize(fcat(StringBuff(opt->path_log),
                    "hts-cache/new.zip")) > 0)
       ) {
       if (!cache->ro) {
         cache->zipInput =
-          unzOpen(fconcat
-                  (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          unzOpen(fcat(StringBuff(opt->path_log),
                    "hts-cache/old.zip"));
       } else {
         cache->zipInput =
-          unzOpen(fconcat
-                  (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          unzOpen(fcat(StringBuff(opt->path_log),
                    "hts-cache/new.zip"));
       }
 
@@ -1559,25 +1533,24 @@ void cache_init(cache_back * cache, httrackp * opt) {
 
         if (!cache->ro) {
           name =
-            fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+            fcat(StringBuff(opt->path_log),
                     "hts-cache/old.zip");
         } else {
           name =
-            fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+            fcat(StringBuff(opt->path_log),
                     "hts-cache/new.zip");
         }
         hts_log_print(opt, LOG_WARNING,
                       "Cache: damaged cache, trying to repair");
         if (unzRepair
             (name,
-             fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                     "hts-cache/repair.zip"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                                      StringBuff(opt->path_log),
-                                                      "hts-cache/repair.tmp"),
+             fcat(StringBuff(opt->path_log),
+                     "hts-cache/repair.zip"),
+             fcat(StringBuff(opt->path_log),
+                     "hts-cache/repair.tmp"),
              &repaired, &repairedBytes) == Z_OK) {
           unlink(name);
-          rename(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          rename(fcat(StringBuff(opt->path_log),
                   "hts-cache/repair.zip"), name);
           cache->zipInput = unzOpen(name);
           hts_log_print(opt, LOG_WARNING,
@@ -1676,23 +1649,13 @@ void cache_init(cache_back * cache, httrackp * opt) {
       }
 
     } else
-      if ((!cache->ro
-           &&
-           fsize(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+      if ((!cache->ro && fsize(fcat(StringBuff(opt->path_log),
                   "hts-cache/old.dat")) >= 0
-           &&
-           fsize(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+           && fsize(fcat(StringBuff(opt->path_log),
                   "hts-cache/old.ndx")) > 0)
-          || (cache->ro
-              &&
-              fsize(fconcat
-                    (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          || (cache->ro && fsize(fcat(StringBuff(opt->path_log),
                      "hts-cache/new.dat")) >= 0
-              &&
-              fsize(fconcat
-                    (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+              && fsize(fcat(StringBuff(opt->path_log),
                      "hts-cache/new.ndx")) > 0)
       ) {
       FILE *oldndx = NULL;
@@ -1702,21 +1665,17 @@ void cache_init(cache_back * cache, httrackp * opt) {
 #endif
       if (!cache->ro) {
         cache->olddat =
-          fopen(fconcat
-                (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          fopen(fcat(StringBuff(opt->path_log),
                  "hts-cache/old.dat"), "rb");
         oldndx =
-          fopen(fconcat
-                (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          fopen(fcat(StringBuff(opt->path_log),
                  "hts-cache/old.ndx"), "rb");
       } else {
         cache->olddat =
-          fopen(fconcat
-                (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          fopen(fcat(StringBuff(opt->path_log),
                  "hts-cache/new.dat"), "rb");
         oldndx =
-          fopen(fconcat
-                (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          fopen(fcat(StringBuff(opt->path_log),
                  "hts-cache/new.ndx"), "rb");
       }
       // les deux doivent être ouvrables
@@ -1737,21 +1696,17 @@ void cache_init(cache_back * cache, httrackp * opt) {
         // lire ndx, et lastmodified
         if (!cache->ro) {
           buffl =
-            fsize(fconcat
-                  (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+            fsize(fcat(StringBuff(opt->path_log),
                    "hts-cache/old.ndx"));
           cache->use =
-            readfile(fconcat
-                     (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+            readfile(fcat(StringBuff(opt->path_log),
                       "hts-cache/old.ndx"));
         } else {
           buffl =
-            fsize(fconcat
-                  (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+            fsize(fcat(StringBuff(opt->path_log),
                    "hts-cache/new.ndx"));
           cache->use =
-            readfile(fconcat
-                     (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+            readfile(fcat(StringBuff(opt->path_log),
                       "hts-cache/new.ndx"));
         }
         if (cache->use != NULL) {
@@ -1822,7 +1777,7 @@ void cache_init(cache_back * cache, httrackp * opt) {
       }
     } else {
       hts_log_print(opt, LOG_DEBUG, "Cache: no cache found in %s",
-                    fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+                    fcat(StringBuff(opt->path_log),
                             "hts-cache/"));
     }
 
@@ -1831,39 +1786,30 @@ void cache_init(cache_back * cache, httrackp * opt) {
 #endif
     if (!cache->ro) {
       // ouvrir caches actuels
-      structcheck(fconcat
-                  (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log), "hts-cache/"));
+      structcheck(fcat(StringBuff(opt->path_log), "hts-cache/"));
 
       /* Create ZIP file cache */
       cache->zipOutput =
         (void *)
-        zipOpen(fconcat
-                (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+        zipOpen(fcat(StringBuff(opt->path_log),
                  "hts-cache/new.zip"), 0);
 
       if (cache->zipOutput != NULL) {
         // supprimer old.lst
-        if (fexist
-            (fconcat
-             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+        if (fexist(fcat(StringBuff(opt->path_log),
               "hts-cache/old.lst")))
-          remove(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          remove(fcat(StringBuff(opt->path_log),
                   "hts-cache/old.lst"));
         // renommer
-        if (fexist
-            (fconcat
-             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+        if (fexist(fcat(StringBuff(opt->path_log),
               "hts-cache/new.lst")))
-          rename(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                  "hts-cache/new.lst"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                                StringBuff(opt->path_log),
-                                                "hts-cache/old.lst"));
+          rename(fcat(StringBuff(opt->path_log),
+                  "hts-cache/new.lst"),
+                 fcat(StringBuff(opt->path_log),
+                  "hts-cache/old.lst"));
         // ouvrir
         cache->lst =
-          fopen(fconcat
-                (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          fopen(fcat(StringBuff(opt->path_log),
                  "hts-cache/new.lst"), "wb");
         strcpybuff(opt->state.strc.path, StringBuff(opt->path_html));
         opt->state.strc.lst = cache->lst;
@@ -1875,27 +1821,20 @@ void cache_init(cache_back * cache, httrackp * opt) {
         //}
 
         // supprimer old.txt
-        if (fexist
-            (fconcat
-             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+        if (fexist(fcat(StringBuff(opt->path_log),
               "hts-cache/old.txt")))
-          remove(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          remove(fcat(StringBuff(opt->path_log),
                   "hts-cache/old.txt"));
         // renommer
-        if (fexist
-            (fconcat
-             (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+        if (fexist(fcat(StringBuff(opt->path_log),
               "hts-cache/new.txt")))
-          rename(fconcat
-                 (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
-                  "hts-cache/new.txt"), fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt),
-                                                StringBuff(opt->path_log),
-                                                "hts-cache/old.txt"));
+          rename(fcat(StringBuff(opt->path_log),
+                    "hts-cache/new.txt"),
+                 fcat(StringBuff(opt->path_log),
+                    "hts-cache/old.txt"));
         // ouvrir
         cache->txt =
-          fopen(fconcat
-                (OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log),
+          fopen(fcat(StringBuff(opt->path_log),
                  "hts-cache/new.txt"), "wb");
         if (cache->txt) {
           fprintf(cache->txt,

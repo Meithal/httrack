@@ -988,12 +988,10 @@ int back_serialize_ref(httrackp * opt, const lien_back * src) {
 
   if (fp == NULL) {
 #ifdef _WIN32
-    if (mkdir
-        (fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log), CACHE_REFNAME))
+    if (mkdir(fcat(StringBuff(opt->path_log), CACHE_REFNAME))
         == 0)
 #else
-    if (mkdir
-        (fconcat(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), StringBuff(opt->path_log), CACHE_REFNAME),
+    if (mkdir(fcat(StringBuff(opt->path_log), CACHE_REFNAME),
          S_IRWXU | S_IRWXG | S_IRWXO) == 0)
 #endif
     {
@@ -2693,7 +2691,7 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
           FILE *fp;
 
           fp =
-            FOPEN(fconcat(OPT_GET_BUFF(opt), back[i].location_buffer, ".ok"),
+            FOPEN(fcat(back[i].location_buffer, ".ok"),
                   "rb");
           if (fp) {
             int j = 0;
@@ -2707,9 +2705,8 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
             }
             back[i].r.msg[j++] = '\0';
             fclose(fp);
-            UNLINK(fconcat(OPT_GET_BUFF(opt), back[i].location_buffer, ".ok"));
-            strcpybuff(fconcat
-                       (OPT_GET_BUFF(opt), back[i].location_buffer, ".ok"), "");
+            UNLINK(fcat(back[i].location_buffer, ".ok"));
+            strcpybuff(fcat(back[i].location_buffer, ".ok"), "");
           } else {
             strcpybuff(back[i].r.msg,
                        "Unknown ftp result, check if file is ok");
