@@ -622,7 +622,7 @@ int httpmirror(const char *url1, httrackp * opt) {
 
   // copier adresse(s) dans liste des adresses
   {
-    char *a = url1;
+    const char *a = url1;
     int primary_len = 8192;
 
     if (StringNotEmpty(opt->filelist)) {
@@ -2121,8 +2121,10 @@ int httpmirror(const char *url1, httrackp * opt) {
                 if (!strstr(adr, line)) {       // fichier non trouvé dans le nouveau?
                   char BIGSTK file[HTS_URLMAXSIZE];
 
-                  strcpybuff(file, StringBuff(opt->path_html));
-                  strcatbuff(file, line + 1);
+//                  strcpybuff(file, StringBuff(opt->path_html));
+//                  strcatbuff(file, line + 1);
+                  // ^ unsafe because line + 1 is converted to a pointer and sizeof becomes nonsense
+                  snprintf(file, HTS_URLMAXSIZE, "%s%s", StringBuff(opt->path_html), line + 1);
                   file[strlen(file) - 1] = '\0';
                   if (fexist(file)) {   // toujours sur disque: virer
                     hts_log_print(opt, LOG_INFO, "Purging %s", file);
@@ -2145,8 +2147,9 @@ int httpmirror(const char *url1, httrackp * opt) {
                     if (!strstr(adr, line)) {   // non trouvé?
                       char BIGSTK file[HTS_URLMAXSIZE];
 
-                      strcpybuff(file, StringBuff(opt->path_html));
-                      strcatbuff(file, line + 1);
+//                      strcpybuff(file, StringBuff(opt->path_html));
+//                      strcatbuff(file, line + 1);
+                      snprintf(file, HTS_URLMAXSIZE, "%s%s", StringBuff(opt->path_html), line + 1);
                       while((strnotempty(file)) && (rmdir(file) == 0)) {        // ok, éliminé (existait)
                         purge = 1;
                         if (opt->log) {
