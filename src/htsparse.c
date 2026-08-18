@@ -106,69 +106,6 @@ Please visit our Website: http://www.httrack.com
 // does nothing
 #define XH_uninit do {} while(0)
 
-#define HT_ADD_END { \
-  int ok=0;\
-  if (TypedArraySize(output_buffer) != 0) { \
-    const size_t ht_len = TypedArraySize(output_buffer); \
-    const char *const ht_buff = TypedArrayElts(output_buffer); \
-    char digest[32+2];\
-    off_t fsize_old = fsize(fconv(OPT_GET_BUFF(opt),OPT_GET_BUFF_SIZE(opt),savename()));\
-    digest[0] = '\0';\
-    domd5mem(TypedArrayElts(output_buffer), ht_len, digest, 1);\
-    if (fsize_old == (off_t) ht_len) { \
-      int mlen = 0;\
-      char* mbuff;\
-      cache_readdata(cache,"//[HTML-MD5]//",savename(),&mbuff,&mlen);\
-      if (mlen) \
-        mbuff[mlen]='\0';\
-      if ((mlen == 32) && (strcmp(((mbuff!=NULL)?mbuff:""),digest)==0)) {\
-        ok=1;\
-        hts_log_print(opt, LOG_DEBUG, "File not re-written (md5): %s",savename());\
-      } else {\
-        ok=0;\
-      } \
-    }\
-    if (!ok) { \
-      file_notify(opt,urladr(), urlfil(), savename(), 1, 1, r->notmodified); \
-      fp=filecreate(&opt->state.strc, savename()); \
-      if (fp) { \
-        if (ht_len>0) {\
-        if (fwrite(ht_buff,1,ht_len,fp) != ht_len) { \
-          int fcheck;\
-          if ((fcheck=check_fatal_io_errno())) {\
-            opt->state.exit_xh=-1;\
-          }\
-          if (opt->log) {   \
-            hts_log_print(opt, LOG_ERROR | LOG_ERRNO, "Unable to write HTML file %s", savename());\
-            if (fcheck) {\
-              hts_log_print(opt, LOG_ERROR, "* * Fatal write error, giving up");\
-            }\
-          }\
-        }\
-        }\
-        fclose(fp); fp=NULL; \
-        if (strnotempty(r->lastmodified)) \
-        set_filetime_rfc822(savename(),r->lastmodified); \
-      } else {\
-        int fcheck;\
-        if ((fcheck=check_fatal_io_errno())) {\
-  				hts_log_print(opt, LOG_ERROR, "Mirror aborted: disk full or filesystem problems"); \
-          opt->state.exit_xh=-1;\
-        }\
-        hts_log_print(opt, LOG_ERROR | LOG_ERRNO, "Unable to save file %s", savename());\
-        if (fcheck) {\
-          hts_log_print(opt, LOG_ERROR, "* * Fatal write error, giving up");\
-        }\
-      }\
-    } else {\
-      file_notify(opt,urladr(), urlfil(), savename(), 0, 0, r->notmodified); \
-      filenote(&opt->state.strc, savename(),NULL); \
-    }\
-    if (cache->ndx)\
-      cache_writedata(cache->ndx,cache->dat,"//[HTML-MD5]//",savename(),digest,(int)strlen(digest));\
-  } \
-  TypedArrayFree(output_buffer); \
-}
 #define HT_ADD_FOP
 
 // COPY IN HTSCORE.C
@@ -3360,7 +3297,69 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
     }
 
     /* Flush and save to disk */
-    HT_ADD_END;             // achever
+                 // achever
+    int ok=0;
+    if (TypedArraySize(output_buffer) != 0) {
+      const size_t ht_len = TypedArraySize(output_buffer);
+      const char *const ht_buff = TypedArrayElts(output_buffer);
+      char digest[32+2];
+      off_t fsize_old = fsize(fconv(OPT_GET_BUFF(opt),OPT_GET_BUFF_SIZE(opt),savename()));
+      digest[0] = '\0';
+      domd5mem(TypedArrayElts(output_buffer), ht_len, digest, 1);
+      if (fsize_old == (off_t) ht_len) {
+        int mlen = 0;
+        char* mbuff;
+        cache_readdata(cache,"//[HTML-MD5]//",savename(),&mbuff,&mlen);
+        if (mlen)
+          mbuff[mlen]='\0';
+        if ((mlen == 32) && (strcmp(((mbuff!=NULL)?mbuff:""),digest)==0)) {
+          ok=1;
+          hts_log_print(opt, LOG_DEBUG, "File not re-written (md5): %s",savename());
+        } else {
+          ok=0;
+        }
+      }
+      if (!ok) {
+        file_notify(opt,urladr(), urlfil(), savename(), 1, 1, r->notmodified);
+        fp=filecreate(&opt->state.strc, savename());
+        if (fp) {
+          if (ht_len>0) {
+          if (fwrite(ht_buff,1,ht_len,fp) != ht_len) {
+            int fcheck;
+            if ((fcheck=check_fatal_io_errno())) {
+              opt->state.exit_xh=-1;
+            }
+            if (opt->log) {
+              hts_log_print(opt, LOG_ERROR | LOG_ERRNO, "Unable to write HTML file %s", savename());
+              if (fcheck) {
+                hts_log_print(opt, LOG_ERROR, "* * Fatal write error, giving up");
+              }
+            }
+          }
+          }
+          fclose(fp); fp=NULL;
+          if (strnotempty(r->lastmodified))
+          set_filetime_rfc822(savename(),r->lastmodified);
+        } else {
+          int fcheck;
+          if ((fcheck=check_fatal_io_errno())) {
+            hts_log_print(opt, LOG_ERROR, "Mirror aborted: disk full or filesystem problems");
+            opt->state.exit_xh=-1;
+          }
+          hts_log_print(opt, LOG_ERROR | LOG_ERRNO, "Unable to save file %s", savename());
+          if (fcheck) {
+            hts_log_print(opt, LOG_ERROR, "* * Fatal write error, giving up");
+          }
+        }
+      } else {
+        file_notify(opt,urladr(), urlfil(), savename(), 0, 0, r->notmodified);
+        filenote(&opt->state.strc, savename(),NULL);
+      }
+      if (cache->ndx)
+        cache_writedata(cache->ndx,cache->dat,"//[HTML-MD5]//",savename(),digest,(int)strlen(digest));
+    }
+    TypedArrayFree(output_buffer);
+      
   }
   //
   //

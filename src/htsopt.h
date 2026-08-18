@@ -228,7 +228,7 @@ struct htsoptstate {
   htsmutex lock;                /* 3.41 */
   /* */
   int stop;
-  int exit_xh;
+  int exit_xh;  // -1 : erreur fatale de disque dur, 0 : RAS, 1 : arret demandé par user, 2 : panne internet
   int back_add_stats;
   /* */
   int mimehtml_created;

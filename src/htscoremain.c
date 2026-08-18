@@ -1129,7 +1129,7 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
         while(*com) {
           switch (*com) {
           case ' ':
-          case 9:
+          case '\t':
           case '-':
           case '\0':
             break;

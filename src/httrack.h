@@ -81,7 +81,6 @@ struct t_InpInfo {
   int stat_back;
 };
 
-int main(int argc, char **argv);
 #endif
 
 extern HTSEXT_API hts_stat_struct HTS_STAT;
