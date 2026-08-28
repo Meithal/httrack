@@ -104,7 +104,7 @@ with
 void cache_mayadd(httrackp * opt, cache_back * cache, htsblk * r,
                   const char *url_adr, const char *url_fil,
                   const char *url_save) {
-  hts_log_print(opt, LOG_DEBUG, "File checked by cache: %s", url_adr);
+  hts_log_print(opt, LOG_DEBUG, "File checked by cache: %s%s local %s", url_adr, url_fil, url_save);
   // ---stockage en cache---
   // stocker dans le cache?
   if (opt->cache) {
@@ -235,6 +235,8 @@ void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
   const char *url_save_suffix = url_save;
   int zErr;
 
+  hts_log_print(opt, LOG_DEBUG, "Add file to cache: %s%s local: %s", url_adr, url_fil, url_save);
+  
   // robots.txt hack
   if (url_save == NULL) {
     dataincache = 0;            // testing links
@@ -632,6 +634,8 @@ static htsblk cache_readex_new(httrackp * opt, cache_back * cache,
   intptr_t hash_pos;
   int hash_pos_return;
   htsblk r;
+  
+  hts_log_print(opt, LOG_DEBUG, "Read file from cache: %s%s local: %s %s", adr, fil, target_save, location);
 
   hts_init_htsblk(&r);
   //memset(&r, 0, sizeof(htsblk)); r.soc=INVALID_SOCKET;
@@ -856,7 +860,7 @@ static htsblk cache_readex_new(httrackp * opt, cache_back * cache,
                 file_notify(opt, adr, fil, target_save, 1, 1, 1);       // data in cache
                 r.out = filecreate(&opt->state.strc, target_save);
 #if HDEBUG
-                printf("direct-disk: %s\n", save);
+                printf("direct-disk: %s\n", target_save);
 #endif
                 if (r.out != NULL) {
                   char BIGSTK buff[32768 + 4];
@@ -1067,10 +1071,10 @@ static htsblk cache_readex_old(httrackp * opt, cache_back * cache,
     pos = hash_pos;             /* simply */
 #else
     a += strlen(buff);
-    sscanf(a, "%d", &pos);      // lire position
+    sscanf(a, "%ld", &pos);      // lire position
 #endif
 #if DEBUGCA
-    printf("%d\n", pos);
+    printf("%ld\n", pos);
 #endif
 
     fflush(cache->olddat);

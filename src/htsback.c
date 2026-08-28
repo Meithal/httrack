@@ -3816,7 +3816,7 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
 
           }                     // si pas d'erreurs
 #if BDEBUG==1
-          printf("bytes overall: %d\n", back[i].r.size);
+          printf("bytes overall: %ld\n", back[i].r.size);
 #endif
         }                       // données dispo
 

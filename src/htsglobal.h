@@ -400,43 +400,79 @@ static const t_htsboundary htsboundary = 0xDEADBEEF;
 /* ------------------------------------------------------------ */
 
 // débuggage types
+#ifndef DEBUG_SHOWTYPES
 #define DEBUG_SHOWTYPES 0
+#endif
 // backing debug
+#ifndef BDEBUG
 #define BDEBUG 0
+#endif
 // chunk receive
+#ifndef CHUNKDEBUG
 #define CHUNKDEBUG 0
+#endif
 // realloc links debug
+#ifndef MDEBUG
 #define MDEBUG 0
+#endif
 // cache debug
+#ifndef DEBUGCA
 #define DEBUGCA 0
+#endif
 // DNS debug
+#ifndef DEBUGDNS
 #define DEBUGDNS 0
+#endif
 // savename debug
+#ifndef DEBUG_SAVENAME
 #define DEBUG_SAVENAME 0
+#endif
 // debug robots
+#ifndef DEBUG_ROBOTS
 #define DEBUG_ROBOTS 0
+#endif
 // debug hash
+#ifndef DEBUG_HASH
 #define DEBUG_HASH 0
+#endif
 // Vérification d'intégrité
+#ifndef DEBUG_CHECKINT
 #define DEBUG_CHECKINT 0
+#endif
 // nbr sockets debug
+#ifndef NSDEBUG
 #define NSDEBUG 0
+#endif
 
 // débuggage HTSLib
+#ifndef HDEBUG
 #define HDEBUG 0
+#endif
 // surveillance de la connexion
+#ifndef CNXDEBUG
 #define CNXDEBUG 0
+#endif
 // debuggage cookies
+#ifndef DEBUG_COOK
 #define DEBUG_COOK 0
+#endif
 // débuggage hard..
+#ifndef HTS_WIDE_DEBUG
 #define HTS_WIDE_DEBUG 0
+#endif
 // debuggage deletehttp et cie
+#ifndef HTS_DEBUG_CLOSESOCK
 #define HTS_DEBUG_CLOSESOCK 0
+#endif
 // debug tracage mémoire
+#ifndef MEMDEBUG
 #define MEMDEBUG 0
+#endif
 
 // htsmain
+#ifndef DEBUG_STEPS
 #define DEBUG_STEPS 0
+#endif
 
 // Débuggage de contrôle
 #if HTS_DEBUG_CLOSESOCK

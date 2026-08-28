@@ -367,7 +367,7 @@ void index_finish(const char *indexpath, int mode) {
               int hit;
               int total_hit = 0;
               int total_line = 0;
-              int last_pos = 0;
+              long last_pos = 0;
               char word0 = '\0';
 
               current_word[0] = '\0';

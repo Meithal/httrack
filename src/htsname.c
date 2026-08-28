@@ -912,9 +912,9 @@ int url_savename(lien_adrfilsave *const afs,
               strncatbuff(b, dot_pos + 1, 3);
           } else {
             if (!short_ver)     // Noms longs
-              strcpybuff(b, DEFAULT_EXT + 1);   // pas de..
+              strcpybuff(b, &DEFAULT_EXT [1]);   // pas de..
             else
-              strcpybuff(b, DEFAULT_EXT_SHORT + 1);     // pas de..
+              strcpybuff(b, &DEFAULT_EXT_SHORT [1]);     // pas de..
           }
           b += strlen(b);       // pointer à la fin
           //
@@ -928,9 +928,9 @@ int url_savename(lien_adrfilsave *const afs,
               strncatbuff(b, dot_pos + 1, 3);
           } else {
             if (!short_ver)     // Noms longs
-              strcpybuff(b, DEFAULT_EXT + 1);   // pas de..
+              strcpybuff(b, &DEFAULT_EXT [1]);   // pas de..
             else
-              strcpybuff(b, DEFAULT_EXT_SHORT + 1);     // pas de..
+              strcpybuff(b, &DEFAULT_EXT_SHORT [1]);     // pas de..
           }
           b += strlen(b);       // pointer à la fin
           break;

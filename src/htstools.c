@@ -1260,7 +1260,7 @@ HTSEXT_API int hts_findgetsize(find_handle find) {
 #ifdef _WIN32
     return find->hdata.nFileSizeLow;
 #else
-    return find->filestat.st_size;
+    return (int)find->filestat.st_size;
 #endif
   }
   return -1;

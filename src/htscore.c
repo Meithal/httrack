@@ -1000,10 +1000,11 @@ int httpmirror(const char *url1, httrackp * opt) {
       if (heap(ptr)) {
         while(ptr < opt->lien_tot
               && (heap(ptr))
-              && ((((urladr() != NULL) ? (urladr()) : (" "))[0] == '!')
-                  || (((urlfil() != NULL) ? (urlfil()) : (" "))[0] == '\0')
-                  || ((heap(ptr)->pass2 == -1))
-              )
+              && (
+                  ((urladr() != NULL) ? (urladr()) : (" "))[0] == '!'
+                  || ((urlfil() != NULL) ? (urlfil()) : (" "))[0] == '\0'
+                  || (heap(ptr)->pass2 == -1)
+                 )
           ) {                   // sauter si lien annulé (ou fil vide)
           if (heap(ptr) != NULL && heap(ptr)->pass2 == -1) {
             hts_log_print(opt, LOG_DEBUG, "link #%d is ready, skipping: %s%s..",

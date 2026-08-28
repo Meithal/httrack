@@ -287,7 +287,12 @@ int hash_read(const hash_struct * hash, const char *nom1, const char *nom2,
               hash_struct_type type) {
   intptr_t intvalue;
   lien_url lien;
-
+  
+#if HDEBUG>=1
+  fprintf(stderr, "Hash read %s and %s\n",
+                nom1, nom2);
+#endif
+  
   /* read */
   switch(type) {
   case HASH_STRUCT_FILENAME:

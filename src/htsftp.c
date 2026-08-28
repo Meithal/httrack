@@ -695,7 +695,7 @@ int run_launch_ftp(FTPDownloadStruct * pStruct) {
           strcpybuff(back->info, "receiving");
           if (back->r.fp != NULL) {
             char BIGSTK buff[1024];
-            int len = 1;
+            ssize_t len = 1;
             int read_len = 1024;
 
             //HTS_TOTAL_RECV_CHECK(read_len);         // Diminuer au besoin si trop de données reçues

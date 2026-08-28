@@ -2944,7 +2944,7 @@ int sig_ignore_flag(int setflag) {      // flag ignore
 
 // envoi de texte (en têtes généralement) sur la socket soc
 int sendc(htsblk * r, const char *s) {
-  int n, ssz = (int) strlen(s);
+  size_t n, ssz = strlen(s);
 
 #ifdef _WIN32
 #else
@@ -2956,7 +2956,7 @@ int sendc(htsblk * r, const char *s) {
 
 #if HTS_USEOPENSSL
   if (r->ssl) {
-    n = SSL_write(r->ssl_con, s, ssz);
+    n = SSL_write(r->ssl_con, s, (int)ssz);
   } else
 #endif
     n = send(r->soc, s, ssz, 0);
@@ -2966,7 +2966,7 @@ int sendc(htsblk * r, const char *s) {
   sig_ignore_flag(0);
 #endif
 
-  return (n == ssz) ? n : -1;
+  return (n == ssz) ? (int)n : -1;
 }
 
 // Remplace read
@@ -4487,7 +4487,7 @@ int HTS_TOTAL_RECV_CHECK(int var) {
 // == 0 : not yet data
 // <0: error or no data: READ_ERROR, READ_EOF or READ_TIMEOUT
 int hts_read(htsblk * r, char *buff, int size) {
-  int retour;
+  ssize_t retour;
 
   //  return read(soc,buff,size);
   if (r->is_file) {
@@ -4512,7 +4512,7 @@ int hts_read(htsblk * r, char *buff, int size) {
     if (r->ssl) {
       retour = SSL_read(r->ssl_con, buff, size);
       if (retour <= 0) {
-        int err_code = SSL_get_error(r->ssl_con, retour);
+        int err_code = SSL_get_error(r->ssl_con, (int)retour);
 
         if ((err_code == SSL_ERROR_WANT_READ)
             || (err_code == SSL_ERROR_WANT_WRITE)
@@ -4541,7 +4541,7 @@ int hts_read(htsblk * r, char *buff, int size) {
 #if HTS_WIDE_DEBUG
   DEBUG_W("recv/read done (%d bytes)\n" _(int) retour);
 #endif
-  return retour;
+  return (int)retour;
 }
 
 // -- Gestion cache DNS --

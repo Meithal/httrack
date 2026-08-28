@@ -3068,7 +3068,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
 #if DEBUG_ROBOTS
                                   printf
                                     ("robots.txt: added file robots.txt for %s\n",
-                                     adr);
+                                     afs.af.adr);
 #endif
                                   hts_log_print(opt, LOG_DEBUG,
                                                 "robots.txt added at %s",
@@ -3397,7 +3397,7 @@ int hts_mirror_check_moved(htsmoduleStruct * str,
       //int i=0;
       // char* p;
 
-      hts_log_print(opt, LOG_WARNING, "%s for %s%s", r->msg, urladr(), urlfil());
+      hts_log_print(opt, LOG_WARNING, "\"%s\" for %s%s", r->msg, urladr(), urlfil());
 
       {
         char BIGSTK mov_url[HTS_URLMAXSIZE];
@@ -3556,7 +3556,6 @@ int hts_mirror_check_moved(htsmoduleStruct * str,
             // changer la page
             if (r->adr) {
               freet(r->adr);
-              r->adr = NULL;
             }
             r->adr = rn;
             r->size = strlen(r->adr);

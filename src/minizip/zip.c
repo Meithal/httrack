@@ -1362,7 +1362,7 @@ local int zip64FlushWriteBuffer(zip64_internal* zi) {
     return err;
 }
 
-extern int ZEXPORT zipWriteInFileInZip(zipFile file, const void* buf, unsigned int len) {
+extern int ZEXPORT zipWriteInFileInZip(zipFile file, z_const void* buf, unsigned int len) {
     zip64_internal* zi;
     int err=ZIP_OK;
 
