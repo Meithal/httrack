@@ -119,8 +119,8 @@ int hts_mirror_check_moved(htsmoduleStruct * str,
 /*
   Process user intercations: pause, add link, delete link..
 */
-void hts_mirror_process_user_interaction(htsmoduleStruct * str,
-                                         htsmoduleStructExtended * stre);
+void hts_mirror_process_user_interaction(const htsmoduleStruct * str,
+                                         const htsmoduleStructExtended * stre);
 
 /*
   Get the next file on the queue, waiting for it, handling other files in background..
@@ -139,50 +139,5 @@ int hts_wait_delayed(htsmoduleStruct * str, lien_adrfilsave *afs,
                      char *parent_adr, char *parent_fil, lien_adrfil *former,
                      int *forbidden_url);
 
-/* Context state */
-
-#define ENGINE_DEFINE_CONTEXT_BASE() \
-  httrackp* const opt HTS_UNUSED = (httrackp*) str->opt; \
-  struct_back* const sback HTS_UNUSED = (struct_back*) str->sback; \
-  lien_back* const back HTS_UNUSED = sback->lnk; \
-  const int back_max HTS_UNUSED = sback->count; \
-  cache_back* const cache HTS_UNUSED = (cache_back*) str->cache; \
-  hash_struct* const hashptr HTS_UNUSED = (hash_struct*) str->hashptr; \
-  const int numero_passe HTS_UNUSED = str->numero_passe; \
-  /* variable */ \
-  int ptr = *str->ptr_
-
-#define ENGINE_SET_CONTEXT_BASE() \
-  ptr = *str->ptr_
-
-#define ENGINE_LOAD_CONTEXT_BASE() \
-  ENGINE_DEFINE_CONTEXT_BASE()
-
-#define ENGINE_SAVE_CONTEXT_BASE() \
-  /* Apply changes */ \
-  * str->ptr_ = ptr
-
-#define WAIT_FOR_AVAILABLE_SOCKET() do { \
-  int prev = opt->state._hts_in_html_parsing; \
-  while(back_pluggable_sockets_strict(sback, opt) <= 0) { \
-    opt->state._hts_in_html_parsing = 6; \
-    /* Wait .. */ \
-    back_wait(sback,opt,cache,0); \
-    /* Transfer rate */ \
-    engine_stats(); \
-    /* Refresh various stats */ \
-    HTS_STAT.stat_nsocket=back_nsoc(sback); \
-    HTS_STAT.stat_errors=fspc(opt,NULL,"error"); \
-    HTS_STAT.stat_warnings=fspc(opt,NULL,"warning"); \
-    HTS_STAT.stat_infos=fspc(opt,NULL,"info"); \
-    HTS_STAT.nbk=backlinks_done(sback,opt->liens,opt->lien_tot,ptr); \
-    HTS_STAT.nb=back_transferred(HTS_STAT.stat_bytes,sback); \
-    /* Check */ \
-    if (!RUN_CALLBACK7(opt, loop, sback->lnk, sback->count, -1,ptr,opt->lien_tot,(int) (time_local()-HTS_STAT.stat_timestart),&HTS_STAT)) { \
-      return -1; \
-    } \
-  } \
-  opt->state._hts_in_html_parsing = prev; \
-} while(0)
 
 #endif

@@ -208,12 +208,12 @@ Please visit our Website: http://www.httrack.com
 #define HTTRACK_WEB "http://www.httrack.com"
 #define HTS_UPDATE_WEBSITE "http://www.httrack.com/update.php3?Product=HTTrack&Version=" HTTRACK_VERSIONID "&VersionStr=" HTTRACK_VERSION "&Platform=%d&Language=%s"
 
-#define H_CRLF "\x0d\x0a"
-#define CRLF   "\x0d\x0a"
+#define H_CRLF "\r\n"
+#define CRLF   "\r\n"
 #ifdef _WIN32
-#define LF "\x0d\x0a"
+#define LF "\r\n"
 #else
-#define LF "\x0a"
+#define LF "\n"
 #endif
 
 /* équivaut à "paramètre vide", par exemple -F (none) */

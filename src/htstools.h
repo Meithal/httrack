@@ -70,9 +70,6 @@ HTS_INLINE int __rech_tageq(const char *adr, const char *s);
 HTS_INLINE int __rech_tageqbegdigits(const char *adr, const char *s);
 HTS_INLINE int rech_tageq_all(const char *adr, const char *s);
 
-int hts_template_format(FILE *const out, const char *format, ...);
-int hts_template_format_str(char *buffer, size_t size, const char *format, ...);
-
 #define rech_tageq(adr,s) \
   ( \
     ( (*((adr)-1)=='<') || (is_space(*((adr)-1))) ) ? \

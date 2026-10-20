@@ -94,7 +94,7 @@ int url_savename(lien_adrfilsave *const afs,
                  lien_adrfil *const former,
                  const char *referer_adr, const char *referer_fil, 
                  httrackp * opt, struct_back * sback, cache_back * cache,
-                 hash_struct * hash, int ptr, int numero_passe,
+                 hash_struct * hash, const int ptr, int numero_passe,
                  const lien_back * headers);
 void standard_name(char *b, const char *dot_pos, const char *nom_pos,
                    const char *fil_complete,

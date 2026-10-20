@@ -102,7 +102,7 @@ MSVC2003INLINEBUG HTS_STATIC char *getHtsOptBuff_(httrackp * opt) {
 
 #undef MSVC2003INLINEBUG
 #define OPT_GET_BUFF(OPT)      ( getHtsOptBuff_(OPT) )
-#define OPT_GET_BUFF_SIZE(OPT) ( sizeof(opt->state.concat.buff[0]) )
+#define OPT_GET_BUFF_SIZE(OPT) ( sizeof((OPT)->state.concat.buff[0]) )
 
 /* ANCIENNE STURCTURE pour cache 1.0 */
 #ifndef HTS_DEF_FWSTRUCT_OLD_t_proxy

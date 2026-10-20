@@ -143,7 +143,7 @@ int url_savename(lien_adrfilsave *const afs,
                  lien_adrfil *const former,
                  const char *referer_adr, const char *referer_fil, 
                  httrackp * opt, struct_back * sback, cache_back * cache,
-                 hash_struct * hash, int ptr, int numero_passe,
+                 hash_struct * hash, const int ptr, int numero_passe,
                  const lien_back * headers) {
   char catbuff[CATBUFF_SIZE];
   const int is_redirect = headers != NULL && HTTP_IS_REDIRECT(headers->r.statuscode);
@@ -266,16 +266,16 @@ int url_savename(lien_adrfilsave *const afs,
 
     i = hash_read(hash, normadr, normfil, HASH_STRUCT_ADR_PATH);     // recherche table 1 (adr+fil)
     if (i >= 0) {               // ok, trouvé
-      strcpybuff(afs->save, heap(i)->sav);
+      strcpybuff(afs->save, opt->liens[i]->sav);
       return 0;
     }
     i = hash_read(hash, normadr, normfil, HASH_STRUCT_ORIGINAL_ADR_PATH);     // recherche table 2 (former->adr+former->fil)
     if (i >= 0) {               // ok, trouvé
       // copier location moved!
-      strcpybuff(afs->af.adr, heap(i)->adr);
-      strcpybuff(afs->af.fil, heap(i)->fil);
+      strcpybuff(afs->af.adr, opt->liens[i]->adr);
+      strcpybuff(afs->af.fil, opt->liens[i]->fil);
       // et save
-      strcpybuff(afs->save, heap(i)->sav);  // copier (formé à partir du nouveau lien!)
+      strcpybuff(afs->save, opt->liens[i]->sav);  // copier (formé à partir du nouveau lien!)
       return 0;
     }
     // chercher sans / ou avec / dans former
@@ -291,10 +291,10 @@ int url_savename(lien_adrfilsave *const afs,
       i = hash_read(hash, normadr, fil_complete_patche, HASH_STRUCT_ORIGINAL_ADR_PATH);       // recherche table 2 (former->adr+former->fil)
       if (i >= 0) {
         // écraser fil et adr (pas former->fil?????)
-        strcpybuff(afs->af.adr, heap(i)->adr);
-        strcpybuff(afs->af.fil, heap(i)->fil);
+        strcpybuff(afs->af.adr, opt->liens[i]->adr);
+        strcpybuff(afs->af.fil, opt->liens[i]->fil);
         // écrire save
-        strcpybuff(afs->save, heap(i)->sav);
+        strcpybuff(afs->save, opt->liens[i]->sav);
         return 0;
       }
     }
@@ -1140,14 +1140,14 @@ int url_savename(lien_adrfilsave *const afs,
           if (opt->savename_type % 100 == 5)
             strcatbuff(afs->save, "html/");
         } else {
-          const char *a = fil + strlen(fil) - 1;
+          const char *aa = fil + strlen(fil) - 1;
 
-          while((a > fil) && (*a != '/') && (*a != '.'))
-            a--;
-          if (*a != '.')
+          while((aa > fil) && (*aa != '/') && (*aa != '.'))
+            aa--;
+          if (*aa != '.')
             strcatbuff(afs->save, "other");
           else
-            strcatbuff(afs->save, a + 1);
+            strcatbuff(afs->save, aa + 1);
           strcatbuff(afs->save, "/");
         }
         /*strcatbuff(save,a); */
@@ -1400,13 +1400,13 @@ int url_savename(lien_adrfilsave *const afs,
 
   /* Ensure that the MANDATORY "temporary" extension is set */
   if (ext_chg_delayed) {
-    char *ptr;
+    char *ptr_;
     char *lastDot = NULL;
 
-    for(ptr = afs->save; *ptr != 0; ptr++) {
-      if (*ptr == '.') {
-        lastDot = ptr;
-      } else if (*ptr == '/' || *ptr == '\\') {
+    for(ptr_ = afs->save; *ptr_ != 0; ptr_++) {
+      if (*ptr_ == '.') {
+        lastDot = ptr_;
+      } else if (*ptr_ == '/' || *ptr_ == '\\') {
         lastDot = NULL;
       }
     }
@@ -1532,18 +1532,18 @@ int url_savename(lien_adrfilsave *const afs,
 
       i = hash_read(hash, afs->save, NULL, HASH_STRUCT_FILENAME);      // lecture type 0 (sav)
       if (i >= 0) {
-        int sameAdr = (strfield2(heap(i)->adr, normadr) != 0);
+        int sameAdr = (strfield2(opt->liens[i]->adr, normadr) != 0);
         int sameFil;
 
         // NO - URL hack is only for stripping // and www.
         //if (opt->urlhack != 0)
         //  sameFil = ( strfield2(heap(i)->fil, normfil) != 0);
         //else
-        sameFil = (strcmp(heap(i)->fil, normfil) == 0);
+        sameFil = (strcmp(opt->liens[i]->fil, normfil) == 0);
         if (sameAdr && sameFil) {       // ok c'est le même lien, adresse déja définie
           /* Take the existing name not to screw up with cAsE sEnSiTiViTy of Linux/Unix */
-          if (strcmp(heap(i)->sav, afs->save) != 0) {
-            strcpybuff(afs->save, heap(i)->sav);
+          if (strcmp(opt->liens[i]->sav, afs->save) != 0) {
+            strcpybuff(afs->save, opt->liens[i]->sav);
           }
           i = 0;
 #if DEBUG_SAVENAME
@@ -1584,15 +1584,15 @@ int url_savename(lien_adrfilsave *const afs,
           // en plus il faut gérer le 8-3 .. pas facile le client
           if (opt->savename_83) {
             int max;
-            char *a = tempo + strlen(tempo) - 1;
+            char *aa = tempo + strlen(tempo) - 1;
 
-            while((a > tempo) && (*a != '/'))
-              a--;
-            if (*a == '/')
-              a++;
+            while((aa > tempo) && (*a != '/'))
+              aa--;
+            if (*aa == '/')
+              aa++;
             max = max_char - 1 - nombre_digit(n);
-            if ((int) strlen(a) > max)
-              *(a + max) = '\0';        // couper sinon il n'y aura pas la place!
+            if ((int) strlen(aa) > max)
+              *(aa + max) = '\0';        // couper sinon il n'y aura pas la place!
           }
           // ajouter -xx (ex: index.html -> index-2.html)
           sprintf(tempo + strlen(tempo), "%c%d", collisionSeparator, n);

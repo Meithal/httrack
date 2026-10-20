@@ -755,118 +755,6 @@ static int sortTopIndexFnc(const void *a_, const void *b_) {
   return cmp;
 }
 
-typedef struct hts_template_format_buf {
-  FILE *fp;
-  char *buffer;
-  size_t size;
-  size_t offset;
-} hts_template_format_buf;
-
-// note: upstream arg list MUST be NULL-terminated for safety
-// returns a negative value upon error
-static int hts_template_formatv(hts_template_format_buf *buf, 
-                                const char *format, va_list args) {
-#undef FPUTC
-#undef FPUTS
-#define FPUTC(C) do { \
-  if (buf->fp != NULL) { \
-    assertf(buf->buffer == NULL); \
-    if (fputc(C, buf->fp) < 0) { \
-      return -1; \
-    } \
-  } else { \
-    assertf(buf->buffer != NULL); \
-    if (buf->offset + 1 < buf->size) { \
-      buf->buffer[buf->offset++] = (C); \
-    } else { \
-      return -1; \
-    } \
-  } \
-} while(0)
-#define FPUTS(S) do { \
-  size_t i; \
-  const char *const str_ = (S); \
-  assertf(str_ != NULL); \
-  for(i = 0 ; str_[i] != '\0' ; i++) { \
-    FPUTC(str_[i]); \
-  } \
-} while(0)
-
-  if (buf != NULL && format != NULL) {
-    const char *arg_expanded[32];
-    size_t i, nbArgs, posArgs;
-    /* Expand internal code args. */
-    const char *str;
-    for(nbArgs = 0 ; ( str = va_arg(args, const char*) ) != NULL ; nbArgs++) {
-      assertf(nbArgs < sizeof(arg_expanded)/sizeof(arg_expanded[0]));
-      arg_expanded[nbArgs] = str;
-    }
-    /* Expand user-injected format string. */
-    for(posArgs = 0, i = 0 ; format[i] != '\0' ; i++) {
-      const unsigned char c = format[i];
-      if (c == '%') {
-        const unsigned char cFormat = format[++i];
-        switch(cFormat) {
-        case '%':
-          FPUTC('%');
-          break;
-        case 's':
-          if (posArgs < nbArgs) {
-            assertf(arg_expanded[posArgs] != NULL);
-            FPUTS(arg_expanded[posArgs]);
-            posArgs++;
-          } else {
-            FPUTS("???");  /* error (args overflow) */
-          }
-          break;
-        default:  /* ignored */
-          FPUTC('%');
-          FPUTC(cFormat);
-          break;
-        }
-      } else {
-        FPUTC(c);
-      }
-    }
-    /* Terminating NULL. */
-    if (buf->buffer != NULL) {
-      buf->buffer[buf->offset] = 0;
-    }
-    return 1;
-  } else {
-    return -1;
-  }
-#undef FPUTC
-#undef FPUTS
-}
-
-// note: upstream arg list MUST be NULL-terminated for safety
-// returns a negative value upon error
-int hts_template_format(FILE *const out, const char *format, ...) {
-  int success;
-  hts_template_format_buf buf = { NULL, NULL, 0, 0 };
-  va_list args;
-  buf.fp = out;
-  va_start(args, format);
-  success = hts_template_formatv(&buf, format, args);
-  va_end(args);
-  return success;
-}
-
-// note: upstream arg list MUST be NULL-terminated for safety
-// returns a negative value upon error
-int hts_template_format_str(char *buffer, size_t size, const char *format, ...) {
-  int success;
-  hts_template_format_buf buf = { NULL, NULL, 0, 0 };
-  va_list args;
-  buf.buffer = buffer;
-  buf.size = size;
-  va_start(args, format);
-  success = hts_template_formatv(&buf, format, args);
-  va_end(args);
-  return success;
-}
-
 /* Note: NOT utf-8 */
 HTSEXT_API int hts_buildtopindex(httrackp * opt, const char *path,
                                  const char *binpath) {
@@ -906,9 +794,9 @@ HTSEXT_API int hts_buildtopindex(httrackp * opt, const char *path,
 
       verif_backblue(opt, concat(catbuff, sizeof(catbuff), rpath, "/")); // générer gif
       // Header
-      hts_template_format(fpo, toptemplate_header,
+      fprintf(fpo, toptemplate_header,
               "<!-- Mirror and index made by HTTrack Website Copier/"
-              HTTRACK_VERSION " " HTTRACK_AFF_AUTHORS " -->", /* EOF */ NULL);
+              HTTRACK_VERSION " " HTTRACK_AFF_AUTHORS " -->");
 
       /* Find valid project names */
       h = hts_findfirst(rpath);
@@ -999,9 +887,9 @@ HTSEXT_API int hts_buildtopindex(httrackp * opt, const char *path,
               /* Changed category */
               if (strcmp(category, sortedElts[i]->category) != 0) {
                 category = sortedElts[i]->category;
-                hts_template_format(fpo, toptemplate_bodycat, category, /* EOF */ NULL);
+                fprintf(fpo, toptemplate_bodycat, category);
               }
-              hts_template_format(fpo, toptemplate_body, hname, sortedElts[i]->name, /* EOF */ NULL);
+              fprintf(fpo, toptemplate_body, hname, sortedElts[i]->name);
             }
 
             /* Wipe elements */
@@ -1019,9 +907,9 @@ HTSEXT_API int hts_buildtopindex(httrackp * opt, const char *path,
 
       }
       // Footer
-      hts_template_format(fpo, toptemplate_footer,
+      fprintf(fpo, toptemplate_footer,
               "<!-- Mirror and index made by HTTrack Website Copier/"
-              HTTRACK_VERSION " " HTTRACK_AFF_AUTHORS " -->", /* EOF */ NULL);
+              HTTRACK_VERSION " " HTTRACK_AFF_AUTHORS " -->");
 
       fclose(fpo);
 

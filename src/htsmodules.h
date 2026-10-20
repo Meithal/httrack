@@ -109,7 +109,7 @@ struct htsmoduleStruct {
   hash_struct *hashptr;
   int numero_passe;
   /* */
-  int *ptr_;
+  const int *ptr_;
   const char *page_charset_;
   /* Internal use - please don't touch */
 

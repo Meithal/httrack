@@ -226,20 +226,6 @@ struct filecreate_params {
   char path[HTS_URLMAXSIZE];
 };
 
-/* Access macros. */
-#define heap(N)            (opt->liens[N])
-#define heap_top_index()   (opt->lien_tot - 1)
-#define heap_top()         (heap(heap_top_index()))
-#define urladr()           (heap(ptr)->adr)
-#define urlfil()           (heap(ptr)->fil)
-#define savename()         (heap(ptr)->sav)
-#define parenturladr()     (heap(heap(ptr)->precedent)->adr)
-#define parenturlfil()     (heap(heap(ptr)->precedent)->fil)
-#define parentsavename()   (heap(heap(ptr)->precedent)->sav)
-#define relativeurladr()   ((!parent_relative)?urladr():parenturladr())
-#define relativeurlfil()   ((!parent_relative)?urlfil():parenturlfil())
-#define relativesavename() ((!parent_relative)?savename():parentsavename())
-
 /* Library internal definictions */
 #ifdef HTS_INTERNAL_BYTECODE
 
