@@ -40,8 +40,6 @@ Please visit our Website: http://www.httrack.com
 #include "htscore.h"
 #include "htsdefines.h"
 #include "htsalias.h"
-#include "htswrap.h"
-#include "htsmodules.h"
 #include "htszlib.h"
 #include "htscharset.h"
 #include "htsencoding.h"
@@ -100,11 +98,15 @@ extern int IPV6_resolver;
       url = (char*) malloct(urlsize); \
       if (url != NULL) url[0]='\0'; \
     } else { \
-      url = (char*) realloct(url, urlsize); \
+      void*n_ = (void*) malloct(urlsize); \
+      if(n_ == NULL) { \
+        HTS_PANIC_PRINTF("* memory exhausted"); \
+        return -1; \
+      } \
+      url = n_; \
     } \
     if (url == NULL) { \
       HTS_PANIC_PRINTF("* memory exhausted"); \
-      htsmain_free(); \
       return -1; \
     } \
   } \
@@ -331,7 +333,7 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                      hts_get_version_info(opt));
               return 0;
             } else {
-              if (strncmp(tmp_argv[0], "--", 2)) {      /* pas */
+              if (strncmp(tmp_argv[0], "--", 2) != 0) {      /* pas */
                 if ((strchr(tmp_argv[0], 'q') != NULL))
                   opt->quiet = 1;       // ne pas poser de questions! (nohup par exemple)
                 if ((strchr(tmp_argv[0], 'i') != NULL)) {       // doit.log!
@@ -446,6 +448,7 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                 //printf("-->%s\n%s\n",StringBuff(opt->path_html),StringBuff(opt->path_log));                
               }
               break;
+            default: break;
             }                   // switch
             com++;
           }                     // while
@@ -1728,7 +1731,7 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                   na++;
                   for(pos = argv[na];
                       *pos != '\0' && *pos != '=' && *pos != ',' && *pos != ':';
-                      pos++) ;
+                      pos++) {}
                   /* httrack --wrapper callback[,foo] */
                   if (*pos == 0 || *pos == ',' || *pos == ':') {
                     int ret;
@@ -1752,7 +1755,8 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                       HTS_PANIC_PRINTF(tmp);
                       htsmain_free();
                       return -1;
-                    } else if (ret == -1) {
+                    }
+                    if (ret == -1) {
                       char BIGSTK tmp[1024 * 2];
                       int last_errno = errno;
 
@@ -1785,13 +1789,14 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                 break;
 
               case 'R':        // Referer
-                if ((na + 1 >= argc) || (argv[na + 1][0] == '-')) {
-                  HTS_PANIC_PRINTF
+                {
+                  if ((na + 1 >= argc) || (argv[na + 1][0] == '-')) {
+                    HTS_PANIC_PRINTF
                     ("Option %R needs to be followed by a blank space, and a referer URL");
-                  printf("Example: -%%R \"http://www.example.com/\"\n");
-                  htsmain_free();
-                  return -1;
-                } else {
+                    printf("Example: -%%R \"http://www.example.com/\"\n");
+                    htsmain_free();
+                    return -1;
+                  }
                   na++;
                   if (strlen(argv[na]) >= 254) {
                     HTS_PANIC_PRINTF("Referer URL too long");
@@ -1802,13 +1807,14 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                 }
                 break;
               case 'E':        // From Email address
-                if ((na + 1 >= argc) || (argv[na + 1][0] == '-')) {
-                  HTS_PANIC_PRINTF
+                {
+                  if ((na + 1 >= argc) || (argv[na + 1][0] == '-')) {
+                    HTS_PANIC_PRINTF
                     ("Option %E needs to be followed by a blank space, and an email");
-                  printf("Example: -%%E \"postmaster@example.com\"\n");
-                  htsmain_free();
-                  return -1;
-                } else {
+                    printf("Example: -%%E \"postmaster@example.com\"\n");
+                    htsmain_free();
+                    return -1;
+                  }
                   na++;
                   if (strlen(argv[na]) >= 254) {
                     HTS_PANIC_PRINTF("From email too long");
@@ -1925,7 +1931,7 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                   cache.ro = 1; /* read only */
                   if (cache.hashtable) {
                     lien_adrfilsave afs;
-                    char BIGSTK url[HTS_URLMAXSIZE];
+                    char BIGSTK url_[HTS_URLMAXSIZE];
                     char linepos[256];
                     int pos;
                     char *cacheNdx =
@@ -1948,16 +1954,16 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                           /* read "host/file" */
                           a += binput(a, afs.af.adr, HTS_URLMAXSIZE);
                           a += binput(a, afs.af.fil, HTS_URLMAXSIZE);
-                          url[0] = '\0';
+                          url_[0] = '\0';
                           if (!link_has_authority(afs.af.adr))
-                            strcatbuff(url, "http://");
-                          strcatbuff(url, afs.af.adr);
-                          strcatbuff(url, afs.af.fil);
+                            strcatbuff(url_, "http://");
+                          strcatbuff(url_, afs.af.adr);
+                          strcatbuff(url_, afs.af.fil);
                           /* read position */
                           a += binput(a, linepos, 200);
                           sscanf(linepos, "%d", &pos);
                           if (!hasFilter
-                              || (strjoker(url, filter, NULL, NULL) != NULL)
+                              || (strjoker(url_, filter, NULL, NULL) != NULL)
                             ) {
                             r = cache_read_ro(opt, &cache, afs.af.adr, afs.af.fil, "", NULL); // lire entrée cache + data
                             if (r.statuscode != -1) {   // No errors
@@ -2410,7 +2416,13 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                               } else {
                                 capa <<= 1;
                               }
-                              strings = (const char **) realloc((void*) strings, capa*sizeof(char*));
+                              void*n_ = realloc(strings, capa*sizeof(char*));
+                              if (n_ == NULL)
+                              {
+                                HTS_PANIC_PRINTF("out of memory");
+                                return -1;
+                              }
+                              strings = (const char **) n_;
                             }
                             strings[count++] = &buff[last];
                             last = i + 1;
@@ -2427,16 +2439,16 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                     size_t loop;
                     for(loop = 0 ; bench[loop].type != DO_END ; loop++) {
                       size_t i;
-                      for(i = bench[loop].offset ; i < (size_t) count
+                      for(i = bench[loop].offset ; i < count
                           ; i += bench[loop].modulus) {
                         int result;
                         FMT();
                         if (bench[loop].type == DO_ADD
                             || bench[loop].type == DO_DRY_ADD) {
                           size_t k;
-                          result = coucal_write(hashtable, name, (uintptr_t) expected);
+                          result = coucal_write(hashtable, name, expected);
                           for(k = 0 ; k < /* stash_size*2 */ 32 ; k++) {
-                            (void) coucal_write(hashtable, name, (uintptr_t) expected);
+                            (void) coucal_write(hashtable, name, expected);
                           }
                           /* revert logic */
                           if (bench[loop].type == DO_DRY_ADD) {
@@ -2531,13 +2543,13 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
             na++;               // sauter, déja traité
             break;
           case 'P':            // proxy
-            if ((na + 1 >= argc) || (argv[na + 1][0] == '-')) {
-              HTS_PANIC_PRINTF
-                ("Option P needs to be followed by a blank space, and a proxy proxy:port or user:id@proxy:port");
-              printf("Example: -P proxy.myhost.com:8080\n");
-              htsmain_free();
-              return -1;
-            } else {
+            {
+              if ((na + 1 >= argc) || (argv[na + 1][0] == '-')) {
+                HTS_PANIC_PRINTF("Option P needs to be followed by a blank space, and a proxy proxy:port or user:id@proxy:port");
+                printf("Example: -P proxy.myhost.com:8080\n");
+                htsmain_free();
+                return -1;
+              }
               char *a;
 
               na++;
@@ -2796,7 +2808,6 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
 
     // un petit lock-file pour indiquer un miroir en cours, ainsi qu'un éventuel fichier log
     {
-      FILE *fp = NULL;
 
       //int n=0;
       char t[256];
@@ -2830,8 +2841,7 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
         }
       }
 
-      strcpybuff(n_lock,fcat(StringBuff(opt->path_log),
-                     "hts-in_progress.lock"));
+      snprintf(n_lock, sizeof n_lock, "%s%s", StringBuff(opt->path_log), "hts-in_progress.lock");
       //sprintf(n_lock,fconcat(OPT_GET_BUFF(opt), StringBuff(opt->path_log),"hts-in_progress.lock"),n);
       /*do {
          if (!n)
@@ -2910,6 +2920,7 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
         }
       }
       // petit message dans le lock
+      FILE *fp = NULL;
       if ((fp = fopen(n_lock, "wb")) != NULL) {
         int i;
 
@@ -3001,7 +3012,7 @@ static int hts_main_internal(int argc, char **argv, httrackp * opt) {
                       (int) opt->maxrate);
       }
       if (opt->maxconn <= 0 || opt->maxconn > 5.0) {
-        opt->maxconn = 5.0;
+        opt->maxconn = 5.0f;
         hts_log_print(opt, LOG_WARNING,
                       "* security warning: maximum number of connections per second limited to %f to avoid server overload",
                       (float) opt->maxconn);
@@ -3180,12 +3191,11 @@ int cmdl_opt(char *s) {
   if (s[0] == '-') {            // c'est peut être une option
     if (strchr(s, '.') != NULL && strchr(s, '%') == NULL)
       return 0;                 // sans doute un -www.truc.fr (note: -www n'est pas compris)
-    else if (strchr(s, '/') != NULL)
+    if (strchr(s, '/') != NULL)
       return 0;                 // idem, -*cgi-bin/
-    else if (strchr(s, '*') != NULL)
+    if (strchr(s, '*') != NULL)
       return 0;                 // joker, idem
-    else
-      return 1;
-  } else
-    return 0;
+    return 1;
+  }
+  return 0;
 }

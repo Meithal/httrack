@@ -122,8 +122,9 @@ struct String {
     } else { \
       (BLK).capacity_ *= 2; \
     } \
-    (BLK).buffer_ = STRING_REALLOC((BLK).buffer_, (BLK).capacity_); \
-    STRING_ASSERT((BLK).buffer_ != NULL); \
+    void*n_ = STRING_REALLOC((BLK).buffer_, (BLK).capacity_); \
+    STRING_ASSERT(n_ != NULL); \
+    (BLK).buffer_ = n_; \
   } \
 } while(0)
 

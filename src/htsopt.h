@@ -340,8 +340,8 @@ struct httrackp {
   int savename_delayed;         // delayed type check
   int delayed_cached;           // delayed type check can be cached to speedup updates
   int mimehtml;                 // MIME-html
-  int user_agent_send;          // user agent (ex: httrack/1.0 [sun])
-  String user_agent;            //
+  short int user_agent_send;    // envoyer notre user agent
+  String user_agent;            // user agent (ex: httrack/1.0 [sun])
   String referer;               // referer 
   String from;                  // from
   String path_log;              // chemin pour cache et log
@@ -366,8 +366,8 @@ struct httrackp {
   int accept_cookie;            // gestion des cookies
   t_cookie *cookie;
   int http10;                   // forcer http 1.0
-  int nokeepalive;              // pas de keep-alive
-  int nocompression;            // pas de compression
+  short int nokeepalive;              // pas de keep-alive
+  short int nocompression;            // pas de compression
   int sizehack;                 // forcer réponse "mis à jour" si taille identique
   int urlhack;                  // force "url normalization" to avoid loops
   int tolerant;                 // accepter content-length incorrect
@@ -472,13 +472,13 @@ struct htsrequest_proxy {
 typedef struct htsrequest htsrequest;
 #endif
 struct htsrequest {
-  short int user_agent_send;    // user agent (ex: httrack/1.0 [sun])
+  short int user_agent_send;    // on envoye notre user agent
   short int http11;             // l'en tête peut (doit) être signé HTTP/1.1 et non HTTP/1.0
   short int nokeepalive;        // pas de keep-alive
   short int range_used;         // Range utilisé
   short int nocompression;      // Pas de compression
   short int flush_garbage;      // recycled
-  const char* user_agent;
+  const char* user_agent;       // user agent (ex: httrack/1.0 [sun])
   const char* referer;
   const char* from;
   const char* lang_iso;
@@ -591,7 +591,7 @@ struct lien_back {
   LLint range_req_size;         // range utilisé
   TStamp ka_time_start;         // refresh time for KA 
   //
-  int http11;                   // L'en tête doit être signé HTTP/1.1 et non HTTP/1.0
+  short int http11;                   // L'en tête doit être signé HTTP/1.1 et non HTTP/1.0
   int is_chunk;                 // chunk?
   char *chunk_adr;              // adresse chunk en cours de chargement
   LLint chunk_size;             // taille chunk en cours de chargement

@@ -33,9 +33,6 @@ Please visit our Website: http://www.httrack.com
 /* Internal engine bytecode */
 #define HTS_INTERNAL_BYTECODE
 
-#include <fcntl.h>
-#include <ctype.h>
-
 /* File defs */
 #include "htscore.h"
 
@@ -44,7 +41,6 @@ Please visit our Website: http://www.httrack.com
 #include "htsnet.h"
 #include "htsbasenet.h"
 #include "htsbauth.h"
-#include "htsmd5.h"
 #include "htsindex.h"
 
 /* external modules */
@@ -67,10 +63,6 @@ Please visit our Website: http://www.httrack.com
 
 /* END specific definitions */
 
-/* external modules */
-extern int hts_parse_externals(htsmoduleStruct * str);
-extern void htspe_init(void);
-
 /* debug */
 #if DEBUG_SHOWTYPES
 char REG[32768] = "\n";
@@ -80,8 +72,8 @@ int nsocDEBUG = 0;
 #endif
 
 //
-#define _CLRSCR printf("\33[m\33[2J");
-#define _GOTOXY(X,Y) printf("\33[" X ";" Y "f");
+#define CLRSCR() printf("\33[m\33[2J")
+#define GOTOXY(X,Y) printf("\33[" X ";" Y "f")
 
 #if DEBUG_CHECKINT
 #define _CHECKINT_FAIL(a) printf("\n%s\n",a); fflush(stdout); abort();
@@ -162,7 +154,7 @@ RUN_CALLBACK0(opt, end); \
 #define XH_uninit do { XH_extuninit; if (r.adr) { freet(r.adr); r.adr=NULL; } } while(0)
 
 struct lien_buffers {
-  /* Main array of pointers. 
+  /* Main array of pointers.
      This is the real "lien_url **liens" pointer base. */
   TypedArray(lien_url*) ptr;
   /* String pool, chunked. */
@@ -619,7 +611,7 @@ int httpmirror(const char *url1, httrackp * opt) {
   // copier adresse(s) dans liste des adresses
   {
     const char *a = url1;
-    int primary_len = 8192;
+    off_t primary_len = 8192;
 
     if (StringNotEmpty(opt->filelist)) {
       primary_len += max(0, fsize(StringBuff(opt->filelist)) * 2);
@@ -643,9 +635,7 @@ int httpmirror(const char *url1, httrackp * opt) {
       int joker = 0;
 
       // vérifier qu'il n'y a pas de * dans l'url
-      if (*a == '+')
-        joker = 1;
-      else if (*a == '-')
+      if (*a == '+' || *a == '-')
         joker = 1;
 
       if (joker) {              // joker ou filters
@@ -836,7 +826,7 @@ int httpmirror(const char *url1, httrackp * opt) {
   //soc_max=opt->maxsoc;
   if (opt->maxsoc > 0) {
 #if BDEBUG==2
-    _CLRSCR;
+    CLRSCR();
 #endif
     // Nombre de fichiers HTML pouvant être présents en mémoire de manière simultannée
     // On prévoit large: les fichiers HTML ne prennent que peu de place en mémoire, et les
@@ -1040,7 +1030,7 @@ int httpmirror(const char *url1, httrackp * opt) {
           r.adr = primary;
           primary = NULL;
           r.statuscode = HTTP_OK;
-          r.size = strlen(r.adr);
+          r.size = (int)strlen(r.adr);
           r.soc = INVALID_SOCKET;
           strcpybuff(r.contenttype, "text/html");
           /*} else if (opt->maxsoc<=0) {   // fichiers 1 à 1 en attente (pas de backing)
@@ -1128,6 +1118,7 @@ int httpmirror(const char *url1, httrackp * opt) {
               // is acceptable
               // A supplemental flag and if( ) { } would be really messy
               goto jump_if_done;
+            default:break;
             }
 
           }
@@ -1264,9 +1255,9 @@ int httpmirror(const char *url1, httrackp * opt) {
 #define CH_ADD(c) do {															\
 	if (new_offs + 1 > new_capa) {										\
 		new_capa *= 2;																	\
-		new_adr = (unsigned char*) realloct(new_adr,    \
-		                                    new_capa); 	\
-		assertf(new_adr != NULL);												\
+		void*n_ = realloct(new_adr,  new_capa);         \
+		assertf(n_ != NULL);     												\
+		new_adr = n_; 	                                \
 	}																									\
 	new_adr[new_offs++] = (unsigned char) (c);        \
 } while(0)
@@ -1869,9 +1860,8 @@ int httpmirror(const char *url1, httrackp * opt) {
             file_notify(opt, opt->liens[ptr]->adr, opt->liens[ptr]->fil, opt->liens[ptr]->sav, 1, 1, r.notmodified);
             if (filesave(opt, r.adr, (int) r.size, opt->liens[ptr]->sav, opt->liens[ptr]->adr, opt->liens[ptr]->fil) !=
                 0) {
-              int fcheck;
 
-              if ((fcheck = check_fatal_io_errno())) {
+              if ((check_fatal_io_errno())) {
                 hts_log_print(opt, LOG_ERROR,
                               "Mirror aborted: disk full or filesystem problems");
                 opt->state.exit_xh = -1;        /* fatal error */
@@ -1945,6 +1935,7 @@ int httpmirror(const char *url1, httrackp * opt) {
                           "(External module): couldn't parse successfully %s : %s",
                           opt->liens[ptr]->sav, str.err_msg);
             break;
+          default:break;
           }
         }
 
@@ -2317,10 +2308,6 @@ int engine_stats(void) {
   return 0;
 }
 
-#define _FILTERS     (*opt->filters.filters)
-#define _FILTERS_PTR (opt->filters.filptr)
-#define _ROBOTS      ((robots_wizard*)opt->robotsptr)
-
 // bannir host (trop lent etc)
 void host_ban(httrackp * opt, int ptr,
               struct_back * sback, const char *host) {
@@ -2334,28 +2321,28 @@ void host_ban(httrackp * opt, int ptr,
     return;                     // erreur.. déja cancellé.. bizarre.. devrait pas arriver
 
   /* sanity check */
-  if (*_FILTERS_PTR + 1 >= opt->maxfilter) {
+  if (*(opt->filters.filptr) + 1 >= opt->maxfilter) {
     opt->maxfilter += HTS_FILTERSINC;
-    if (filters_init(&_FILTERS, opt->maxfilter, HTS_FILTERSINC) == 0) {
-      printf("PANIC! : Too many filters : >%d [%d]\n", *_FILTERS_PTR, __LINE__);
+    if (filters_init((opt->filters.filters), opt->maxfilter, HTS_FILTERSINC) == 0) {
+      printf("PANIC! : Too many filters : >%d [%d]\n", *(opt->filters.filptr), __LINE__);
       hts_log_print(opt, LOG_PANIC, "Too many filters, giving up..(>%d)",
-                    *_FILTERS_PTR);
+                    *(opt->filters.filptr));
       hts_log_print(opt, LOG_INFO,
                     "To avoid that: use #F option for more filters (example: -#F5000)");
       assertf("too many filters - giving up" == NULL);
     }
   }
   // interdire host
-  assertf((*_FILTERS_PTR) < opt->maxfilter);
-  if (*_FILTERS_PTR < opt->maxfilter) {
-    strcpybuff(_FILTERS[*_FILTERS_PTR], "-");
-    strcatbuff(_FILTERS[*_FILTERS_PTR], host);
-    strcatbuff(_FILTERS[*_FILTERS_PTR], "/*");  // host/ * interdit
-    (*_FILTERS_PTR)++;
+  assertf((*(opt->filters.filptr)) < opt->maxfilter);
+  if (*(opt->filters.filptr) < opt->maxfilter) {
+    strcpybuff((*opt->filters.filters)[*(opt->filters.filptr)], "-");
+    strcatbuff((*opt->filters.filters)[*(opt->filters.filptr)], host);
+    strcatbuff((*opt->filters.filters)[*(opt->filters.filptr)], "/*");  // host/ * interdit
+    (*(opt->filters.filptr))++;
   }
   // oups
   if (strlen(host) <= 1) {      // euhh?? longueur <= 1
-    if (strcmp(host, "file://")) {
+    if (strcmp(host, "file://") != 0) {
       //## if (host[0]!=lOCAL_CHAR) {  // pas local
       hts_log_print(opt, LOG_PANIC,
                     "PANIC! HostCancel detected memory leaks [char %d]",
@@ -2433,21 +2420,21 @@ int filters_init(char ***ptrfilters, int maxfilter, int filterinc) {
   int filter_max = maximum(maxfilter, 128);
 
   if (filters == NULL) {
-    filters = (char **) malloct(sizeof(char *) * (filter_max + 2));
+    filters = malloct(sizeof(char *) * (filter_max + 2));
     memset(filters, 0, sizeof(char *) * (filter_max + 2));      // filters[0] == 0
   } else {
-    filters = (char **) realloct(filters, sizeof(char *) * (filter_max + 2));
+    void*n = realloct(filters, sizeof(char *) * (filter_max + 2));
+    assertf(n && "realloct failed");
+    filters = n;
   }
   if (filters) {
     if (filters[0] == NULL) {
-      filters[0] =
-        (char *) malloct(sizeof(char) * (filter_max + 2) *
+      filters[0] = malloct(sizeof(char) * (filter_max + 2) *
                          (HTS_URLMAXSIZE));
       memset(filters[0], 0,
              sizeof(char) * (filter_max + 2) * (HTS_URLMAXSIZE));
     } else {
-      filters[0] =
-        (char *) realloct(filters[0],
+      filters[0] = realloct(filters[0],
                           sizeof(char) * (filter_max +
                                           2) * (HTS_URLMAXSIZE));
     }
@@ -2509,8 +2496,8 @@ HTSEXT_API int dir_exists(const char *path) {
   }
 #endif
   /* Get prefix (note: file can not be empty here) */
-  for(i = (int) strlen(file) - 1; i > 0 && file[i] != PATH_SEPARATOR; i--) ;
-  for(; i > 0 && file[i] == PATH_SEPARATOR; i--) ;
+  for(i = (int) strlen(file) - 1; i > 0 && file[i] != PATH_SEPARATOR; i--) {}
+  for(; i > 0 && file[i] == PATH_SEPARATOR; i--) {}
   file[i + 1] = '\0';
 
   /* Check the final dir */
@@ -2548,8 +2535,8 @@ HTSEXT_API int structcheck(const char *path) {
   }
 #endif
   /* Get prefix (note: file can not be empty here) */
-  for(i = (int) strlen(file) - 1; i > 0 && file[i] != PATH_SEPARATOR; i--) ;
-  for(; i > 0 && file[i] == PATH_SEPARATOR; i--) ;
+  for(i = (int) strlen(file) - 1; i > 0 && file[i] != PATH_SEPARATOR; i--) {}
+  for(; i > 0 && file[i] == PATH_SEPARATOR; i--) {}
   file[i + 1] = '\0';
 
   /* First check the final dir */
@@ -2590,9 +2577,9 @@ HTSEXT_API int structcheck(const char *path) {
     /* Go to next path */
 
     /* Skip separator(s) */
-    for(; file[i] == PATH_SEPARATOR; i++) ;
+    for(; file[i] == PATH_SEPARATOR; i++) {}
     /* Next separator */
-    for(; file[i] != 0 && file[i] != PATH_SEPARATOR; i++) ;
+    for(; file[i] != 0 && file[i] != PATH_SEPARATOR; i++) {}
 
     /* Check */
     end_char = file[i];
@@ -2656,8 +2643,8 @@ HTSEXT_API int structcheck_utf8(const char *path) {
   }
 #endif
   /* Get prefix (note: file can not be empty here) */
-  for(i = (int) strlen(file) - 1; i > 0 && file[i] != PATH_SEPARATOR; i--) ;
-  for(; i > 0 && file[i] == PATH_SEPARATOR; i--) ;
+  for(i = (int) strlen(file) - 1; i > 0 && file[i] != PATH_SEPARATOR; i--) {}
+  for(; i > 0 && file[i] == PATH_SEPARATOR; i--) {}
   file[i + 1] = '\0';
 
   /* First check the final dir */
@@ -2698,9 +2685,9 @@ HTSEXT_API int structcheck_utf8(const char *path) {
     /* Go to next path */
 
     /* Skip separator(s) */
-    for(; file[i] == PATH_SEPARATOR; i++) ;
+    for(; file[i] == PATH_SEPARATOR; i++) {}
     /* Next separator */
-    for(; file[i] != 0 && file[i] != PATH_SEPARATOR; i++) ;
+    for(; file[i] != 0 && file[i] != PATH_SEPARATOR; i++) {}
 
     /* Check */
     end_char = file[i];
@@ -2772,6 +2759,7 @@ int check_fatal_io_errno(void) {
 #endif
     return 1;
     break;
+  default:break;
   }
   return 0;
 }
@@ -2886,11 +2874,14 @@ int filenote(filenote_strc * strc, const char *s, filecreate_params * params) {
     strcpybuff(strc->path, params->path);
     strc->lst = params->lst;
     return 0;
-  } else if (strc->lst) {
+  }
+  if (strc->lst) {
     char BIGSTK savelst[HTS_URLMAXSIZE];
     char catbuff[CATBUFF_SIZE];
 
-    strcpybuff(savelst, fslash(catbuff, sizeof(catbuff), s));
+    //strcpybuff(savelst, fslash(catbuff, sizeof(catbuff), s));
+    snprintf(savelst, sizeof savelst, "%s", s);
+    fslash(savelst, sizeof savelst, "");
     // couper chemin?
     if (strnotempty(strc->path)) {
       if (strncmp(fslash(catbuff, sizeof(catbuff), strc->path), savelst, strlen(strc->path)) == 0) {     // couper
@@ -3333,7 +3324,7 @@ int check_flot(T_SOC s) {
   struct timeval tv;
 
   FD_ZERO(&fds);
-  FD_SET((T_SOC) s, &fds);
+  FD_SET(s, &fds);
   tv.tv_sec = 0;
   tv.tv_usec = 0;
   select(s + 1, &fds, NULL, NULL, &tv);
@@ -3357,7 +3348,7 @@ int check_sockerror(T_SOC s) {
   FD_SET((T_SOC) s, &fds);
   tv.tv_sec = 0;
   tv.tv_usec = 0;
-  select((int) s + 1, NULL, NULL, &fds, &tv);
+  select(s + 1, NULL, NULL, &fds, &tv);
   return FD_ISSET(s, &fds);
 }
 
@@ -3367,7 +3358,7 @@ int check_sockdata(T_SOC s) {
   struct timeval tv;
 
   FD_ZERO(&fds);
-  FD_SET((T_SOC) s, &fds);
+  FD_SET(s, &fds);
   tv.tv_sec = 0;
   tv.tv_usec = 0;
   select((int) s + 1, &fds, NULL, NULL, &tv);
@@ -3484,7 +3475,7 @@ static char *hts_cancel_file_pop_(httrackp * opt) {
     htsoptstatecancel *ret;
 
     for(cancel = &opt->state.cancel; (*cancel)->next != NULL;
-        cancel = &((*cancel)->next)) ;
+        cancel = &((*cancel)->next)) {}
     ret = *cancel;
     *cancel = NULL;
     return ret->url;
@@ -3524,13 +3515,13 @@ HTSEXT_API int hts_is_parsing(httrackp * opt, int flag) {
 HTSEXT_API int hts_is_testing(httrackp * opt) { // 0 non 1 test 2 purge
   if (opt->state._hts_in_html_parsing == 2)
     return 1;
-  else if (opt->state._hts_in_html_parsing == 3)
+  if (opt->state._hts_in_html_parsing == 3)
     return 2;
-  else if (opt->state._hts_in_html_parsing == 4)
+  if (opt->state._hts_in_html_parsing == 4)
     return 3;
-  else if (opt->state._hts_in_html_parsing == 5)        // scheduling
+  if (opt->state._hts_in_html_parsing == 5)        // scheduling
     return 4;
-  else if (opt->state._hts_in_html_parsing == 6)        // wait for slot
+  if (opt->state._hts_in_html_parsing == 6)        // wait for slot
     return 5;
   return 0;
 }
@@ -3730,7 +3721,7 @@ int htsAddLink(htsmoduleStruct * str, char *link) {
 
         // calculer les chemins et noms de sauvegarde
         if (ident_url_relatif(lien, str->url_host, codebase, &afs.af) >= 0) { // reformage selon chemin
-          int r;
+          int r = 0;
           int set_prio_to = 0;
           int just_test_it = 0;
 

@@ -287,7 +287,7 @@ typedef long long int TStamp;
 #define LLintP "%lld"
 #endif
 
-#endif /* HTS_LONGLONG */
+#endif /* LLINT_FORMAT */
 
 #else
 typedef int LLint;
@@ -360,7 +360,7 @@ typedef int T_SOC;
 #define HTS_DNSCACHE 1
 
 // ID d'une pseudo-socket locale pour les file://
-#define LOCAL_SOCKET_ID -2
+#define LOCAL_SOCKET_ID (-2)
 
 // taille de chaque buffer (10 sockets 650 ko)
 #define TAILLE_BUFFER 65536

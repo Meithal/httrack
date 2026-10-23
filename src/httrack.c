@@ -51,11 +51,7 @@ Please visit our Website: http://www.httrack.com
 static int fexist(const char *s);
 static int linput(FILE * fp, char *s, int max);
 
-// htswrap_add
-#include "htswrap.h"
-
 /* specific definitions */
-//#include "htsbase.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -69,7 +65,6 @@ static int linput(FILE * fp, char *s, int max);
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include <ctype.h>
 #if (defined(__linux) && defined(HAVE_EXECINFO_H))
 #include <execinfo.h>
 #define USES_BACKTRACE
@@ -510,7 +505,7 @@ static int __cdecl htsshow_loop(t_hts_callbackarg * carg, httrackp * opt, lien_b
                 //
                 s[0] = '\0';
                 strcpybuff(StatsBuffer[index].url_sav, back[i].url_sav);        // pour cancel
-                if (strcmp(back[i].url_adr, "file://"))
+                if (strcmp(back[i].url_adr, "file://") != 0)
                   strcatbuff(s, back[i].url_adr);
                 else
                   strcatbuff(s, "localhost");
@@ -567,7 +562,7 @@ static int __cdecl htsshow_loop(t_hts_callbackarg * carg, httrackp * opt, lien_b
         int parsing = 0;
 
         printf("Current job: ");
-        if (!(parsing = hts_is_parsing(opt, -1)))
+        if (!((parsing = hts_is_parsing(opt, -1))))
           printf("receiving files");
         else {
           switch (hts_is_testing(opt)) {
@@ -589,6 +584,7 @@ static int __cdecl htsshow_loop(t_hts_callbackarg * carg, httrackp * opt, lien_b
           case 5:
             printf("waiting (throttle)");
             break;
+          default:break;
           }
         }
         printf("%s\n", VT_CLREOL);

@@ -43,7 +43,6 @@ Please visit our Website: http://www.httrack.com
 #include "htsnet.h"
 #include "htsbauth.h"
 #include "htsthread.h"
-#include "htsback.h"
 #include "htswrap.h"
 #include "htsmd5.h"
 #include "htsmodules.h"
@@ -68,7 +67,6 @@ Please visit our Website: http://www.httrack.com
 
 #include <string.h>
 #include <time.h>
-#include <stdarg.h>
 
 #ifndef _WIN32
 #include <sys/time.h>
@@ -701,18 +699,16 @@ T_SOC http_xfopen(httrackp * opt, int mode, int treat, int waitconnect,
   /* Check for errors */
   if (soc == INVALID_SOCKET) {
     if (retour) {
-      if (retour->msg) {
-        if (!strnotempty(retour->msg)) {
+      if (!strnotempty(retour->msg)) {
 #ifdef _WIN32
-          int last_errno = WSAGetLastError();
+        int last_errno = WSAGetLastError();
 
-          sprintf(retour->msg, "Connect error: %s", strerror(last_errno));
+        sprintf(retour->msg, "Connect error: %s", strerror(last_errno));
 #else
-          int last_errno = errno;
+        int last_errno = errno;
 
-          sprintf(retour->msg, "Connect error: %s", strerror(last_errno));
+        sprintf(retour->msg, "Connect error: %s", strerror(last_errno));
 #endif
-        }
       }
     }
   }
@@ -847,7 +843,7 @@ typedef struct buff_struct {
   size_t pos;
 } buff_struct;
 
-static void print_buffer(buff_struct*const str, const char *format, ...)
+static void print_buffer(buff_struct* str, const char *format, ...)
   HTS_PRINTF_FUN(2, 3);
 
 /* Prints on a static buffer. asserts in case of overflow. */
@@ -1134,19 +1130,19 @@ int http_sendhead(httrackp * opt, t_cookie * cookie, int mode,
 
         autorisation[0] = '\0';
         if (link_has_authorization(adr)) {      // ohh une authentification!
-          const char *a = jump_identification_const(adr);
+          const char *a_ = jump_identification_const(adr);
           const char *astart = jump_protocol_const(adr);
 
           if (!direct_url) {    // pas ftp:// par exemple
             char user_pass[256];
 
             user_pass[0] = '\0';
-            strncatbuff(user_pass, astart, (int) (a - astart) - 1);
+            strncatbuff(user_pass, astart, (int) (a_ - astart) - 1);
             strcpybuff(user_pass, 
               unescape_http(OPT_GET_BUFF(opt), OPT_GET_BUFF_SIZE(opt), user_pass));
             code64((unsigned char *) user_pass, (int) strlen(user_pass),
                    (unsigned char *) autorisation, 0);
-            if (strcmp(fil, "/robots.txt"))     /* pas robots.txt */
+            if (strcmp(fil, "/robots.txt") != 0)     /* pas robots.txt */
               bauth_add(cookie, astart, fil, autorisation);
           }
         } else if ((a = bauth_check(cookie, real_adr, fil)))
@@ -1421,9 +1417,9 @@ void treathead(t_cookie * cookie, const char *adr, const char *fil, htsblk * ret
     // Content-Range: bytes 0-70870/70871
     const char *a;
 
-    for(a = rcvd + p; is_space(*a); a++) ;
+    for(a = rcvd + p; is_space(*a); a++) {}
     if (strncasecmp(a, "bytes ", 6) == 0) {
-      for(a += 6; is_space(*a); a++) ;
+      for(a += 6; is_space(*a); a++) {}
       if (sscanf
           (a, LLintP "-" LLintP "/" LLintP, &retour->crange_start,
            &retour->crange_end, &retour->crange) != 3) {
@@ -1464,18 +1460,18 @@ void treathead(t_cookie * cookie, const char *adr, const char *fil, htsblk * ret
     while(is_space(*a))
       a++;
     if (*a) {
-      char *p;
+      char *p_;
 
       retour->keep_alive = 1;
       retour->keep_alive_max = 10;
       retour->keep_alive_t = 15;
-      if ((p = strstr(a, "timeout="))) {
-        p += strlen("timeout=");
-        sscanf(p, "%d", &retour->keep_alive_t);
+      if ((p_ = strstr(a, "timeout="))) {
+        p_ += strlen("timeout=");
+        sscanf(p_, "%d", &retour->keep_alive_t);
       }
-      if ((p = strstr(a, "max="))) {
-        p += strlen("max=");
-        sscanf(p, "%d", &retour->keep_alive_max);
+      if ((p_ = strstr(a, "max="))) {
+        p_ += strlen("max=");
+        sscanf(p_, "%d", &retour->keep_alive_max);
       }
       if (retour->keep_alive_max <= 1 || retour->keep_alive_t < 1) {
         retour->keep_alive = 0;
@@ -1499,10 +1495,10 @@ void treathead(t_cookie * cookie, const char *adr, const char *fil, htsblk * ret
       while(is_space(*a))
         a++;
       {
-        char *a = strchr(rcvd + p, ';');
+        char *a_ = strchr(rcvd + p, ';');
 
-        if (a)
-          *a = '\0';
+        if (a_)
+          *a_ = '\0';
       }
       sscanf(a, "%s", tempo);
       if (strlen(tempo) < 64)   // pas trop long!!
@@ -1888,7 +1884,9 @@ LLint http_xfread1(htsblk * r, int bufl) {
 #if HDEBUG
           printf("..realloc xfread1\n");
 #endif
-          r->adr = (char *) realloct(r->adr, (int) r->size + bufl + 1);
+          void*n = realloct(r->adr, (int) r->size + bufl + 1);
+          assertf(n && "realloc failed");
+          r->adr = n;
         }
 
         if (r->adr != NULL) {
@@ -1896,7 +1894,9 @@ LLint http_xfread1(htsblk * r, int bufl) {
           nl = hts_read(r, r->adr + (int) r->size, bufl);
           if (nl > 0) {
             // resize
-            r->adr = (char *) realloct(r->adr, (int) r->size + nl + 1);
+            void*n = realloct(r->adr, (int) r->size + nl + 1);
+            assertf(n && "realloc failed");
+            r->adr = n;
             // nouvelle taille
             r->size += nl;
             // octet nul
@@ -2185,7 +2185,7 @@ T_SOC newhttp(httrackp * opt, const char *_iadr, htsblk * retour, int port,
 #if DEBUG
       printf("erreur gethostbyname\n");
 #endif
-      if (retour && retour->msg) {
+      if (retour) {
 #ifdef _WIN32
         snprintf(retour->msg, sizeof(retour->msg),
                  "Unable to get server's address: %s", error);
@@ -2216,7 +2216,7 @@ T_SOC newhttp(httrackp * opt, const char *_iadr, htsblk * retour, int port,
     DEBUG_W("socket()=%d\n" _(int) soc);
 #endif
     if (soc == INVALID_SOCKET) {
-      if (retour && retour->msg) {
+      if (retour) {
 #ifdef _WIN32
         int last_errno = WSAGetLastError();
 
@@ -2233,14 +2233,14 @@ T_SOC newhttp(httrackp * opt, const char *_iadr, htsblk * retour, int port,
     }
     // bind this address
     if (retour != NULL && strnotempty(retour->req.proxy.bindhost)) {
-      const char *error = "unknown error";
+      error = "unknown error";
       SOCaddr bind_addr;
 
       if (hts_dns_resolve2(opt, retour->req.proxy.bindhost,
                              &bind_addr, &error) == NULL
           || bind(soc, &SOCaddr_sockaddr(bind_addr), 
                   SOCaddr_size(bind_addr)) != 0) {
-        if (retour && retour->msg) {
+        if (retour) {
 #ifdef _WIN32
           snprintf(retour->msg, sizeof(retour->msg),
                    "Unable to bind the specificied server address: %s",
@@ -2297,7 +2297,7 @@ T_SOC newhttp(httrackp * opt, const char *_iadr, htsblk * retour, int port,
 #if HDEBUG
         printf("unable to connect!\n");
 #endif
-        if (retour != NULL && retour->msg) {
+        if (retour != NULL) {
 #ifdef _WIN32
           const int last_errno = WSAGetLastError();
 
@@ -2997,7 +2997,7 @@ int finput(T_SOC fd, char *s, int max) {
 }
 
 // Like linput, but in memory (optimized)
-int binput(char *buff, char *s, int max) {
+int binput(const char* buff, char *s, int max) {
   int count = 0;
   int destCount = 0;
 
@@ -3248,7 +3248,7 @@ int is_unicode_utf8(const char *buffer_, const size_t size) {
   return is_utf;
 }
 
-void map_characters(unsigned char *buffer, unsigned int size, unsigned int *map) {
+void map_characters(const unsigned char* buffer, unsigned int size, unsigned int *map) {
   unsigned int i;
 
   memset(map, 0, sizeof(unsigned int) * 256);
@@ -3275,9 +3275,8 @@ int ishtml(httrackp * opt, const char *fil) {
   if (get_userhttptype(opt, mime, fil_noquery)) {
     if (is_html_mime_type(mime)) {
       return 1;
-    } else {
-      return 0;
     }
+    return 0;
   }
 
   if (!strnotempty(fil_noquery)) {
@@ -3286,20 +3285,20 @@ int ishtml(httrackp * opt, const char *fil) {
 
   /* Search for known ext */
   for(a = fil_noquery + strlen(fil_noquery) - 1;
-      *a != '.' && *a != '/' && a > fil_noquery; a--) ;
+      *a != '.' && *a != '/' && a > fil_noquery; a--) {}
   if (*a == '.') {              // a une extension
-    char BIGSTK fil_noquery[HTS_URLMAXSIZE];
+    char BIGSTK fil_noquery_[HTS_URLMAXSIZE];
     char *b;
     int ret;
     char *dotted = a;
 
-    fil_noquery[0] = '\0';
+    fil_noquery_[0] = '\0';
     a++;                        // pointer sur extension
-    strncatbuff(fil_noquery, a, HTS_URLMAXSIZE);
-    b = strchr(fil_noquery, '?');
+    strncatbuff(fil_noquery_, a, HTS_URLMAXSIZE);
+    b = strchr(fil_noquery_, '?');
     if (b)
       *b = '\0';
-    ret = ishtml_ext(fil_noquery);      // retour
+    ret = ishtml_ext(fil_noquery_);      // retour
     if (ret == -1) {
       switch (is_knowntype(opt, dotted)) {
       case 1:
@@ -3314,8 +3313,9 @@ int ishtml(httrackp * opt, const char *fil) {
       }
     }
     return ret;
-  } else
-    return -2;                  // indéterminé, par exemple /truc
+  }
+
+  return -2;                  // indéterminé, par exemple /truc
 }
 
 // idem, mais pour uniquement l'extension
@@ -3323,21 +3323,15 @@ int ishtml_ext(const char *a) {
   int html = 0;
 
   //
-  if (strfield2(a, "html"))
-    html = 1;
-  else if (strfield2(a, "htm"))
-    html = 1;
-  else if (strfield2(a, "shtml"))
-    html = 1;
-  else if (strfield2(a, "phtml"))
-    html = 1;
-  else if (strfield2(a, "htmlx"))
-    html = 1;
-  else if (strfield2(a, "shtm"))
-    html = 1;
-  else if (strfield2(a, "phtm"))
-    html = 1;
-  else if (strfield2(a, "htmx"))
+  if (strfield2(a, "html")
+    || strfield2(a, "htm")
+    || strfield2(a, "shtml")
+    || strfield2(a, "phtml")
+    || strfield2(a, "htmlx")
+    || strfield2(a, "shtm")
+    || strfield2(a, "phtm")
+    || strfield2(a, "htmx")
+  )
     html = 1;
   //
   // insuccès..
@@ -3369,6 +3363,7 @@ int ishttperror(int err) {
   case 5:
     return 1;
     break;
+  default:break;
   }
   return 0;
 }
@@ -4031,7 +4026,7 @@ int get_userhttptype(httrackp * opt, char *s, const char *fil) {
                 && mimedefs[i] != '='   /* end of left list */
                 && mimedefs[i] != '\n'  /* end of this def (?) */
                 && mimedefs[i] == segment[i]    /* same item */
-                ; i++) ;
+                ; i++) {}
             /* success */
             if ((mimedefs[i] == '=' || mimedefs[i] == ' ')
                 && segment[i] == '\0') {
@@ -4054,7 +4049,7 @@ int get_userhttptype(httrackp * opt, char *s, const char *fil) {
             /* next item in list */
             for(mimedefs += i;
                 *mimedefs != '\0' && *mimedefs != '\n' && *mimedefs != '='
-                && *mimedefs != ' '; mimedefs++) ;
+                && *mimedefs != ' '; mimedefs++) {}
             if (*mimedefs == ' ') {
               mimedefs++;
             }
@@ -4127,9 +4122,8 @@ void give_mimext(char *s, const char *st) {
     int p;
     const char *a = NULL;
 
-    if ((p = strfield(st, "application/x-")))
-      a = st + p;
-    else if ((p = strfield(st, "application/")))
+    if (((p = strfield(st, "application/x-")))
+      || ((p = strfield(st, "application/"))))
       a = st + p;
     if (a) {
       if ((int) strlen(a) >= 1) {
@@ -4723,7 +4717,7 @@ static SOCaddr* hts_dns_resolve_(httrackp * opt, const char *_iadr,
     const size_t iadr_len = strlen(iadr) + 1;
 
     // find queue
-    for(; cache->next != NULL; cache = cache->next) ;
+    for(; cache->next != NULL; cache = cache->next) {}
 
 #if DEBUGDNS
     printf("resolving (not cached) %s\n", iadr);
@@ -5278,6 +5272,7 @@ HTSEXT_API void hts_log_vprint(httrackp * opt, int type, const char *format, va_
     case LOG_PANIC:
       s_type = "panic";
       break;
+    default:break;
     }
     fspc(opt, opt->log, s_type);
     (void) vfprintf(opt->log, format, args);
@@ -5319,22 +5314,20 @@ HTSEXT_API int plug_wrapper(httrackp * opt, const char *moduleName,
                             ret);
       }
       if (ret == 1) {           /* Success! */
-        opt->libHandles.handles =
-          (htslibhandle *) realloct(opt->libHandles.handles,
+        void*n = realloct(opt->libHandles.handles,
                                     (opt->libHandles.count +
                                      1) * sizeof(htslibhandle));
+        assertf(n && "realloct() failed");
+        opt->libHandles.handles = n;
         opt->libHandles.handles[opt->libHandles.count].handle = handle;
         opt->libHandles.handles[opt->libHandles.count].moduleName =
           strdupt(moduleName);
         opt->libHandles.count++;
         return 1;
-      } else {
-        hts_debug_log_print
-          ("* note: error while running entry point 'hts_plug' in %s",
-           moduleName);
-        if (unplug)
-          unplug(opt);
       }
+      hts_debug_log_print("* note: error while running entry point 'hts_plug' in %s",moduleName);
+      if (unplug)
+        unplug(opt);
     } else {
       int last_errno = errno;
 
@@ -5510,7 +5503,7 @@ HTSEXT_API httrackp *hts_create_opt(void) {
   //opt->maxcache_anticipate=256;  // maximum de liens à anticiper
   opt->maxtime = -1;            // temps max en secondes
   opt->maxrate = 100000;        // taux maxi
-  opt->maxconn = 5.0;           // nombre connexions/s
+  opt->maxconn = 5.0f;           // nombre connexions/s
   opt->waittime = -1;           // wait until.. hh*3600+mm*60+ss
   //
   opt->exec = "";

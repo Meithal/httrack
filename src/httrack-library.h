@@ -140,7 +140,6 @@ HTSEXT_API void hts_set_log_vprint_callback(void (*callback)(httrackp * opt,
 HTSEXT_API const char *hts_get_version_info(httrackp * opt);
 HTSEXT_API const char *hts_is_available(void);
 HTSEXT_API const char* hts_version(void);
-HTSEXT_API const hts_stat_struct* hts_get_stats(httrackp * opt);
 
 /* Wrapper functions */
 HTSEXT_API int htswrap_init(void);      // DEPRECATED - DUMMY FUNCTION
@@ -182,8 +181,6 @@ HTSEXT_API char *hts_errmsg(httrackp * opt);
 HTSEXT_API int hts_setpause(httrackp * opt, int);
 HTSEXT_API int hts_request_stop(httrackp * opt, int force);
 HTSEXT_API int hts_cancel_file_push(httrackp * opt, const char *url);
-HTSEXT_API void hts_cancel_test(httrackp * opt);
-HTSEXT_API void hts_cancel_parsing(httrackp * opt);
 HTSEXT_API void hts_cancel_test(httrackp * opt);
 HTSEXT_API void hts_cancel_parsing(httrackp * opt);
 HTSEXT_API int hts_has_stopped(httrackp * opt);

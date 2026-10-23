@@ -69,7 +69,6 @@ typedef struct lien_adrfilsave lien_adrfilsave;
 
 /* readdir() */
 #ifndef _WIN32
-#include <sys/types.h>
 #include <dirent.h>
 #endif
 
@@ -233,7 +232,7 @@ HTS_INLINE void time_rfc822_local(char *s, struct tm *A);
 
 HTS_INLINE int sendc(htsblk * r, const char *s);
 int finput(T_SOC fd, char *s, int max);
-int binput(char *buff, char *s, int max);
+int binput(const char* buff, char *s, int max);
 int linput(FILE * fp, char *s, int max);
 int linputsoc(T_SOC soc, char *s, int max);
 int linputsoc_t(T_SOC soc, char *s, int max, int timeout);
@@ -244,7 +243,7 @@ const char *strstrcase(const char *s, const char *o);
 int ident_url_absolute(const char *url, lien_adrfil *adrfil);
 void fil_simplifie(char *f);
 int is_unicode_utf8(const char *buffer, const size_t size);
-void map_characters(unsigned char *buffer, unsigned int size,
+void map_characters(const unsigned char* buffer, unsigned int size,
                     unsigned int *map);
 int ishtml(httrackp * opt, const char *urlfil);
 int ishtml_ext(const char *a);

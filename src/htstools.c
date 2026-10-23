@@ -35,7 +35,6 @@ Please visit our Website: http://www.httrack.com
 #define HTS_INTERNAL_BYTECODE
 
 /* String */
-#include <ctype.h>
 #include "htscore.h"
 #include "htstools.h"
 #include "htsstrings.h"
@@ -148,9 +147,9 @@ int ident_url_relatif(const char *lien, const char *origin_adr,
 
   // filtrer les parazites (mailto & cie)
   // scheme+authority (//)
-  if ((strfield(lien, "http://"))       // scheme+//
-      || (strfield(lien, "file://"))    // scheme+//
-      || (strncmp(lien, "//", 2) == 0)  // // sans scheme (-> default)
+  if (strfield(lien, "http://")       // scheme+//
+      || strfield(lien, "file://")    // scheme+//
+      || strncmp(lien, "//", 2) == 0  // // sans scheme (-> default)
     ) {
     if (ident_url_absolute(lien, adrfil) == -1) {
       ok = -1;                  // erreur URL
@@ -171,10 +170,10 @@ int ident_url_relatif(const char *lien, const char *origin_adr,
       ok = -1;                // erreur URL
     }
 #endif
-  } else if ((scheme) && ((!strfield(lien, "http:"))
-                          && (!strfield(lien, "https:"))
-                          && (!strfield(lien, "ftp:"))
-             )) {
+  } else if (scheme && !strfield(lien, "http:")
+                          && !strfield(lien, "https:")
+                          && !strfield(lien, "ftp:")
+             ) {
     ok = -1;                    // unknown scheme
   } else {                      // c'est un lien relatif
     // On forme l'URL complète à partie de l'url actuelle
@@ -187,9 +186,9 @@ int ident_url_relatif(const char *lien, const char *origin_adr,
     }
 
     // copier adresse
-    if (((int) strlen(origin_adr) < HTS_URLMAXSIZE)
-        && ((int) strlen(origin_fil) < HTS_URLMAXSIZE)
-        && ((int) strlen(lien) < HTS_URLMAXSIZE)) {
+    if ((int) strlen(origin_adr) < HTS_URLMAXSIZE
+        && (int) strlen(origin_fil) < HTS_URLMAXSIZE
+        && (int) strlen(lien) < HTS_URLMAXSIZE) {
 
       /* patch scheme if necessary */
       if (strfield(lien, "http:")) {
@@ -223,16 +222,16 @@ int ident_url_relatif(const char *lien, const char *origin_adr,
 
           if (a == NULL)
             a = origin_fil + strlen(origin_fil);
-          while((*a != '/') && (a > origin_fil))
+          while(*a != '/' && a > origin_fil)
             a--;
           if (*a == '/') {      // ok on a un '/'
-            if ((((int) (a - origin_fil)) + 1 + strlen(lien)) < HTS_URLMAXSIZE) {
+            if ((int) (a - origin_fil) + 1 + strlen(lien) < HTS_URLMAXSIZE) {
               // copier chemin
               strncpy(adrfil->fil, origin_fil, ((int) (a - origin_fil)) + 1);
               *(adrfil->fil + ((int) (a - origin_fil)) + 1) = '\0';
 
               // copier chemin relatif
-              if (((int) strlen(adrfil->fil) + (int) strlen(lien)) < HTS_URLMAXSIZE) {
+              if ((int) strlen(adrfil->fil) + (int) strlen(lien) < HTS_URLMAXSIZE) {
                 strcatbuff(adrfil->fil, lien + ((*lien == '/') ? 1 : 0));
                 // simplifier url pour les ../
                 fil_simplifie(adrfil->fil);
@@ -260,7 +259,7 @@ int ident_url_relatif(const char *lien, const char *origin_adr,
     char *a = jump_identification(adrfil->adr);
 
     while(*a) {
-      if ((*a >= 'A') && (*a <= 'Z'))
+      if (*a >= 'A' && *a <= 'Z')
         *a += 'a' - 'A';
       a++;
     }
@@ -511,17 +510,17 @@ void longfile_to_83(int mode, char *n83, char *save) {
     while((i > 0) && (save[i] != '.') && (save[i] != '/'))
       i--;                      // rechercher dernier .
     if (save[i] == '.') {       // point!
-      int j = 0;
+      int j_ = 0;
 
       i++;
-      while((j < 3) && (save[i])) {
+      while(j_ < 3 && save[i]) {
         if (save[i] != ' ') {
-          ext[j] = save[i];
-          j++;
+          ext[j_] = save[i];
+          j_++;
         }
         i++;
       }
-      ext[j] = '\0';
+      ext[j_] = '\0';
     }
   }
   // corriger vers 8-3
@@ -643,7 +642,7 @@ HTS_INLINE int rech_tageq_all(const char *adr, const char *s) {
           if (strncasecmp(&adr[p], s, s_len) == 0
               && (is_realspace(adr[p + s_len]) || adr[p + s_len] == '=')
             ) {
-            for(p += s_len; is_realspace(adr[p]) || adr[p] == '='; p++) ;
+            for(p += s_len; is_realspace(adr[p]) || adr[p] == '='; p++) {}
             return p;
           }
           token = &adr[p];
@@ -827,7 +826,6 @@ HTSEXT_API int hts_buildtopindex(httrackp * opt, const char *path,
                 if (category != NULL) {
                   if (*category == '\0') {
                     freet(category);
-                    category = NULL;
                   }
                 }
               }
@@ -836,7 +834,7 @@ HTSEXT_API int hts_buildtopindex(httrackp * opt, const char *path,
                 level = 1;
               }
 
-              chain = calloc(sizeof(struct topindex_chain), 1);
+              chain = calloc(sizeof(topindex_chain), 1);
               chainSize++;
               if (!startchain) {
                 startchain = chain;
@@ -859,16 +857,15 @@ HTSEXT_API int hts_buildtopindex(httrackp * opt, const char *path,
 
         /* Sort chain */
         {
-          struct topindex_chain **sortedElts =
-            (struct topindex_chain **) calloct(sizeof(topindex_chain *),
-                                               chainSize);
+          topindex_chain **sortedElts =
+            calloct(sizeof(topindex_chain *), chainSize);
           assertf(sortedElts != NULL);
           if (sortedElts != NULL) {
             int i;
             const char *category = "";
 
             /* Build array */
-            struct topindex_chain *chain = startchain;
+            topindex_chain *chain = startchain;
 
             for(i = 0; i < chainSize; i++) {
               assertf(chain != NULL);

@@ -39,7 +39,6 @@ Please visit our Website: http://www.httrack.com
 /* specific definitions */
 #include "htscore.h"
 #include "htsbasenet.h"
-#include "htsmd5.h"
 #include <time.h>
 
 #include "htszlib.h"
@@ -190,12 +189,6 @@ void cache_mayadd(httrackp * opt, cache_back * cache, htsblk * r,
   (headersSize) += (int) strlen(headers + headersSize); \
 } while(0)
 
-struct cache_back_zip_entry {
-  unsigned long int hdrPos;
-  unsigned long int size;
-  int compressionMethod;
-};
-
 #define ZIP_READFIELD_STRING(line, value, refline, refvalue) do { \
   if (line[0] != '\0' && strfield2(line, refline)) { \
     strcpybuff(refvalue, value); \
@@ -220,9 +213,9 @@ struct cache_back_zip_entry {
 } while(0)
 
 /* Ajout d'un fichier en cache */
-void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
+void cache_add(httrackp * opt, const cache_back * cache, const htsblk * r,
                const char *url_adr, const char *url_fil, const char *url_save,
-               int all_in_cache, const char *path_prefix) {
+               const int all_in_cache, const char *path_prefix) {
   char BIGSTK filename[HTS_URLMAXSIZE];
   char catbuff[CATBUFF_SIZE];
   int dataincache = 0;          // put data in cache ?
@@ -233,7 +226,6 @@ void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
   //int entryFilenameSize = 0;
   zip_fileinfo fi;
   const char *url_save_suffix = url_save;
-  int zErr;
 
   hts_log_print(opt, LOG_DEBUG, "Add file to cache: %s%s local: %s", url_adr, url_fil, url_save);
   
@@ -254,9 +246,8 @@ void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
             && r->adr != NULL)
         /* store error messages! */
         || !HTTP_IS_OK(r->statuscode)
+        || all_in_cache
       ) {
-      dataincache = 1;
-    } else if (all_in_cache) {
       dataincache = 1;
     }
   }
@@ -330,17 +321,17 @@ void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
     struct tm *tm_s = convert_time_rfc822(&buffer, r->lastmodified);
 
     if (tm_s) {
-      fi.tmz_date.tm_sec = (uInt) tm_s->tm_sec;
-      fi.tmz_date.tm_min = (uInt) tm_s->tm_min;
-      fi.tmz_date.tm_hour = (uInt) tm_s->tm_hour;
-      fi.tmz_date.tm_mday = (uInt) tm_s->tm_mday;
-      fi.tmz_date.tm_mon = (uInt) tm_s->tm_mon;
-      fi.tmz_date.tm_year = (uInt) tm_s->tm_year;
+      fi.tmz_date.tm_sec = tm_s->tm_sec;
+      fi.tmz_date.tm_min = tm_s->tm_min;
+      fi.tmz_date.tm_hour = tm_s->tm_hour;
+      fi.tmz_date.tm_mday = tm_s->tm_mday;
+      fi.tmz_date.tm_mon = tm_s->tm_mon;
+      fi.tmz_date.tm_year = tm_s->tm_year;
     }
   }
 
   /* Open file - NOTE: headers in "comment" */
-  if ((zErr = zipOpenNewFileInZip((zipFile) cache->zipOutput, filename, &fi,
+  if ((zipOpenNewFileInZip(cache->zipOutput, filename, &fi,
                                   /* 
                                      Store headers in realtime in the local file directory as extra field
                                      In case of crash, we'll be able to recover the whole ZIP file by rescanning it
@@ -356,8 +347,7 @@ void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
   if (dataincache) {
     if (r->is_write == 0) {
       if (r->size > 0 && r->adr != NULL) {
-        if ((zErr =
-             zipWriteInFileInZip((zipFile) cache->zipOutput, r->adr,
+        if ((zipWriteInFileInZip(cache->zipOutput, r->adr,
                                  (int) r->size)) != Z_OK) {
           int zip_zipWriteInFileInZip_failed = 0;
 
@@ -379,8 +369,7 @@ void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
           do {
             nl = fread(buff, 1, 32768, fp);
             if (nl > 0) {
-              if ((zErr =
-                   zipWriteInFileInZip((zipFile) cache->zipOutput, buff,
+              if ((zipWriteInFileInZip(cache->zipOutput, buff,
                                        (int) nl)) != Z_OK) {
                 int zip_zipWriteInFileInZip_failed = 0;
 
@@ -397,14 +386,14 @@ void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
   }
 
   /* Close */
-  if ((zErr = zipCloseFileInZip((zipFile) cache->zipOutput)) != Z_OK) {
+  if ((zipCloseFileInZip(cache->zipOutput)) != Z_OK) {
     int zip_zipCloseFileInZip_failed = 0;
 
     assertf(zip_zipCloseFileInZip_failed);
   }
 
   /* Flush */
-  if ((zErr = zipFlush((zipFile) cache->zipOutput)) != 0) {
+  if ((zipFlush(cache->zipOutput)) != 0) {
     int zip_zipFlush_failed = 0;
 
     assertf(zip_zipFlush_failed);
@@ -412,6 +401,7 @@ void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
 }
 
 #else
+#include "htsmd5.h"
 
 /* Ajout d'un fichier en cache */
 void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
@@ -668,9 +658,9 @@ static htsblk cache_readex_new(httrackp * opt, cache_back * cache,
     } else {
       posInZip = (uLong) - hash_pos;
     }
-    if (unzSetOffset((unzFile) cache->zipInput, posInZip) == Z_OK) {
+    if (unzSetOffset(cache->zipInput, posInZip) == Z_OK) {
       /* Read header (Max 8KiB) */
-      if (unzOpenCurrentFile((unzFile) cache->zipInput) == Z_OK) {
+      if (unzOpenCurrentFile(cache->zipInput) == Z_OK) {
         char BIGSTK headerBuff[8192 + 2];
         int readSizeHeader;
 
@@ -684,7 +674,7 @@ static htsblk cache_readex_new(httrackp * opt, cache_back * cache,
           = headerBuff[sizeof(headerBuff) - 3] = '\0';
 
         if ((readSizeHeader =
-             unzGetLocalExtrafield((unzFile) cache->zipInput, headerBuff,
+             unzGetLocalExtrafield(cache->zipInput, headerBuff,
                                    sizeof(headerBuff) - 2)) > 0)
           /*if (unzGetCurrentFileInfo((unzFile) cache->zipInput, NULL,
              NULL, 0, NULL, 0, headerBuff, sizeof(headerBuff) - 2) == Z_OK ) */
@@ -863,19 +853,19 @@ static htsblk cache_readex_new(httrackp * opt, cache_back * cache,
                 printf("direct-disk: %s\n", target_save);
 #endif
                 if (r.out != NULL) {
-                  char BIGSTK buff[32768 + 4];
+                  char BIGSTK buff_[32768 + 4];
                   LLint size = r.size;
 
                   if (size > 0) {
-                    size_t nl;
+                    int nl;
 
                     do {
                       nl =
-                        unzReadCurrentFile((unzFile) cache->zipInput, buff,
+                        unzReadCurrentFile(cache->zipInput, buff_,
                                            (int) minimum(size, 32768));
                       if (nl > 0) {
                         size -= nl;
-                        if (fwrite(buff, 1, nl, r.out) != nl) { // erreur
+                        if (fwrite(buff_, 1, nl, r.out) != nl) { // erreur
                           int last_errno = errno;
 
                           r.statuscode = STATUSCODE_INVALID;
@@ -915,7 +905,7 @@ static htsblk cache_readex_new(httrackp * opt, cache_back * cache,
                     sprintf(r.adr,
                             "<html><!-- Missing Error Page ; Generated by HTTrack Website Copier --><head><title>HTTP Error %u</title></head><body><h1>HTTP Error %u</h1></body></html>",
                             r.statuscode, r.statuscode);
-                    r.size = strlen(r.adr);
+                    r.size = (LLint)strlen(r.adr);
                     assertf(r.size < size);
                     strcpy(r.contenttype, "text/html");
                     strcpy(r.charset, "utf-8");
@@ -962,7 +952,7 @@ static htsblk cache_readex_new(httrackp * opt, cache_back * cache,
                 // lire fichier (d'un coup)
                 r.adr = (char *) malloct((int) r.size + 4);
                 if (r.adr != NULL) {
-                  if (unzReadCurrentFile((unzFile) cache->zipInput, r.adr, (int) r.size) != r.size) {   // erreur
+                  if (unzReadCurrentFile(cache->zipInput, r.adr, (int) r.size) != r.size) {   // erreur
                     freet(r.adr);
                     r.adr = NULL;
                     r.statuscode = STATUSCODE_INVALID;
@@ -1160,7 +1150,7 @@ static htsblk cache_readex_old(httrackp * opt, cache_back * cache,
             // Court-circuit:
             // Peut-on stocker le fichier directement sur disque?
             if (!readonly && r.statuscode == HTTP_OK && !is_hypertext_mime(opt, r.contenttype, fil) && strnotempty(save)) {     // pas HTML, écrire sur disk directement
-              int ok = 0;
+              ok = 0;
 
               r.is_write = 1;   // écrire
               if (fexist_utf8(fconv(catbuff, sizeof(catbuff), save))) {  // un fichier existe déja
@@ -1192,17 +1182,17 @@ static htsblk cache_readex_old(httrackp * opt, cache_back * cache,
                 printf("direct-disk: %s\n", save);
 #endif
                 if (r.out != NULL) {
-                  char BIGSTK buff[32768 + 4];
+                  char BIGSTK buff_[32768 + 4];
                   size_t size = (size_t) r.size;
 
                   if (size > 0) {
                     size_t nl;
 
                     do {
-                      nl = fread(buff, 1, minimum(size, 32768), cache->olddat);
+                      nl = fread(buff_, 1, minimum(size, 32768), cache->olddat);
                       if (nl > 0) {
                         size -= nl;
-                        if (fwrite(buff, 1, nl, r.out) != nl) { // erreur
+                        if (fwrite(buff_, 1, nl, r.out) != nl) { // erreur
                           r.statuscode = STATUSCODE_INVALID;
                           strcpybuff(r.msg, "Cache Read Error : Read To Disk");
                         }
@@ -1569,7 +1559,7 @@ void cache_init(cache_back * cache, httrackp * opt) {
         int zErr;
 
         /* Ready directory entries */
-        if ((zErr = unzGoToFirstFile((unzFile) cache->zipInput)) == Z_OK) {
+        if ((zErr = unzGoToFirstFile(cache->zipInput)) == Z_OK) {
           char comment[128];
           char BIGSTK filename[HTS_URLMAXSIZE];
           int entries = 0;

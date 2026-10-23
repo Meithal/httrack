@@ -108,11 +108,11 @@ int back_unserialize(FILE * fp, lien_back ** dst);
 int back_serialize_ref(httrackp * opt, const lien_back * src);
 int back_unserialize_ref(httrackp * opt, const char *adr, const char *fil,
                          lien_back ** dst);
-void back_set_finished(struct_back * sback, const int p);
+void back_set_finished(struct_back * sback, long p);
 void back_set_locked(struct_back * sback, const int p);
 void back_set_unlocked(struct_back * sback, const int p);
 int back_delete(httrackp * opt, cache_back * cache, struct_back * sback,
-                const int p);
+                long p);
 void back_index_unlock(struct_back * sback, const int p);
 int back_clear_entry(lien_back * back);
 int back_flush_output(httrackp * opt, cache_back * cache, struct_back * sback,
@@ -121,11 +121,11 @@ void back_delete_all(httrackp * opt, cache_back * cache, struct_back * sback);
 int back_maydelete(httrackp * opt, cache_back * cache, struct_back * sback,
                    const int p);
 void back_maydeletehttp(httrackp * opt, cache_back * cache, struct_back * sback,
-                        const int p);
+                        long p);
 int back_trylive(httrackp * opt, cache_back * cache, struct_back * sback,
                  const int p);
 int back_finalize(httrackp * opt, cache_back * cache, struct_back * sback,
-                  const int p);
+                  long p);
 void back_info(struct_back * sback, int i, int j, FILE * fp);
 void back_infostr(struct_back * sback, int i, int j, char *s);
 LLint back_transferred(LLint add, struct_back * sback);

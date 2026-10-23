@@ -130,10 +130,10 @@ int cookie_del(t_cookie * cookie, const char *cook_name, const char *domain, con
 // chk_dom: the domain stored in the cookie (potentially wildcard).
 // domain: query domain
 static int cookie_cmp_wildcard_domain(const char *chk_dom, const char *domain) {
-  const size_t n = strlen(chk_dom);
-  const size_t m = strlen(domain);
-  const size_t l = n < m ? n : m;
-  size_t i;
+  const int n = (int)strlen(chk_dom);
+  const int m = (int)strlen(domain);
+  const int l = n < m ? n : m;
+  int i;
   for (i = l - 1; i >= 0; i--) {
     if (chk_dom[n - i - 1] != domain[m - i - 1]) {
       return 1;

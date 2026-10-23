@@ -159,6 +159,7 @@ static HTS_UNUSED void htssafe_compile_time_check_(void) {
  * Copy characters from "B" to "A".
  * If "A" is a char[] variable whose size is not sizeof(char*), then the size 
  * is assumed to be the capacity of this array.
+ * TODO URGENT: supprimmer cette macro
  */
 #define strcpybuff(A, B) \
   ( HTS_IS_NOT_CHAR_BUFFER(A) \

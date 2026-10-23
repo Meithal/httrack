@@ -34,7 +34,6 @@ Please visit our Website: http://www.httrack.com
 #define HTS_ARRAYS_DEFSTATIC
 
 /* System definitions. */
-#include <stdlib.h>
 #include <string.h>
 
 #include "htssafe.h"
@@ -104,11 +103,12 @@ static void hts_record_assert_memory_failed(const size_t size) {
   while (TypedArrayRoom(A) < room_) { \
     TypedArrayCapa(A) = TypedArrayCapa(A) < 16 ? 16 : TypedArrayCapa(A) * 2; \
   } \
-  TypedArrayPtr(A) = realloc(TypedArrayPtr(A), \
+  void * new_ = realloc(TypedArrayPtr(A), \
                              TypedArrayCapa(A)*TypedArrayWidth(A)); \
-  if (TypedArrayPtr(A) == NULL) { \
+  if (new_ == NULL) { \
     hts_record_assert_memory_failed(TypedArrayCapa(A)*TypedArrayWidth(A)); \
   } \
+  TypedArrayPtr(A) = new_; \
 } while(0)
 
 /** Add an element. Macro, first element evaluated multiple times. **/

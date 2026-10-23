@@ -59,7 +59,7 @@ typedef struct htsblk htsblk;
 void cache_mayadd(httrackp * opt, cache_back * cache, htsblk * r,
                   const char *url_adr, const char *url_fil,
                   const char *url_save);
-void cache_add(httrackp * opt, cache_back * cache, const htsblk * r,
+void cache_add(httrackp * opt, const cache_back * cache, const htsblk * r,
                const char *url_adr, const char *url_fil, const char *url_save,
                int all_in_cache, const char *path_prefix);
 htsblk cache_read(httrackp * opt, cache_back * cache, const char *adr,

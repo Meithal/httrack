@@ -38,7 +38,6 @@ Please visit our Website: http://www.httrack.com
 #include "htsnet.h"
 #include "htsbasenet.h"
 #include "htscore.h"
-#include "htsthread.h"
 #include <time.h>
 /* END specific definitions */
 
@@ -482,7 +481,7 @@ static int create_back_tmpfile(httrackp * opt, lien_back *const back) {
 // fermer les paramètres de transfert,
 // et notamment vérifier les fichiers compressés (décompresser), callback etc.
 int back_finalize(httrackp * opt, cache_back * cache, struct_back * sback,
-                  const int p) {
+                  const long p) {
   char catbuff[CATBUFF_SIZE];
   lien_back *const back = sback->lnk;
   const int back_max = sback->count;
@@ -836,13 +835,12 @@ int back_letlive(httrackp * opt, cache_back * cache, struct_back * sback,
                  const int p) {
   lien_back *const back = sback->lnk;
   const int back_max = sback->count;
-  int checkerror;
   htsblk *src = &back[p].r;
 
   assertf(p >= 0 && p < back_max);
   if (src && !src->is_file && src->soc != INVALID_SOCKET && src->statuscode >= 0        /* no timeout errors & co */
       && src->keep_alive_trailers == 0  /* not yet supported (chunk trailers) */
-      && !(checkerror = check_sockerror(src->soc))
+      && !(check_sockerror(src->soc))
       /*&& !check_sockdata(src->soc) *//* no unexpected data */
     ) {
     htsblk tmp;
@@ -962,7 +960,7 @@ int back_unserialize(FILE * fp, lien_back ** dst) {
     (*dst)->r.ssl_con = NULL;
 #endif
     if (back_data_unserialize(fp, (void **) &(*dst)->r.adr, &size) == 0) {
-      (*dst)->r.size = size;
+      (*dst)->r.size = (LLint)size;
       (*dst)->r.headers = NULL;
       if (back_string_unserialize(fp, &(*dst)->r.headers) == 0)
         return 0;               /* ok */
@@ -1074,10 +1072,9 @@ int back_maydelete(httrackp * opt, cache_back * cache, struct_back * sback,
 
 // clear, or leave for keep-alive
 void back_maydeletehttp(httrackp * opt, cache_back * cache, struct_back * sback,
-                        const int p) {
+                        const long p) {
   lien_back *const back = sback->lnk;
   const int back_max = sback->count;
-  TStamp lt = 0;
 
   assertf(p >= 0 && p < back_max);
   if (back[p].r.soc != INVALID_SOCKET) {
@@ -1097,7 +1094,7 @@ void back_maydeletehttp(httrackp * opt, cache_back * cache, struct_back * sback,
         /* Known keep-alive start (security) */
         && back[p].ka_time_start
         /* We're on time */
-        && (lt = time_local()) < back[p].ka_time_start + back[p].r.keep_alive_t
+        && time_local() < back[p].ka_time_start + back[p].r.keep_alive_t
         /* Connection delay must not exceed keep-alive timeout */
         && (opt->maxconn <= 0
             || (back[p].r.keep_alive_t > (1.0 / opt->maxconn)))
@@ -1194,7 +1191,6 @@ int back_search(httrackp * opt, struct_back * sback) {
   /* couldn't find an empty place, try to requisition a keep-alive place */
   for(i = 0; i < back_max; i++) {
     if (back[i].status == STATUS_ALIVE) {
-      lien_back *const back = sback->lnk;
 
       /* close this place */
       back_clear_entry(&back[i]);       /* Already finalized (this is the night of the living dead) */
@@ -1207,7 +1203,7 @@ int back_search(httrackp * opt, struct_back * sback) {
   return -1;
 }
 
-void back_set_finished(struct_back * sback, const int p) {
+void back_set_finished(struct_back * sback, const long p) {
   lien_back *const back = sback->lnk;
   const int back_max = sback->count;
 
@@ -1286,7 +1282,7 @@ int back_flush_output(httrackp * opt, cache_back * cache, struct_back * sback,
 
 // effacer entrée
 int back_delete(httrackp * opt, cache_back * cache, struct_back * sback,
-                const int p) {
+                const long p) {
   lien_back *const back = sback->lnk;
   const int back_max = sback->count;
 
@@ -1312,13 +1308,13 @@ int back_delete(httrackp * opt, cache_back * cache, struct_back * sback,
       }
       if (cache != NULL) {
         //hts_log_print(opt, LOG_TRACE, "finalizing from back_delete");
-        back_finalize(opt, cache, sback, p);
+        back_finalize(opt, cache, sback, (int)p);
       }
     }
     back[p].finalized = 0;
 
     // flush output buffers
-    (void) back_flush_output(opt, cache, sback, p);
+    (void) back_flush_output(opt, cache, sback, (int)p);
 
     return back_clear_entry(&back[p]);
   }
@@ -1467,8 +1463,8 @@ int back_add(struct_back * sback, httrackp * opt, cache_back * cache, const char
     if ((referer_adr) && (referer_fil)) {       // existe
       if ((strnotempty(referer_adr)) && (strnotempty(referer_fil))) {   // non vide
         if (referer_adr[0] != '!') {    // non détruit
-          if (strcmp(referer_adr, "file://")) { // PAS file://
-            if (strcmp(referer_adr, "primary")) {       // pas referer 1er lien
+          if (strcmp(referer_adr, "file://") != 0) { // PAS file://
+            if (strcmp(referer_adr, "primary") != 0) {       // pas referer 1er lien
               strcpybuff(back[p].referer_adr, referer_adr);
               strcpybuff(back[p].referer_fil, referer_fil);
             }
@@ -1525,9 +1521,9 @@ int back_add(struct_back * sback, httrackp * opt, cache_back * cache, const char
       }
     }
     // tester cache
-    if ((strcmp(adr, "file://"))        /* pas fichier */
-        &&((!test) || (cache->type == 1))       /* cache prioritaire, laisser passer en test! */
-        &&((strnotempty(save)) || (strcmp(fil, "/robots.txt") == 0))) { // si en test on ne doit pas utiliser le cache sinon telescopage avec le 302..
+    if (strcmp(adr, "file://") != 0        /* pas fichier */
+        &&(!test || cache->type == 1)       /* cache prioritaire, laisser passer en test! */
+        &&(strnotempty(save) || strcmp(fil, "/robots.txt") == 0)) { // si en test on ne doit pas utiliser le cache sinon telescopage avec le 302..
 #if HTS_FAST_CACHE
       intptr_t hash_pos;
       int hash_pos_return = 0;
@@ -2104,7 +2100,7 @@ int back_add(struct_back * sback, httrackp * opt, cache_back * cache, const char
                           /* */
                           back[i].r.contenttype, back[i].url_adr,
                           back[i].url_fil,
-                          back[i].url_sav ? back[i].url_sav : "<null>");
+                          back[i].url_sav[0] ? back[i].url_sav : "<null>");
           }
         }
       }
@@ -2328,8 +2324,8 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
   int busy_state = 0;           // pas de connexions
   int max_loop;                 // nombre de boucles max à parcourir..
   int max_loop_chk = 0;
-  unsigned int mod_random =
-    (unsigned int) (time_local() + HTS_STAT.HTS_TOTAL_RECV);
+  long mod_random =
+    (time_local() + HTS_STAT.HTS_TOTAL_RECV);
 
   // max. number of loops
   max_loop = 8;
@@ -2359,9 +2355,9 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
     nfds = INVALID_SOCKET;
 
     max_c = 1;
-    for(i_mod = 0; i_mod < (unsigned int) back_max; i_mod++) {
+    for(i_mod = 0; i_mod < back_max; i_mod++) {
       // for(i=0;i<back_max;i++) {
-      unsigned int i = (i_mod + mod_random) % (back_max);
+      long i = (i_mod + mod_random) % (back_max);
 
       // en cas de gestion du connect préemptif
 #if HTS_XCONN
@@ -2482,7 +2478,7 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
     // recevoir les données arrivées
     for(i_mod = 0; i_mod < (unsigned int) back_max; i_mod++) {
       // for(i=0;i<back_max;i++) {
-      unsigned int i = (i_mod + mod_random) % (back_max);
+      long i = (i_mod + mod_random) % (back_max);
 
       if (back[i].status > 0) {
         if (!back[i].r.is_file) {       // not file..
@@ -2580,12 +2576,7 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
             // envoyer header
             //if (strcmp(back[i].url_sav,BACK_ADD_TEST)!=0)    // vrai get
             HTS_STAT.stat_nrequests++;
-            if (!back[i].head_request)
-              http_sendhead(opt, opt->cookie, 0, back[i].send_too,
-                            back[i].url_adr, back[i].url_fil,
-                            back[i].referer_adr, back[i].referer_fil,
-                            &back[i].r);
-            else if (back[i].head_request == 2) // test en GET!
+            if (back[i].head_request == 0 || back[i].head_request == 2) // test en GET!
               http_sendhead(opt, opt->cookie, 0, back[i].send_too,
                             back[i].url_adr, back[i].url_fil,
                             back[i].referer_adr, back[i].referer_fil,
@@ -2728,7 +2719,7 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
         // finalize transfer
         if (back[i].r.statuscode > 0) {
           hts_log_print(opt, LOG_TRACE, "finalizing ftp");
-          back_finalize(opt, cache, sback, i);
+          back_finalize(opt, cache, sback, (int)i);
         }
       } else if ((back[i].status > 0) && (back[i].status < 1000)) {     // en réception http
         int dispo = 0;
@@ -2772,7 +2763,7 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
               if (back[i].r.adr == NULL) {      // rien n'a été écrit
                 if (!back[i].testmode) {        // pas mode test
                   if (strnotempty(back[i].url_sav)) {
-                    if (strcmp(back[i].url_fil, "/robots.txt")) {
+                    if (strcmp(back[i].url_fil, "/robots.txt") != 0) {
                       if (back[i].r.statuscode == HTTP_OK) {    // 'OK'
                         if (!is_hypertext_mime(opt, back[i].r.contenttype, back[i].url_fil)) {  // pas HTML
                           if (opt->getmode & HTS_DOWNLOAD_NON_HTML) {       // on peut ecrire des non html
@@ -3474,33 +3465,31 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
                       if (back[i].r.adr == NULL) {      // rien n'a été écrit
                         if (!back[i].testmode) {        // pas mode test
                           if (strnotempty(back[i].url_sav)) {
-                            if (strcmp(back[i].url_fil, "/robots.txt")) {
+                            if (strcmp(back[i].url_fil, "/robots.txt") != 0) {
                               if (back[i].r.statuscode == HTTP_OK) {    // 'OK'
                                 if (!is_hypertext_mime(opt, back[i].r.contenttype, back[i].url_fil)) {  // pas HTML
-                                  if (back[i].r.statuscode == HTTP_OK) {        // "OK"
-                                    if (back[i].range_req_size > 0) {   // but Range: requested
-                                      if (back[i].range_req_size == back[i].r.totalsize) {      // And same size
+                                  if (back[i].range_req_size > 0) {   // but Range: requested
+                                    if (back[i].range_req_size == back[i].r.totalsize) {      // And same size
 #if HTS_DEBUG_CLOSESOCK
                                         DEBUG_W
                                           ("back_wait(skip_range): deletehttp\n");
 #endif
-                                        deletehttp(&back[i].r);
-                                        back[i].r.soc = INVALID_SOCKET;
-                                        back[i].status = STATUS_READY;  // READY
-                                        back_set_finished(sback, i);
-                                        back[i].r.size = back[i].r.totalsize;
-                                        filenote(&opt->state.strc,
-                                                 back[i].url_sav, NULL);
-                                        file_notify(opt, back[i].url_adr,
-                                                    back[i].url_fil,
-                                                    back[i].url_sav, 0, 0,
-                                                    back[i].r.notmodified);
-                                        back[i].r.statuscode = HTTP_NOT_MODIFIED;       // NOT MODIFIED
-                                        hts_log_print(opt, LOG_DEBUG,
-                                                      "File seems complete (reget failed), breaking connection: %s%s",
-                                                      back[i].url_adr,
-                                                      back[i].url_fil);
-                                      }
+                                      deletehttp(&back[i].r);
+                                      back[i].r.soc = INVALID_SOCKET;
+                                      back[i].status = STATUS_READY;  // READY
+                                      back_set_finished(sback, i);
+                                      back[i].r.size = back[i].r.totalsize;
+                                      filenote(&opt->state.strc,
+                                               back[i].url_sav, NULL);
+                                      file_notify(opt, back[i].url_adr,
+                                                  back[i].url_fil,
+                                                  back[i].url_sav, 0, 0,
+                                                  back[i].r.notmodified);
+                                      back[i].r.statuscode = HTTP_NOT_MODIFIED;       // NOT MODIFIED
+                                      hts_log_print(opt, LOG_DEBUG,
+                                                    "File seems complete (reget failed), breaking connection: %s%s",
+                                                    back[i].url_adr,
+                                                    back[i].url_fil);
                                     }
                                   }
 
@@ -3694,8 +3683,8 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
                             if (back[i].r.totalsize >= 0)
                               alloc_mem += back[i].r.totalsize; // AJOUTER RESTANT!
                             if (deleteaddr(&back[i].r)
-                                && (back[i].r.adr =
-                                    (char *) malloct((size_t) alloc_mem))) {
+                                && ((back[i].r.adr =
+                                  (char *) malloct((size_t) alloc_mem)))) {
                               back[i].r.size = sz;
                               if (back[i].r.totalsize >= 0)
                                 back[i].r.totalsize += sz;      // plus en fait
@@ -3757,7 +3746,7 @@ void back_wait(struct_back * sback, httrackp * opt, cache_back * cache,
                           back[i].status = STATUS_READY;        // terminé
                           back_set_finished(sback, i);
                           if (deleteaddr(&back[i].r)
-                              && (back[i].r.adr = (char *) malloct(2))) {
+                              && ((back[i].r.adr = (char *) malloct(2)))) {
                             back[i].r.adr[0] = 0;
                           }
                           hts_log_print(opt, LOG_TRACE, "finalizing empty");

@@ -31,14 +31,12 @@ Please visit our Website: http://www.httrack.com
 /* ------------------------------------------------------------ */
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "httrack.h"
 #include "httrack-library.h"
 
-// concat, concatne deux chaines et renvoi le rŽsultat
-// permet d'allŽger grandement le code
+// concat, concatï¿½ne deux chaines et renvoi le rï¿½sultat
+// permet d'allï¿½ger grandement le code
 #undef concat
 HTSEXT_API char *concat(char *catbuff, size_t size, const char *a, const char *b) {
   size_t max = 0;
@@ -64,7 +62,7 @@ HTSEXT_API char *concat(char *catbuff, size_t size, const char *a, const char *b
 }
 
 // conversion fichier / -> antislash
-static char *__fconv(char *a) {
+static char *fconv__(char *a) {
 #if HTS_DOSNAME
   int i;
 
@@ -79,17 +77,17 @@ static char *__fconv(char *a) {
 #undef concat
 HTSEXT_API char *fconcat(char *catbuff, size_t size, const char *a, const char *b) {
   RUNTIME_TIME_CHECK_SIZE(size);
-  return __fconv(concat(catbuff, size, a, b));
+  return fconv__(concat(catbuff, size, a, b));
 }
 
 #undef fconv
 HTSEXT_API char *fconv(char *catbuff, size_t size, const char *a) {
   RUNTIME_TIME_CHECK_SIZE(size);
-  return __fconv(concat(catbuff, size, a, ""));
+  return fconv__(concat(catbuff, size, a, ""));
 }
 
 /* / et \\ en / */
-static char *__fslash(char *a) {
+static char *fslash__(char *a) {
   int i;
 
   for(i = 0; a[i] != 0; i++)
@@ -101,7 +99,7 @@ static char *__fslash(char *a) {
 #undef fslash
 char *fslash(char *catbuff, size_t size, const char *a) {
   RUNTIME_TIME_CHECK_SIZE(size);
-  return __fslash(concat(catbuff, size, a, NULL));
+  return fslash__(concat(catbuff, size, a, NULL));
 }
 
 // extension : html,gif..
