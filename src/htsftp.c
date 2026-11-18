@@ -35,6 +35,7 @@ Please visit our Website: http://www.httrack.com
 
 // Gestion protocole ftp
 // Version .05 (01/2000)
+#include <ctype.h>
 
 #include "htsftp.h"
 #include "htsbasenet.h"

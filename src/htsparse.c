@@ -35,6 +35,8 @@ Please visit our Website: http://www.httrack.com
 /* Internal engine bytecode */
 #define HTS_INTERNAL_BYTECODE
 
+#include <ctype.h>
+
 /* File defs */
 #include "htscore.h"
 
@@ -1452,7 +1454,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
                              || strchr(tempo, ',')    /* list of files ? */
                              ||strchr(tempo, '\"')    /* potential parsing bug */
                              ||strchr(tempo, '\'')    /* potential parsing bug */
-                             || tempo[0] == '.' && isalnum(tempo[1]))    // ".gif"
+                             || (tempo[0] == '.' && isalnum(tempo[1])))    // ".gif"
                             invalid_url = 1;
 
                           /* non invalide? */
@@ -3262,7 +3264,7 @@ int htsparse(htsmoduleStruct * str, htsmoduleStructExtended * stre) {
           }
           fclose(fp); fp=NULL;
           if (strnotempty(stre->r_->lastmodified))
-          set_filetime_rfc822(heap_(*str->ptr_)->sav,stre->r_->lastmodified);
+            set_filetime_rfc822(heap_(*str->ptr_)->sav,stre->r_->lastmodified);
         } else {
           int fcheck;
           if ((fcheck=check_fatal_io_errno())) {

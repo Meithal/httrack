@@ -39,6 +39,7 @@ Please visit our Website: http://www.httrack.com
 #include "htsbasenet.h"
 #include "htscore.h"
 #include <time.h>
+#include <ctype.h>
 /* END specific definitions */
 
 #include "htsback.h"
@@ -2174,7 +2175,10 @@ static int slot_can_be_finalized(httrackp * opt, const lien_back * back) {
 void back_clean(httrackp * opt, cache_back * cache, struct_back * sback) {
   lien_back *const back = sback->lnk;
   const int back_max = sback->count;
-  int oneMore = ((opt->state._hts_in_html_parsing == 2 && opt->maxsoc >= 2) || (opt->state._hts_in_html_parsing == 1 && opt->maxsoc >= 4)) ? 1 : 0;     // testing links
+  int oneMore = (
+                 (opt->state._hts_in_html_parsing == 2 && opt->maxsoc >= 2)
+                 || (opt->state._hts_in_html_parsing == 1 && opt->maxsoc >= 4)
+                 ) ? 1 : 0;     // testing links
   int i;
 
   for(i = 0; i < back_max; i++) {

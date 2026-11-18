@@ -39,6 +39,7 @@ Please visit our Website: http://www.httrack.com
 #include "htstools.h"
 #include "htsstrings.h"
 #include "htscharset.h"
+
 #ifdef _WIN32
 # include "windows.h"
 #else
@@ -47,6 +48,7 @@ Please visit our Website: http://www.httrack.com
 #  include <unistd.h>
 # endif
 # include <sys/stat.h>
+# include <ctype.h>
 #endif
 
 // Portable directory find functions
@@ -1101,10 +1103,9 @@ HTSEXT_API int hts_findnext(find_handle find) {
 
     memset(&(find->filestat), 0, sizeof(find->filestat));
     if ((find->dirp = readdir(find->hdir)))
-      if (find->dirp->d_name)
-        if (!STAT
-            (concat(catbuff, sizeof(catbuff), find->path, find->dirp->d_name), &find->filestat))
-          return 1;
+      if (!STAT
+          (concat(catbuff, sizeof(catbuff), find->path, find->dirp->d_name), &find->filestat))
+        return 1;
 #endif
   }
   return 0;
@@ -1190,14 +1191,13 @@ HTSEXT_API int hts_findissystem(find_handle find) {
              || (!strcmp(find->hdata.cFileName, ".")))
       return 1;
 #else
-    if ((S_ISCHR(find->filestat.st_mode))
+    if (   (S_ISCHR(find->filestat.st_mode))
         || (S_ISBLK(find->filestat.st_mode))
         || (S_ISFIFO(find->filestat.st_mode))
         || (S_ISSOCK(find->filestat.st_mode))
-      )
-      return 1;
-    else if ((!strcmp(find->dirp->d_name, ".."))
-             || (!strcmp(find->dirp->d_name, ".")))
+        || (!strcmp(find->dirp->d_name, ".."))
+        || (!strcmp(find->dirp->d_name, "."))
+        )
       return 1;
 #endif
   }

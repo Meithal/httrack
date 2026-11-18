@@ -40,7 +40,6 @@ Please visit our Website: http://www.httrack.com
 #include "htssafe.h"
 
 #include <string.h>
-#include <ctype.h>
 #ifdef _WIN32
  // pour read
 #include <io.h>
@@ -52,10 +51,8 @@ typedef ADDRESS_FAMILY sa_family_t;
  //typedef int T_SOC;
 #define INVALID_SOCKET -1
 #include <netdb.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <sys/time.h>
  /* Force for sun env. */
 #ifndef BSD_COMP
 #define BSD_COMP

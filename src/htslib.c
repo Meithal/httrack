@@ -67,6 +67,7 @@ Please visit our Website: http://www.httrack.com
 
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 
 #ifndef _WIN32
 #include <sys/time.h>

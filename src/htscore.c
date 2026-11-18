@@ -33,6 +33,8 @@ Please visit our Website: http://www.httrack.com
 /* Internal engine bytecode */
 #define HTS_INTERNAL_BYTECODE
 
+#include <ctype.h>
+
 /* File defs */
 #include "htscore.h"
 
@@ -1858,8 +1860,7 @@ int httpmirror(const char *url1, httrackp * opt) {
           // ATTENTION C'EST ICI QU'ON SAUVE LE FICHIER!!          
           if (r.adr != NULL || r.size == 0) {
             file_notify(opt, opt->liens[ptr]->adr, opt->liens[ptr]->fil, opt->liens[ptr]->sav, 1, 1, r.notmodified);
-            if (filesave(opt, r.adr, (int) r.size, opt->liens[ptr]->sav, opt->liens[ptr]->adr, opt->liens[ptr]->fil) !=
-                0) {
+            if (filesave(opt, r.adr, (int) r.size, opt->liens[ptr]->sav, opt->liens[ptr]->adr, opt->liens[ptr]->fil) != 0) {
 
               if ((check_fatal_io_errno())) {
                 hts_log_print(opt, LOG_ERROR,
@@ -2778,7 +2779,7 @@ FILE *filecreate(filenote_strc * strc, const char *s) {
     filenote(strc, s, NULL);
   }
 
-  strcpybuff(fname, s);
+  strcpy(fname, s);
 #if HTS_DOSNAME
   // remplacer / par des slash arrière
   {

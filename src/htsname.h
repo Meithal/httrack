@@ -41,8 +41,8 @@ Please visit our Website: http://www.httrack.com
 HTS_STATIC int strendwith_(const char *a, const char *b) {
   int i, j;
 
-  for(i = 0; a[i] != 0; i++) ;
-  for(j = 0; b[j] != 0; j++) ;
+  for(i = 0; a[i] != 0; i++) {}
+  for(j = 0; b[j] != 0; j++) {}
   while(i >= 0 && j >= 0 && a[i] == b[j]) {
     i--;
     j--;
